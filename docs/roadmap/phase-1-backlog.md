@@ -34,9 +34,9 @@ Validated project implementation decisions:
 - Django is the backend/server framework — ADR 0010;
 - Django REST Framework is the REST layer — ADR 0011;
 - drf-spectacular generates and validates the OpenAPI contract — ADR 0011;
-- django-filter is the filtering helper for declared resource filters — ADR 0011.
-
-Python 3.14 and Django 5.2 LTS are now the accepted runtime baseline — ADR 0012. Server dependencies may now be pinned and the first Django scaffold can be generated.
+- django-filter is the filtering helper for declared resource filters — ADR 0011;
+- Python 3.14 + Django 5.2 LTS are the server runtime baseline — ADR 0012;
+- opaque revocable PostgreSQL-backed Bearer sessions are the API authentication baseline — ADR 0013.
 
 ## Implementation order
 
@@ -44,15 +44,15 @@ Python 3.14 and Django 5.2 LTS are now the accepted runtime baseline — ADR 001
 
 - #25 — completed: Django explicitly validated as the FashionERP backend framework.
 
-### Gate 1 — REST/OpenAPI decision
+### Gate 1 — REST/OpenAPI and runtime
 
-- #30 — DRF + drf-spectacular accepted; conventions documented in `docs/api/README.md` and ADR 0011.
-- #33 — completed: Python 3.14 + Django 5.2 LTS validated; dependency pinning/scaffolding is now unblocked.
+- #30 — completed: DRF + drf-spectacular accepted; conventions documented in `docs/api/README.md` and ADR 0011.
+- #33 — completed: Python 3.14 + Django 5.2 LTS validated.
 - #34 — completed: initial Django server scaffold, PostgreSQL-backed CI checks and OpenAPI validation added.
 
 ### Foundation sequence
 
-1. #10 — authentication and session lifecycle
+1. #10 — completed: authentication and revocable session lifecycle
 2. #11 — organizations and isolation
 3. #12 — companies and establishments hierarchy/scopes
 4. #13 — users, groups, roles and permissions
