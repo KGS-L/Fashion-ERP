@@ -1,3 +1,4 @@
+from django.db import transaction
 from django.utils import timezone
 from drf_spectacular.utils import extend_schema
 from rest_framework import generics, status
@@ -6,6 +7,8 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.throttling import ScopedRateThrottle
 from rest_framework.views import APIView
+
+from fashionerp.audit.services import audit_snapshot, record_audit_event
 
 from .models import ApiSession
 from .serializers import (
@@ -29,12 +32,21 @@ class LoginView(APIView):
         serializer.is_valid(raise_exception=True)
 
         user = serializer.validated_data["user"]
-        session, raw_token = create_api_session(
-            user=user,
-            device_id=serializer.validated_data.get("device_id", ""),
-            device_label=serializer.validated_data.get("device_label", ""),
-            user_agent=request.headers.get("User-Agent", ""),
-        )
+        with transaction.atomic():
+            session, raw_token = create_api_session(
+                user=user,
+                device_id=serializer.validated_data.get("device_id", ""),
+                device_label=serializer.validated_data.get("device_label", ""),
+                user_agent=request.headers.get("User-Agent", ""),
+            )
+            record_audit_event(
+                organization=user.organization,
+                actor=user,
+                action="auth.login",
+                object_instance=session,
+                after=audit_snapshot(session),
+                request=request,
+            )
 
         return Response(
             {
@@ -58,7 +70,18 @@ class LogoutView(APIView):
     def post(self, request):
         session = request.auth
         if isinstance(session, ApiSession):
-            session.revoke(reason="logout")
+            with transaction.atomic():
+                before = audit_snapshot(session)
+                session.revoke(reason="logout")
+                record_audit_event(
+                    organization=request.user.organization,
+                    actor=request.user,
+                    action="auth.logout",
+                    object_instance=session,
+                    before=before,
+                    after=audit_snapshot(session),
+                    request=request,
+                )
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -97,5 +120,16 @@ class SessionRevokeView(APIView):
         except ApiSession.DoesNotExist as exc:
             raise NotFound("Session not found.") from exc
 
-        session.revoke(reason="user_requested")
+        with transaction.atomic():
+            before = audit_snapshot(session)
+            session.revoke(reason="user_requested")
+            record_audit_event(
+                organization=request.user.organization,
+                actor=request.user,
+                action="auth.session.revoke",
+                object_instance=session,
+                before=before,
+                after=audit_snapshot(session),
+                request=request,
+            )
         return Response(status=status.HTTP_204_NO_CONTENT)
