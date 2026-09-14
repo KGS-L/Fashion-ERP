@@ -1,6 +1,6 @@
 # ADR 0012 — Python 3.14 and Django 5.2 LTS runtime baseline
 
-Status: `proposed`
+Status: `accepted`
 
 Decision owner: Phase 1 / issue #33.
 
@@ -19,7 +19,7 @@ Research performed for issue #33 on 2026-09-14 shows:
 - drf-spectacular 0.30.0 explicitly supports Django 5.2, Python 3.14 and DRF through the 3.17 series;
 - django-filter 25.2 supports Django 5.2, while later releases also test Python 3.14.
 
-## Proposed decision
+## Decision
 
 Use **Python 3.14** as the FashionERP server runtime series and **Django 5.2 LTS** as the Django framework series for the initial implementation baseline.
 
@@ -79,4 +79,4 @@ Rejected for the initial baseline because Django 6.1 is non-LTS and the selected
 
 ## Validation
 
-This ADR remains `proposed` until the FashionERP project owner explicitly validates the runtime choice in issue #33.
+Explicitly validated by the FashionERP project owner in issue #33 on 2026-09-14.
