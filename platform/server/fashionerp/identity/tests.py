@@ -2,6 +2,7 @@ from datetime import timedelta
 
 from django.contrib.auth import get_user_model
 from django.contrib.auth.hashers import identify_hasher
+from django.core.cache import cache
 from django.utils import timezone
 from rest_framework import status
 from rest_framework.test import APITestCase
@@ -13,6 +14,7 @@ from .models import ApiSession
 
 class AuthenticationLifecycleTests(APITestCase):
     def setUp(self):
+        cache.clear()
         self.organization = Organization.objects.create(
             name="Test Organization",
             slug="test-organization",
