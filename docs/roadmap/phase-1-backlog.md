@@ -14,8 +14,8 @@ Before introducing or changing a technical choice, consult the FashionERP specif
 
 - If a choice is explicitly defined in the sources, preserve it.
 - If the sources do not define it, do not infer a replacement technology from another project, a CV, or developer familiarity.
+- A choice explicitly confirmed by the FashionERP project owner becomes a project decision and must be documented as such.
 - Genuinely new choices remain open until they become blocking and are explicitly validated.
-- Recommendations must be identified as recommendations, not as project decisions.
 
 ## Validated implementation baseline
 
@@ -29,17 +29,19 @@ The FashionERP specification explicitly defines:
 - Tauri + Owl/TypeScript for desktop;
 - Docker as the supported direction for on-premise complexity.
 
-The current FashionERP sources available to the project do **not** identify Laravel, NestJS, Django, FastAPI, Odoo/Python or another server framework as an accepted backend implementation choice. Therefore the server framework remains open until explicitly validated.
+The backend framework has now been explicitly confirmed for FashionERP as **Django**. This project decision is documented in `docs/adr/0010-django-server-baseline.md`.
+
+The following Django implementation details remain open until explicitly validated: Django version, Python runtime version, REST layer, OpenAPI tooling, authentication/session packages, queue/realtime stack and reverse proxy.
 
 ## Implementation order
 
-### Gate 0 — backend decision
+### Gate 0 — backend decision completed
 
-- #25 — verify and explicitly validate the server/backend framework before server-side implementation begins.
+- #25 — completed: Django explicitly validated as the FashionERP backend framework.
 
-### OpenAPI integration decision
+### API/OpenAPI implementation decision
 
-- #30 — choose the concrete OpenAPI generation/validation integration only after the server framework is actually validated.
+- #30 — define the concrete Django REST/OpenAPI implementation without changing the already accepted `/api/v1` and OpenAPI requirements.
 
 ### Foundation sequence
 
