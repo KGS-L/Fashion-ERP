@@ -112,7 +112,7 @@ class GrantRevokeView(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class AccessUserListView(generics.ListAPIView):
+class AccessUserListView(generics.ListCreateAPIView):
     serializer_class = AccessUserSerializer
     permission_classes = [CanManageAccess]
 
@@ -120,3 +120,14 @@ class AccessUserListView(generics.ListAPIView):
         return get_user_model().objects.filter(
             organization_id=self.request.user.organization_id
         ).order_by("username")
+
+
+class AccessUserDetailView(generics.RetrieveUpdateAPIView):
+    serializer_class = AccessUserSerializer
+    permission_classes = [CanManageAccess]
+    lookup_url_kwarg = "user_id"
+
+    def get_queryset(self):
+        return get_user_model().objects.filter(
+            organization_id=self.request.user.organization_id
+        )
