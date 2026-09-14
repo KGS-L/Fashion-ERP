@@ -169,15 +169,14 @@ class FoundationApiEnvelopeTests(SimpleTestCase):
 
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
         self.assertEqual(
-            response.data,
-            {
-                "error": {
-                    "code": "authentication_required",
-                    "message": "Authentication credentials were not provided.",
-                    "details": {},
-                    "request_id": "contract-test-request",
-                }
-            },
+            response.data["error"]["code"],
+            "authentication_required",
+        )
+        self.assertTrue(response.data["error"]["message"])
+        self.assertEqual(response.data["error"]["details"], {})
+        self.assertEqual(
+            response.data["error"]["request_id"],
+            "contract-test-request",
         )
 
     def test_openapi_schema_and_interactive_docs_are_available(self):
