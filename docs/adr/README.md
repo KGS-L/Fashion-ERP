@@ -15,7 +15,8 @@ Each ADR records context, decision, consequences, status and relevant alternativ
 - `0007-modularity-and-country-localizations.md` — modular domains with country localizations separated from the common ERP core;
 - `0008-ci-test-only.md` — GitHub Actions CI limited to validation and tests;
 - `0009-ovh-vps2-initial-managed-cloud.md` — OVHcloud VPS-2 as the accepted initial managed-cloud baseline for pilot and early small customers;
-- `0010-django-server-baseline.md` — Django as the explicitly validated FashionERP backend/server framework.
+- `0010-django-server-baseline.md` — Django as the explicitly validated FashionERP backend/server framework;
+- `0011-drf-drf-spectacular.md` — Django REST Framework + drf-spectacular as the accepted REST/OpenAPI implementation baseline.
 
 Decisions that remain open in the functional and technical specification must not be presented as finalized ADRs until explicitly validated.
 
