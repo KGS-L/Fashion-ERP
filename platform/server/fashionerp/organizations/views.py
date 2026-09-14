@@ -21,6 +21,7 @@ from .serializers import (
 
 
 class OrganizationListView(generics.ListAPIView):
+    queryset = Organization.objects.none()
     serializer_class = OrganizationSerializer
     permission_classes = [IsAuthenticated]
     pagination_class = None
@@ -35,6 +36,7 @@ class OrganizationListView(generics.ListAPIView):
 
 
 class OrganizationDetailView(generics.RetrieveAPIView):
+    queryset = Organization.objects.none()
     serializer_class = OrganizationSerializer
     permission_classes = [IsAuthenticated]
     lookup_field = "id"
@@ -50,6 +52,7 @@ class OrganizationDetailView(generics.RetrieveAPIView):
 
 
 class CompanyListView(generics.ListCreateAPIView):
+    queryset = Company.objects.none()
     serializer_class = CompanySerializer
     permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
@@ -93,6 +96,7 @@ class CompanyListView(generics.ListCreateAPIView):
 
 
 class CompanyDetailView(generics.RetrieveUpdateAPIView):
+    queryset = Company.objects.none()
     serializer_class = CompanySerializer
     permission_classes = [IsAuthenticated]
     lookup_field = "id"
@@ -126,6 +130,7 @@ class CompanyDetailView(generics.RetrieveUpdateAPIView):
 
 
 class EstablishmentListView(generics.ListCreateAPIView):
+    queryset = Establishment.objects.none()
     serializer_class = EstablishmentSerializer
     permission_classes = [IsAuthenticated]
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
@@ -172,6 +177,7 @@ class EstablishmentListView(generics.ListCreateAPIView):
 
 
 class EstablishmentDetailView(generics.RetrieveUpdateAPIView):
+    queryset = Establishment.objects.none()
     serializer_class = EstablishmentSerializer
     permission_classes = [IsAuthenticated]
     lookup_field = "id"
