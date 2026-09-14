@@ -3,6 +3,7 @@ name: Repository Tests
 on:
   pull_request:
     paths:
+      - '.github/**'
       - 'apps/**'
       - 'platform/**'
       - 'modules/**'
@@ -10,11 +11,12 @@ on:
       - 'localizations/**'
       - 'docs/**'
       - 'tests/**'
-      - '.github/workflows/repository-tests.yml'
   push:
     branches:
       - main
+      - 'phase/**'
     paths:
+      - '.github/**'
       - 'apps/**'
       - 'platform/**'
       - 'modules/**'
@@ -22,7 +24,6 @@ on:
       - 'localizations/**'
       - 'docs/**'
       - 'tests/**'
-      - '.github/workflows/repository-tests.yml'
   workflow_dispatch:
 
 permissions:
@@ -36,6 +37,7 @@ jobs:
       fail-fast: false
       matrix:
         area:
+          - .github
           - apps
           - platform
           - modules
@@ -46,15 +48,15 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Verify area documentation
         shell: bash
         run: |
-          test -f "${{ matrix.area }}/README.md" || {
-            echo "::error::Missing ${{ matrix.area }}/README.md"
+          if [ ! -f "${{ matrix.area }}/README.md" ]; then
+            echo "::error title=Missing area documentation::${{ matrix.area }}/README.md is missing"
             exit 1
-          }
+          fi
 
       - name: Verify directory documentation
         shell: bash
@@ -63,7 +65,7 @@ jobs:
 
           while IFS= read -r -d '' directory; do
             if [ ! -f "$directory/README.md" ]; then
-              echo "::error file=$directory::Missing README.md"
+              echo "::error title=Missing directory documentation::$directory/README.md is missing"
               missing=1
             fi
           done < <(find "${{ matrix.area }}" -mindepth 1 -type d -print0)
