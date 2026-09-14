@@ -14,9 +14,8 @@ Each ADR records context, decision, consequences, status and relevant alternativ
 - `0006-tauri-owl-desktop.md` — Tauri + Owl/TypeScript desktop application;
 - `0007-modularity-and-country-localizations.md` — modular domains with country localizations separated from the common ERP core;
 - `0008-ci-test-only.md` — GitHub Actions CI limited to validation and tests;
-- `0009-ovh-vps2-initial-managed-cloud.md` — OVHcloud VPS-2 as the accepted initial managed-cloud baseline for pilot and early small customers;
-- `0010-laravel-server-baseline.md` — preserve the previously validated Laravel 13 / PHP 8.3+ backend baseline and Spatie Permission v8 authorization dependency.
+- `0009-ovh-vps2-initial-managed-cloud.md` — OVHcloud VPS-2 as the accepted initial managed-cloud baseline for pilot and early small customers.
 
 Decisions that remain open in the functional and technical specification must not be presented as finalized ADRs until explicitly validated.
 
-Before introducing or changing a technical decision, the project specification and relevant source files must be reviewed first. If the specification does not define a choice, previously validated project decisions must be preserved; genuinely new choices remain open until explicitly validated by the project owner.
+Before introducing or changing a technical decision, the project specification and relevant source files must be reviewed first. A technology must not be treated as a FashionERP decision merely because it is used in another project or appears in the project owner's general toolset.
