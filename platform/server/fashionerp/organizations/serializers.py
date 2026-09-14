@@ -37,11 +37,20 @@ class CompanySerializer(serializers.ModelSerializer):
             "updated_at",
             "archived_at",
         )
-        read_only_fields = fields
+        read_only_fields = (
+            "id",
+            "organization_id",
+            "created_at",
+            "updated_at",
+            "archived_at",
+        )
 
 
 class EstablishmentSerializer(serializers.ModelSerializer):
-    company_id = serializers.UUIDField(read_only=True)
+    company_id = serializers.PrimaryKeyRelatedField(
+        source="company",
+        queryset=Company.objects.all(),
+    )
     organization_id = serializers.UUIDField(read_only=True)
 
     class Meta:
@@ -65,4 +74,22 @@ class EstablishmentSerializer(serializers.ModelSerializer):
             "updated_at",
             "archived_at",
         )
-        read_only_fields = fields
+        read_only_fields = (
+            "id",
+            "organization_id",
+            "created_at",
+            "updated_at",
+            "archived_at",
+        )
+
+    def validate_company_id(self, company):
+        request = self.context.get("request")
+        if request and company.organization_id != request.user.organization_id:
+            raise serializers.ValidationError(
+                "Company is outside the local organization."
+            )
+        if self.instance and company.id != self.instance.company_id:
+            raise serializers.ValidationError(
+                "Moving an establishment to another company is not supported."
+            )
+        return company
