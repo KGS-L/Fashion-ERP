@@ -1,8 +1,8 @@
 # Architecture and deployment baseline
 
-Status: `partially accepted` during Phase 0.
+Status: `accepted` during Phase 0.
 
-This document records the architecture and deployment decisions already defined by the FashionERP functional and technical specification. It does not introduce an application framework or infrastructure technology that is not explicitly validated.
+This document records the architecture and deployment decisions already defined by the FashionERP functional and technical specification, together with the minimum desktop operating-system policy accepted during Phase 0. It does not introduce an application framework or infrastructure technology that is not explicitly validated.
 
 ## Platform separation
 
@@ -52,6 +52,20 @@ Accepted:
 
 No alternative desktop framework is part of the current baseline.
 
+### Minimum supported desktop operating systems
+
+Accepted during Phase 0:
+
+- **Windows:** Windows 11 on a Microsoft-supported release;
+- **macOS:** macOS 14 Sonoma or later;
+- **Linux:** Ubuntu 24.04 LTS or later is the initial officially supported Linux baseline.
+
+Windows 10 may be tested for temporary compatibility when required by a pilot customer, but it is not part of the officially supported production baseline.
+
+Other Linux distributions may work when compatible with the desktop runtime, but they are initially treated as best-effort support unless explicitly added to the supported matrix later.
+
+The supported OS matrix may be revised in future releases without changing the architecture baseline, provided security and vendor-support requirements remain satisfied.
+
 ## Deployment modes
 
 Accepted:
@@ -89,19 +103,13 @@ Accepted:
 - Docker is the supported direction identified by the specification for handling on-premise deployment complexity;
 - CI remains limited to validation and automated tests at the current stage and does not deploy environments.
 
-## Decisions still open
-
-### Minimum desktop operating systems
-
-The specification explicitly requires the minimum supported Windows, macOS and Linux versions to be confirmed before development.
-
-Status: `open`.
+## Decision tracked separately
 
 ### Managed cloud provider and cost strategy
 
 The specification explicitly leaves the cloud provider and cost strategy to be confirmed before development.
 
-Status: tracked separately during Phase 0 so that provider choice is not confused with the architecture baseline.
+Status: tracked separately in Phase 0 through issue #8 so that provider choice is not confused with the architecture baseline.
 
 ## Not decided by this baseline
 
