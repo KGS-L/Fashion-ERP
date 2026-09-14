@@ -17,8 +17,8 @@ Phase issues:
 - [x] #3 — first pilot and acceptance criteria;
 - [x] #4 — architecture decision records;
 - [x] #5 — Phase 1 backlog preparation;
-- [ ] #7 — first country localization and initial support model;
-- [ ] #8 — managed cloud provider and cost strategy.
+- [x] #7 — first country localization and initial support model;
+- [x] #8 — managed cloud provider and cost strategy.
 
 ## Objectives
 
@@ -28,7 +28,7 @@ Phase issues:
 - confirm repository, branch and CI conventions;
 - prepare the transition to Phase 1 — Foundation.
 
-## Decisions already closed
+## Decisions closed
 
 - FashionERP is the definitive product name;
 - Community core license: LGPL-3.0-only;
@@ -37,15 +37,12 @@ Phase issues:
 - architecture baseline is accepted;
 - desktop OS baseline is Windows 11, macOS 14+ and Ubuntu 24.04 LTS+;
 - first-pilot reference scenario is documented;
-- minimum structural ADR set is accepted;
+- structural ADRs are accepted;
+- Burkina Faso is the first country localization, with OHADA/SYSCOHADA as the accounting foundation and country-specific rules kept outside the common ERP core;
+- official pilot support uses email and private ticketing, with WhatsApp only as a complementary coordination channel;
+- OVHcloud VPS-2 is the initial managed-cloud baseline for pilot and early small managed-cloud customers;
+- PostgreSQL remains self-managed initially in the isolated customer environment, with S3-compatible object storage and independent application-level backup retention;
 - Phase 1 backlog is prepared.
-
-## Decisions still open
-
-The remaining Phase 0 framing decisions are:
-
-- first country/localization to implement and the initial pilot support model (#7);
-- managed cloud provider and cost strategy (#8).
 
 ## Architecture baseline
 
@@ -65,10 +62,12 @@ No new implementation technology is introduced as accepted without an explicit d
 
 Phase 0 is complete when:
 
-- open framing decisions are documented as accepted, deferred or rejected;
+- framing decisions are documented as accepted, deferred or rejected;
 - the first pilot scope is documented;
 - Phase 1 scope is unambiguous;
 - relevant architecture decisions are recorded;
 - GitHub issues for Phase 1 are ready from an agreed baseline;
 - repository CI remains test-only with no deployment automation;
 - relevant CI checks are green before the Phase 0 PR is considered ready.
+
+At the end of Phase 0, all framing issues listed above are resolved. The branch is ready for final CI verification and pull-request review before merge into `main`.
