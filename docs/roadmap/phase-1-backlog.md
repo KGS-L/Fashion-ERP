@@ -1,6 +1,6 @@
 # Phase 1 — Foundation backlog
 
-Status: `prepared` during Phase 0.
+Status: `active`.
 
 The Phase 1 backlog is derived from the FashionERP specification and must not introduce Phase 2 business modules.
 
@@ -13,17 +13,34 @@ GitHub issue #9.
 Before introducing or changing a technical choice, consult the FashionERP specification and the relevant uploaded/source files first.
 
 - If a choice is explicitly defined in the sources, preserve it.
-- If the sources do not define it, do not infer a replacement technology; keep the decision open and request explicit validation only when it becomes blocking.
+- If the specification does not define a choice but the project already validated it separately, preserve that existing project decision and document the distinction.
+- Genuinely new choices must not be inferred from familiarity; keep them open until they become blocking and are explicitly validated.
 - Recommendations must be identified as recommendations, not as decisions from the specification.
+
+## Validated implementation baseline
+
+The specification explicitly defines PostgreSQL, REST `/api/v1`, OpenAPI, Control Plane/Data Plane, S3/MinIO and Tauri + Owl/TypeScript for desktop.
+
+The project had separately validated the server baseline before Phase 1:
+
+- Laravel 13;
+- PHP 8.3+;
+- Spatie Permission v8 as the RBAC dependency baseline.
+
+This server decision is documented in `docs/adr/0010-laravel-server-baseline.md` and is not attributed to the specification itself.
 
 ## Implementation order
 
-### Gate 0 — source verification before implementation
+### Gate 0 — completed source verification
 
-- #25 — verify the already-established server/backend direction against the project sources before any server-side implementation begins.
-- #30 — define the OpenAPI integration/validation strategy without changing the accepted REST/OpenAPI requirement.
+- #25 — completed: backend direction verified and preserved.
+- #31 — completed: Laravel 13 / PHP 8.3+ runtime baseline documented.
 
-The specification explicitly defines PostgreSQL, REST `/api/v1`, OpenAPI, Control Plane/Data Plane, S3/MinIO and Tauri + Owl/TypeScript for desktop. It does not by itself justify replacing or introducing a server framework.
+### OpenAPI integration decision
+
+- #30 — choose the concrete OpenAPI generation/validation integration without changing the accepted REST/OpenAPI requirement.
+
+This is a new implementation detail and must follow the source-first rule before being fixed.
 
 ### Foundation sequence
 
@@ -65,6 +82,6 @@ Phase 1 is not accepted without tests for:
 
 ## Branch rule
 
-The branch `phase/1-foundation` is created from updated `main` only after Phase 0 has been reviewed and merged.
+The branch `phase/1-foundation` was created from updated `main` after Phase 0 was reviewed and merged.
 
 CI remains validation/test-only; deployment automation is outside this backlog.
