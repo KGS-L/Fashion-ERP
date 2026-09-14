@@ -1,6 +1,7 @@
 from django.urls import path
 
 from .views import (
+    AccessUserDetailView,
     AccessUserListView,
     GrantListCreateView,
     GrantRevokeView,
@@ -31,4 +32,5 @@ urlpatterns = [
         name="grant-revoke",
     ),
     path("users/", AccessUserListView.as_view(), name="user-list"),
+    path("users/<uuid:user_id>/", AccessUserDetailView.as_view(), name="user-detail"),
 ]
