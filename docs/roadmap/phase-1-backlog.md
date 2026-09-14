@@ -73,7 +73,7 @@ Validated project implementation decisions:
 14. #23 — completed: Foundation documentation/review preparation
 15. #27 — completed: implementation CI checks
 16. #28 — completed: dependency-license compliance review
-17. #24 — Phase 1 exit gate and PR to `main`
+17. #24 — gate satisfied: Phase 1 PR ready for `main` review
 
 ## Deferred/non-blocking technology decision
 
