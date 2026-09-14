@@ -49,6 +49,7 @@ class PermissionListView(generics.ListAPIView):
 
 
 class RoleListCreateView(generics.ListCreateAPIView):
+    queryset = Role.objects.none()
     serializer_class = RoleSerializer
     permission_classes = [CanManageAccess]
 
@@ -68,6 +69,7 @@ class RoleListCreateView(generics.ListCreateAPIView):
 
 
 class RoleDetailView(generics.RetrieveUpdateAPIView):
+    queryset = Role.objects.none()
     serializer_class = RoleSerializer
     permission_classes = [CanManageAccess]
     lookup_url_kwarg = "role_id"
@@ -90,6 +92,7 @@ class RoleDetailView(generics.RetrieveUpdateAPIView):
 
 
 class GroupListCreateView(generics.ListCreateAPIView):
+    queryset = AccessGroup.objects.none()
     serializer_class = AccessGroupSerializer
     permission_classes = [CanManageAccess]
 
@@ -109,6 +112,7 @@ class GroupListCreateView(generics.ListCreateAPIView):
 
 
 class GroupDetailView(generics.RetrieveUpdateAPIView):
+    queryset = AccessGroup.objects.none()
     serializer_class = AccessGroupSerializer
     permission_classes = [CanManageAccess]
     lookup_url_kwarg = "group_id"
@@ -131,6 +135,7 @@ class GroupDetailView(generics.RetrieveUpdateAPIView):
 
 
 class GrantListCreateView(generics.ListCreateAPIView):
+    queryset = AccessGrant.objects.none()
     serializer_class = AccessGrantSerializer
     permission_classes = [CanManageAccess]
 
@@ -195,6 +200,7 @@ class GrantRevokeView(APIView):
 
 
 class AccessUserListView(generics.ListCreateAPIView):
+    queryset = get_user_model().objects.none()
     serializer_class = AccessUserSerializer
     permission_classes = [CanManageAccess]
 
@@ -271,6 +277,7 @@ class AccessUserTwoFactorResetView(APIView):
 
 
 class AccessUserDetailView(generics.RetrieveUpdateAPIView):
+    queryset = get_user_model().objects.none()
     serializer_class = AccessUserSerializer
     permission_classes = [CanManageAccess]
     lookup_url_kwarg = "user_id"
