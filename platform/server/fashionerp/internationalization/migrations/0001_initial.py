@@ -182,7 +182,7 @@ class Migration(migrations.Migration):
             model_name="exchangerate",
             constraint=models.CheckConstraint(
                 condition=~models.Q(
-                    ("base_currency", models.F("quote_currency"))
+                    base_currency=models.F("quote_currency")
                 ),
                 name="i18n_exchange_rate_distinct_currencies",
             ),
