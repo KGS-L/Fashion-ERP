@@ -25,6 +25,7 @@ INSTALLED_APPS = [
     "drf_spectacular",
     "fashionerp.identity.apps.IdentityConfig",
     "fashionerp.organizations.apps.OrganizationsConfig",
+    "fashionerp.authorization.apps.AuthorizationConfig",
 ]
 
 MIDDLEWARE = [
