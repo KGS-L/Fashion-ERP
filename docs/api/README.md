@@ -137,3 +137,26 @@ Catalog/context reads are available to authenticated users. Reference-data reads
 Company carries its language default and optional functional currency. Establishment carries a validated IANA timezone. User carries its interface language preference.
 
 No country fiscal/accounting rule is exposed by the common i18n API.
+
+
+## Two-factor authentication and session security
+
+Interactive authentication remains under `/api/v1/auth/`.
+
+The Foundation security surface includes:
+
+- active own-session/device listing;
+- individual own-session revocation;
+- revoke-all-other-own-sessions action;
+- TOTP setup and confirmation;
+- 2FA status;
+- personal 2FA disable with security reauthentication;
+- recovery-code regeneration with password + TOTP.
+
+When confirmed 2FA exists, login requires a valid TOTP or unused recovery code. Error codes include `two_factor_required` and `invalid_two_factor`.
+
+TOTP setup secrets are encrypted at rest. Recovery codes are returned only at generation time and only digests are stored.
+
+Enabling 2FA revokes other pre-2FA sessions. Disabling 2FA also revokes other sessions. Session representations include source IP and whether a second factor was verified.
+
+Organization access administrators may reset another user's 2FA under `/api/v1/access/users/{user_id}/2fa/reset/`. The administrator must reauthenticate; the target user's sessions are revoked and the action is auditable. This route cannot be used by an administrator to bypass their own personal 2FA controls.
