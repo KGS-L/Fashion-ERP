@@ -160,3 +160,39 @@ TOTP setup secrets are encrypted at rest. Recovery codes are returned only at ge
 Enabling 2FA revokes other pre-2FA sessions. Disabling 2FA also revokes other sessions. Session representations include source IP and whether a second factor was verified.
 
 Organization access administrators may reset another user's 2FA under `/api/v1/access/users/{user_id}/2fa/reset/`. The administrator must reauthenticate; the target user's sessions are revoked and the action is auditable. This route cannot be used by an administrator to bypass their own personal 2FA controls.
+
+
+## Phase 1 Foundation route inventory
+
+Issue #19 applies the REST/OpenAPI conventions from ADR 0011 to the Foundation resources that are actually implemented.
+
+The routed Foundation namespaces are:
+
+| Namespace | Foundation responsibility |
+| --- | --- |
+| `/api/v1/auth/` | login/logout, current user, sessions/devices, TOTP 2FA and recovery |
+| `/api/v1/organizations/` | local Organization read boundary |
+| `/api/v1/companies/` | Company resources |
+| `/api/v1/establishments/` | Establishment resources |
+| `/api/v1/access/` | users, permissions, roles, groups and scoped grants |
+| `/api/v1/audit/` | immutable audit-event reads |
+| `/api/v1/i18n/` | languages, catalogs, context, currencies, rates and units |
+
+The Organization collection is an explicitly bounded exception to default pagination: ADR 0014 allows exactly one local Organization per private Data Plane database.
+
+All other unbounded Foundation collections use the standard page-number pagination contract unless their endpoint is explicitly bounded.
+
+### Phase 1 contract guard
+
+Automated API contract tests verify that:
+
+- implemented Foundation paths are present in generated OpenAPI;
+- the opaque `bearerAuth` security scheme is present;
+- company and establishment list parameters expose the declared pagination/filter/search/ordering contract;
+- the stable JSON error envelope propagates `X-Request-ID`;
+- no Phase 2 business namespace is exposed early;
+- no API-key or webhook endpoint is exposed as a Foundation capability.
+
+The following specification namespaces remain intentionally absent until their business phases: `customers`, `products`, `measurements`, `orders`, `inventory`, `purchases`, `manufacturing`, `deliveries` and `reports`.
+
+Webhooks and API keys remain Enterprise Plus capabilities and are not part of the internal Foundation API.
