@@ -71,3 +71,25 @@ jobs:
           done < <(find "${{ matrix.area }}" -mindepth 1 -type d -print0)
 
           exit "$missing"
+
+  security-static:
+    name: High-risk secret pattern scan
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Scan tracked files for high-risk secret formats
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          failed=0
+          git grep -nE -- '-----BEGIN (RSA |EC |OPENSSH |DSA )?PRIVATE KEY-----|AKIA[0-9A-Z]{16}|gh[pousr]_[A-Za-z0-9]{30,}|github_pat_[A-Za-z0-9_]{30,}|sk_live_[A-Za-z0-9]{16,}|xox[baprs]-[A-Za-z0-9-]{10,}' -- .             && failed=1 || true
+
+          if [ "$failed" -ne 0 ]; then
+            echo "::error title=Potential secret detected::Review the matching tracked file(s)."
+          fi
+
+          exit "$failed"

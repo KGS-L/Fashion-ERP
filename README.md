@@ -27,13 +27,15 @@ The platform is built around a modular, multi-company and multi-establishment ar
 
 ## Project status
 
-FashionERP is currently in its early development and architecture phase.
+FashionERP is currently in active development.
 
-The first milestones focus on the platform foundation: authentication, organizations, companies, establishments, users, roles, permissions, audit and internationalization.
+Phase 1 Foundation is implemented on the `phase/1-foundation` branch and is being prepared for final review. It includes authentication/session security, organizations, companies, establishments, scoped RBAC, immutable audit, internationalization, versioned REST/OpenAPI contracts, PostgreSQL migrations and Foundation integration tests.
+
+Business modules such as CRM, products, orders, inventory, purchasing and manufacturing remain future phases and are not presented as implemented Foundation capabilities.
 
 ## Documentation
 
-Project documentation and module specifications will be maintained in the `docs/` directory as development progresses.
+Project documentation and module specifications are maintained in the `docs/` directory. The implemented Foundation behavior is summarized in `docs/foundation/README.md`.
 
 ## Security
 
@@ -43,4 +45,4 @@ Security reporting procedures will be documented before the first public release
 
 ## License
 
-FashionERP follows an open-core direction. The exact licenses for the Community core and commercial modules are still being defined.
+FashionERP follows an open-core direction. Unless a source file or directory states otherwise, the Community core is licensed under LGPL-3.0-only as described in the repository `LICENSE` file. Future commercial components remain separately licensed.

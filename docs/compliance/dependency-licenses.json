@@ -1,0 +1,54 @@
+{
+  "setuptools": {
+    "scope": "build",
+    "license": "MIT",
+    "reviewed": true
+  },
+  "django": {
+    "scope": "runtime",
+    "license": "BSD-3-Clause",
+    "reviewed": true
+  },
+  "djangorestframework": {
+    "scope": "runtime",
+    "license": "BSD-3-Clause",
+    "reviewed": true
+  },
+  "drf-spectacular": {
+    "scope": "runtime",
+    "license": "BSD-3-Clause",
+    "reviewed": true
+  },
+  "django-filter": {
+    "scope": "runtime",
+    "license": "BSD-3-Clause",
+    "reviewed": true
+  },
+  "psycopg": {
+    "scope": "runtime",
+    "license": "LGPL-3.0-only",
+    "reviewed": true
+  },
+  "psycopg-binary": {
+    "scope": "transitive-extra",
+    "license": "LGPL-3.0-only",
+    "reviewed": true,
+    "note": "Installed by psycopg[binary]."
+  },
+  "argon2-cffi": {
+    "scope": "runtime",
+    "license": "MIT",
+    "reviewed": true
+  },
+  "pyotp": {
+    "scope": "runtime",
+    "license": "MIT",
+    "reviewed": true
+  },
+  "cryptography": {
+    "scope": "runtime",
+    "license": "Apache-2.0 OR BSD-3-Clause",
+    "reviewed": true,
+    "note": "The upstream package offers a dual-license choice."
+  }
+}

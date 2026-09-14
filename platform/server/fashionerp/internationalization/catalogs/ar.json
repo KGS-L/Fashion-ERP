@@ -1,0 +1,28 @@
+{
+  "foundation.app.name": "FashionERP",
+  "foundation.navigation.organizations": "المؤسسات",
+  "foundation.navigation.companies": "الشركات",
+  "foundation.navigation.establishments": "الفروع",
+  "foundation.navigation.access": "الصلاحيات",
+  "foundation.navigation.audit": "سجل التدقيق",
+  "foundation.common.create": "إنشاء",
+  "foundation.common.update": "تعديل",
+  "foundation.common.save": "حفظ",
+  "foundation.common.cancel": "إلغاء",
+  "foundation.company.count": {
+    "zero": "لا توجد شركات",
+    "one": "شركة واحدة",
+    "two": "شركتان",
+    "few": "{count} شركات",
+    "many": "{count} شركة",
+    "other": "{count} شركة"
+  },
+  "foundation.establishment.count": {
+    "zero": "لا توجد فروع",
+    "one": "فرع واحد",
+    "two": "فرعان",
+    "few": "{count} فروع",
+    "many": "{count} فرعًا",
+    "other": "{count} فرع"
+  }
+}
