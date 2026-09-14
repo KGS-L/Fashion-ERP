@@ -31,7 +31,7 @@ def add_i18n_permissions(apps, schema_editor):
 class Migration(migrations.Migration):
     dependencies = [
         ("authorization", "0002_add_audit_permission"),
-        ("identity", "0002_user_language_code"),
+        ("identity", "0003_user_language_code"),
     ]
 
     operations = [
