@@ -2,15 +2,18 @@
 
 Project documentation is maintained here.
 
-Planned documentation areas include:
+Current documentation areas:
 
-- Product and functional specifications
-- Architecture decisions
-- Module specifications
-- Data model
-- Security
-- Deployment and operations
-- Internationalization and localizations
-- Development guides
+- `product/` — product and functional specifications
+- `architecture/` — platform and system architecture
+- `adr/` — Architecture Decision Records
+- `modules/` — detailed business module specifications
+- `data-model/` — entities, relationships and data rules
+- `workflows/` — end-to-end business workflows
+- `security/` — security architecture and requirements
+- `deployment/` — deployment, operations, backups and updates
+- `internationalization/` — internationalization and country localizations
+- `development/` — developer guides and project conventions
+- `roadmap/` — phases, milestones and acceptance criteria
 
-The functional and technical specification remains the primary reference until more detailed module documents are validated.
+The functional and technical specification remains the primary reference until more detailed documents are validated.
