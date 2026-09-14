@@ -1,7 +1,8 @@
-from django.urls import path
+from django.urls import include, path
 
 
 app_name = "api_v1"
 
-# Foundation resources are introduced by their dedicated Phase 1 issues.
-urlpatterns: list = []
+urlpatterns = [
+    path("auth/", include("fashionerp.identity.urls")),
+]
