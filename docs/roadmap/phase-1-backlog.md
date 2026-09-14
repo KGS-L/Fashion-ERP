@@ -13,34 +13,33 @@ GitHub issue #9.
 Before introducing or changing a technical choice, consult the FashionERP specification and the relevant uploaded/source files first.
 
 - If a choice is explicitly defined in the sources, preserve it.
-- If the specification does not define a choice but the project already validated it separately, preserve that existing project decision and document the distinction.
-- Genuinely new choices must not be inferred from familiarity; keep them open until they become blocking and are explicitly validated.
-- Recommendations must be identified as recommendations, not as decisions from the specification.
+- If the sources do not define it, do not infer a replacement technology from another project, a CV, or developer familiarity.
+- Genuinely new choices remain open until they become blocking and are explicitly validated.
+- Recommendations must be identified as recommendations, not as project decisions.
 
 ## Validated implementation baseline
 
-The specification explicitly defines PostgreSQL, REST `/api/v1`, OpenAPI, Control Plane/Data Plane, S3/MinIO and Tauri + Owl/TypeScript for desktop.
+The FashionERP specification explicitly defines:
 
-The project had separately validated the server baseline before Phase 1:
+- PostgreSQL;
+- REST `/api/v1`;
+- OpenAPI;
+- Control Plane / Data Plane separation;
+- S3/MinIO-compatible object storage;
+- Tauri + Owl/TypeScript for desktop;
+- Docker as the supported direction for on-premise complexity.
 
-- Laravel 13;
-- PHP 8.3+;
-- Spatie Permission v8 as the RBAC dependency baseline.
-
-This server decision is documented in `docs/adr/0010-laravel-server-baseline.md` and is not attributed to the specification itself.
+The current FashionERP sources available to the project do **not** identify Laravel, NestJS, Django, FastAPI, Odoo/Python or another server framework as an accepted backend implementation choice. Therefore the server framework remains open until explicitly validated.
 
 ## Implementation order
 
-### Gate 0 — completed source verification
+### Gate 0 — backend decision
 
-- #25 — completed: backend direction verified and preserved.
-- #31 — completed: Laravel 13 / PHP 8.3+ runtime baseline documented.
+- #25 — verify and explicitly validate the server/backend framework before server-side implementation begins.
 
 ### OpenAPI integration decision
 
-- #30 — choose the concrete OpenAPI generation/validation integration without changing the accepted REST/OpenAPI requirement.
-
-This is a new implementation detail and must follow the source-first rule before being fixed.
+- #30 — choose the concrete OpenAPI generation/validation integration only after the server framework is actually validated.
 
 ### Foundation sequence
 
