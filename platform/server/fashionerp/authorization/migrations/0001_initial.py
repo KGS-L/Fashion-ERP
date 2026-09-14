@@ -100,14 +100,14 @@ class Migration(migrations.Migration):
         migrations.AddConstraint(
             model_name="accessgrant",
             constraint=models.CheckConstraint(
-                condition=models.Q(("group__isnull", True), ("user__isnull", False), _connector="OR") & ~models.Q(("group__isnull", False), ("user__isnull", False)),
+                condition=(models.Q(user__isnull=False, group__isnull=True) | models.Q(user__isnull=True, group__isnull=False)),
                 name="access_grant_exactly_one_principal",
             ),
         ),
         migrations.AddConstraint(
             model_name="accessgrant",
             constraint=models.CheckConstraint(
-                condition=~models.Q(("company__isnull", False), ("establishment__isnull", False)),
+                condition=~models.Q(company__isnull=False, establishment__isnull=False),
                 name="access_grant_single_scope_target",
             ),
         ),
