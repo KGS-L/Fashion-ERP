@@ -22,6 +22,7 @@ FOUNDATION_PERMISSIONS = (
         "Manage establishments",
     ),
     ("foundation.access.manage", "foundation", "access.manage", "Manage access"),
+    ("foundation.audit.view", "foundation", "audit.view", "View audit journal"),
 )
 
 
