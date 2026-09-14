@@ -167,6 +167,7 @@ class MeView(APIView):
 
 
 class SessionListView(generics.ListAPIView):
+    queryset = ApiSession.objects.none()
     serializer_class = ApiSessionSerializer
     permission_classes = [IsAuthenticated]
 
