@@ -1,3 +1,4 @@
+from django.db import transaction
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics, status
 from rest_framework.exceptions import NotFound, ValidationError
@@ -6,6 +7,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from fashionerp.audit.services import audit_snapshot, record_audit_event
 from fashionerp.authorization.services import (
     authorized_company_ids,
     authorized_establishment_ids,
@@ -159,6 +161,18 @@ class CurrencyListCreateView(generics.ListCreateAPIView):
     ordering_fields = ("code", "name")
     ordering = ("code",)
 
+    def perform_create(self, serializer):
+        with transaction.atomic():
+            currency = serializer.save()
+            record_audit_event(
+                organization=self.request.user.organization,
+                actor=self.request.user,
+                action="i18n.currency.create",
+                object_instance=currency,
+                after=audit_snapshot(currency),
+                request=self.request,
+            )
+
 
 class CurrencyDetailView(generics.RetrieveUpdateAPIView):
     queryset = Currency.objects.all()
@@ -166,6 +180,20 @@ class CurrencyDetailView(generics.RetrieveUpdateAPIView):
     permission_classes = [CanAccessInternationalSettings]
     lookup_field = "code"
     lookup_url_kwarg = "currency_code"
+
+    def perform_update(self, serializer):
+        with transaction.atomic():
+            before = audit_snapshot(serializer.instance)
+            currency = serializer.save()
+            record_audit_event(
+                organization=self.request.user.organization,
+                actor=self.request.user,
+                action="i18n.currency.update",
+                object_instance=currency,
+                before=before,
+                after=audit_snapshot(currency),
+                request=self.request,
+            )
 
 
 class ExchangeRateListCreateView(generics.ListCreateAPIView):
@@ -185,6 +213,18 @@ class ExchangeRateListCreateView(generics.ListCreateAPIView):
             organization_id=self.request.user.organization_id
         ).select_related("base_currency", "quote_currency")
 
+    def perform_create(self, serializer):
+        with transaction.atomic():
+            rate = serializer.save()
+            record_audit_event(
+                organization=self.request.user.organization,
+                actor=self.request.user,
+                action="i18n.exchange_rate.create",
+                object_instance=rate,
+                after=audit_snapshot(rate),
+                request=self.request,
+            )
+
 
 class ExchangeRateDetailView(generics.RetrieveUpdateAPIView):
     serializer_class = ExchangeRateSerializer
@@ -195,6 +235,20 @@ class ExchangeRateDetailView(generics.RetrieveUpdateAPIView):
         return ExchangeRate.objects.filter(
             organization_id=self.request.user.organization_id
         ).select_related("base_currency", "quote_currency")
+
+    def perform_update(self, serializer):
+        with transaction.atomic():
+            before = audit_snapshot(serializer.instance)
+            rate = serializer.save()
+            record_audit_event(
+                organization=self.request.user.organization,
+                actor=self.request.user,
+                action="i18n.exchange_rate.update",
+                object_instance=rate,
+                before=before,
+                after=audit_snapshot(rate),
+                request=self.request,
+            )
 
 
 class UnitOfMeasureListCreateView(generics.ListCreateAPIView):
@@ -211,6 +265,18 @@ class UnitOfMeasureListCreateView(generics.ListCreateAPIView):
             organization_id=self.request.user.organization_id
         )
 
+    def perform_create(self, serializer):
+        with transaction.atomic():
+            unit = serializer.save()
+            record_audit_event(
+                organization=self.request.user.organization,
+                actor=self.request.user,
+                action="i18n.unit.create",
+                object_instance=unit,
+                after=audit_snapshot(unit),
+                request=self.request,
+            )
+
 
 class UnitOfMeasureDetailView(generics.RetrieveUpdateAPIView):
     serializer_class = UnitOfMeasureSerializer
@@ -221,3 +287,18 @@ class UnitOfMeasureDetailView(generics.RetrieveUpdateAPIView):
         return UnitOfMeasure.objects.filter(
             organization_id=self.request.user.organization_id
         )
+
+    def perform_update(self, serializer):
+        with transaction.atomic():
+            before = audit_snapshot(serializer.instance)
+            unit = serializer.save()
+            record_audit_event(
+                organization=self.request.user.organization,
+                actor=self.request.user,
+                action="i18n.unit.update",
+                object_instance=unit,
+                before=before,
+                after=audit_snapshot(unit),
+                request=self.request,
+            )
+
