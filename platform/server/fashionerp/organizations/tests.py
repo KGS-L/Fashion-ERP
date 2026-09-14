@@ -7,8 +7,10 @@ from django.core.exceptions import ValidationError
 from django.db import IntegrityError, transaction
 from django.test import TestCase
 from rest_framework import status
+from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.test import APITestCase
 
+from fashionerp.identity.authentication import resolve_api_session
 from fashionerp.identity.models import ApiSession
 from fashionerp.identity.services import create_api_session, digest_token
 
@@ -61,14 +63,12 @@ class OrganizationApiTests(APITestCase):
         self.assertEqual(response.data["error"]["code"], "not_found")
 
 
-class PhysicalDatabaseIsolationTests(TestCase):
-    databases = {"default", "tenant_b"}
+TENANT_B_AVAILABLE = "tenant_b" in settings.DATABASES
 
-    @classmethod
-    def setUpClass(cls):
-        if "tenant_b" not in settings.DATABASES:
-            raise unittest.SkipTest("tenant_b database alias is not configured")
-        super().setUpClass()
+
+@unittest.skipUnless(TENANT_B_AVAILABLE, "tenant_b database alias is not configured")
+class PhysicalDatabaseIsolationTests(TestCase):
+    databases = {"default", "tenant_b"} if TENANT_B_AVAILABLE else {"default"}
 
     def test_customer_databases_are_physically_isolated(self):
         org_a = Organization.objects.using("default").create(
@@ -105,5 +105,7 @@ class PhysicalDatabaseIsolationTests(TestCase):
                 token_digest=digest_token(raw_token_a)
             ).exists()
         )
+        with self.assertRaises(AuthenticationFailed):
+            resolve_api_session(raw_token_a, using="tenant_b")
         self.assertNotEqual(org_a.pk, org_b.pk)
         self.assertEqual(session_a._state.db, "default")
