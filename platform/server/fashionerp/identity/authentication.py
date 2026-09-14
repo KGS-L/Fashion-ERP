@@ -5,6 +5,22 @@ from .models import ApiSession
 from .services import digest_token, touch_api_session
 
 
+def resolve_api_session(raw_token: str, *, using: str = "default") -> ApiSession:
+    try:
+        session = (
+            ApiSession.objects.using(using)
+            .select_related("user")
+            .get(token_digest=digest_token(raw_token))
+        )
+    except ApiSession.DoesNotExist as exc:
+        raise AuthenticationFailed("Invalid authentication credentials.") from exc
+
+    if session.is_revoked or session.is_expired() or not session.user.is_active:
+        raise AuthenticationFailed("Invalid authentication credentials.")
+
+    return session
+
+
 class OpaqueBearerAuthentication(BaseAuthentication):
     keyword = b"bearer"
 
@@ -25,16 +41,7 @@ class OpaqueBearerAuthentication(BaseAuthentication):
         except UnicodeError as exc:
             raise AuthenticationFailed("Invalid authentication credentials.") from exc
 
-        try:
-            session = ApiSession.objects.select_related("user").get(
-                token_digest=digest_token(raw_token)
-            )
-        except ApiSession.DoesNotExist as exc:
-            raise AuthenticationFailed("Invalid authentication credentials.") from exc
-
-        if session.is_revoked or session.is_expired() or not session.user.is_active:
-            raise AuthenticationFailed("Invalid authentication credentials.")
-
+        session = resolve_api_session(raw_token)
         touch_api_session(session)
         return session.user, session
 
