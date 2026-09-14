@@ -73,7 +73,11 @@ Accepted:
 ### Managed cloud
 
 - private customer ERP database hosted by FashionERP;
-- FashionERP is responsible for infrastructure, backups and updates.
+- FashionERP is responsible for infrastructure, backups and updates;
+- **OVHcloud VPS-2** is the accepted initial managed-cloud baseline for the pilot and early small managed-cloud environments;
+- PostgreSQL remains self-managed initially inside the isolated customer environment;
+- S3-compatible object storage is used for business files and backup artifacts;
+- the OVH choice must remain replaceable without changing FashionERP business logic.
 
 ### Customizable cloud
 
@@ -103,13 +107,16 @@ Accepted:
 - Docker is the supported direction identified by the specification for handling on-premise deployment complexity;
 - CI remains limited to validation and automated tests at the current stage and does not deploy environments.
 
-## Decision tracked separately
+## Managed cloud provider decision
 
-### Managed cloud provider and cost strategy
+Accepted separately during Phase 0 through issue #8 and ADR 0009:
 
-The specification explicitly leaves the cloud provider and cost strategy to be confirmed before development.
+- OVHcloud VPS-2 is the initial provider baseline;
+- the choice is operational, not a permanent architecture lock-in;
+- PostgreSQL + S3-compatible storage remain the portability boundaries;
+- latency, operations, SLA, capacity, residency and pricing are explicit re-evaluation triggers.
 
-Status: tracked separately in Phase 0 through issue #8 so that provider choice is not confused with the architecture baseline.
+See `docs/deployment/managed-cloud-evaluation.md` and `docs/adr/0009-ovh-vps2-initial-managed-cloud.md`.
 
 ## Not decided by this baseline
 
@@ -117,8 +124,7 @@ The following are intentionally not selected here unless separately accepted:
 
 - server-side application framework;
 - mobile application framework;
-- cloud provider;
-- managed database vendor;
+- managed database vendor for a future managed-database topology;
 - queue or realtime implementation;
 - reverse proxy;
 - final observability stack among the tools listed as possible in the specification.
