@@ -16,8 +16,6 @@ Each ADR records context, decision, consequences, status and relevant alternativ
 - `0008-ci-test-only.md` — GitHub Actions CI limited to validation and tests;
 - `0009-ovh-vps2-initial-managed-cloud.md` — OVHcloud VPS-2 as the accepted initial managed-cloud baseline for pilot and early small customers.
 
-## Proposed ADRs
-
-- `0010-server-framework.md` — proposes Laravel 13.x as the primary server framework; awaiting explicit acceptance in issue #25.
-
 Decisions that remain open in the functional and technical specification must not be presented as finalized ADRs until explicitly validated.
+
+Before introducing or changing a technical decision, the project specification and relevant source files must be reviewed first. If the sources do not define the choice, it must remain open until explicitly validated by the project owner.
