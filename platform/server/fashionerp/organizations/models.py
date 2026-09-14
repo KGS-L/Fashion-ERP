@@ -3,6 +3,12 @@ import uuid
 from django.core.exceptions import ValidationError
 from django.db import models
 
+from fashionerp.internationalization.constants import SUPPORTED_LANGUAGES
+from fashionerp.internationalization.validators import (
+    validate_language_code,
+    validate_timezone_name,
+)
+
 
 class Organization(models.Model):
     class Status(models.TextChoices):
@@ -54,6 +60,19 @@ class Company(models.Model):
     registration_number = models.CharField(max_length=128, blank=True)
     tax_identifier = models.CharField(max_length=128, blank=True)
     country_code = models.CharField(max_length=2, blank=True)
+    language_code = models.CharField(
+        max_length=8,
+        choices=SUPPORTED_LANGUAGES,
+        default="fr",
+        validators=[validate_language_code],
+    )
+    functional_currency = models.ForeignKey(
+        "internationalization.Currency",
+        on_delete=models.PROTECT,
+        related_name="functional_currency_companies",
+        null=True,
+        blank=True,
+    )
     status = models.CharField(
         max_length=16,
         choices=Status.choices,
@@ -115,6 +134,11 @@ class Establishment(models.Model):
     country_code = models.CharField(max_length=2, blank=True)
     phone = models.CharField(max_length=64, blank=True)
     email = models.EmailField(blank=True)
+    timezone = models.CharField(
+        max_length=64,
+        default="UTC",
+        validators=[validate_timezone_name],
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     archived_at = models.DateTimeField(null=True, blank=True)
