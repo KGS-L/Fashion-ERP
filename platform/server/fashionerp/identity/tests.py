@@ -1,6 +1,7 @@
 from datetime import timedelta
 
 from django.contrib.auth import get_user_model
+from django.contrib.auth.hashers import identify_hasher
 from django.utils import timezone
 from rest_framework import status
 from rest_framework.test import APITestCase
@@ -40,6 +41,17 @@ class AuthenticationLifecycleTests(APITestCase):
             response.data["error"]["code"],
             "authentication_required",
         )
+
+    def test_password_is_stored_with_argon2(self):
+        self.assertEqual(identify_hasher(self.user.password).algorithm, "argon2")
+
+    def test_raw_bearer_token_is_not_stored(self):
+        response = self.login()
+        raw_token = response.data["token"]
+        session = ApiSession.objects.get(user=self.user)
+
+        self.assertNotEqual(session.token_digest, raw_token)
+        self.assertNotIn(raw_token, session.token_digest)
 
     def test_login_and_current_user(self):
         response = self.login()
