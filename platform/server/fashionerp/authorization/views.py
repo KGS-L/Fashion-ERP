@@ -7,6 +7,15 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from fashionerp.audit.services import audit_snapshot, record_audit_event
+from fashionerp.identity.exceptions import InvalidSecondFactor
+from fashionerp.identity.models import ApiSession
+from fashionerp.identity.serializers import ReauthenticationSerializer
+from fashionerp.identity.services import (
+    disable_two_factor,
+    revoke_user_sessions,
+    two_factor_enabled,
+    verify_second_factor,
+)
 
 from .models import AccessGrant, AccessGroup, Permission, Role
 from .permissions import CanManageAccess
@@ -202,6 +211,63 @@ class AccessUserListView(generics.ListCreateAPIView):
                 action="access.user.create",
                 instance=user,
             )
+
+
+class AccessUserTwoFactorResetView(APIView):
+    permission_classes = [CanManageAccess]
+
+    @extend_schema(request=ReauthenticationSerializer, responses={204: None})
+    def post(self, request, user_id):
+        if user_id == request.user.id:
+            raise PermissionDenied(
+                "Use the personal 2FA disable flow for your own account."
+            )
+
+        try:
+            target = get_user_model().objects.get(
+                pk=user_id,
+                organization_id=request.user.organization_id,
+            )
+        except get_user_model().DoesNotExist as exc:
+            raise NotFound("User not found.") from exc
+
+        serializer = ReauthenticationSerializer(
+            data=request.data,
+            context={"request": request, "allow_recovery": True},
+        )
+        serializer.is_valid(raise_exception=True)
+
+        with transaction.atomic():
+            method = serializer.validated_data.get("second_factor_method")
+            if method == "recovery":
+                consumed = verify_second_factor(
+                    request.user,
+                    serializer.validated_data.get("two_factor_code", ""),
+                    consume_recovery=True,
+                )
+                if consumed != "recovery":
+                    raise InvalidSecondFactor()
+
+            was_enabled = two_factor_enabled(target)
+            disable_two_factor(target)
+            revoked = revoke_user_sessions(
+                target,
+                reason="administrator_two_factor_reset",
+            )
+            record_audit_event(
+                organization=request.user.organization,
+                actor=request.user,
+                action="access.user.2fa_reset",
+                object_type="identity.user",
+                object_id=str(target.id),
+                object_label=target.username,
+                request=request,
+                metadata={
+                    "two_factor_was_enabled": was_enabled,
+                    "sessions_revoked": revoked,
+                },
+            )
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class AccessUserDetailView(generics.RetrieveUpdateAPIView):
