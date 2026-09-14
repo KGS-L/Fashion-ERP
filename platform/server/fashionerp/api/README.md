@@ -51,4 +51,4 @@ The API contract test suite verifies that:
 
 CI also generates and validates the OpenAPI schema using:
 
-`python manage.py spectacular --file /tmp/fashionerp-openapi.yaml --validate`
+`python manage.py spectacular --file /tmp/fashionerp-openapi.yaml --validate --fail-on-warn`
