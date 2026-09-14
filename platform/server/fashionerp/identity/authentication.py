@@ -1,3 +1,4 @@
+from django.utils import translation
 from rest_framework.authentication import BaseAuthentication, get_authorization_header
 from rest_framework.exceptions import AuthenticationFailed
 
@@ -43,6 +44,7 @@ class OpaqueBearerAuthentication(BaseAuthentication):
 
         session = resolve_api_session(raw_token)
         touch_api_session(session)
+        translation.activate(session.user.language_code)
         return session.user, session
 
     def authenticate_header(self, request) -> str:
