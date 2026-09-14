@@ -27,7 +27,7 @@ def fashionerp_exception_handler(
     request = context.get("request")
     request_id = request.headers.get("X-Request-ID") if request is not None else None
 
-    code = _ERROR_CODES.get(response.status_code, "api_error")
+    code = getattr(exc, "fashionerp_code", None) or _ERROR_CODES.get(response.status_code, "api_error")
 
     if isinstance(response.data, dict) and "detail" in response.data:
         message = str(response.data["detail"])
