@@ -4,7 +4,7 @@ import uuid
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.exceptions import ValidationError
-from django.db import IntegrityError, transaction
+from django.db import IntegrityError, connections, transaction
 from django.test import TestCase
 from rest_framework import status
 from rest_framework.exceptions import AuthenticationFailed
@@ -241,3 +241,7 @@ class CrossDatabaseHierarchyIsolationTests(TestCase):
                     code="invalid-cross-tenant-site",
                     site_type=Establishment.SiteType.WORKSHOP,
                 )
+                # Django's PostgreSQL foreign keys are checked at transaction
+                # boundaries. Force the deferred constraint now so the
+                # expected failure is captured inside this assertion/rollback.
+                connections["default"].check_constraints()
