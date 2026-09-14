@@ -1,5 +1,6 @@
 from django.contrib.auth import authenticate
 from rest_framework import serializers
+from rest_framework.exceptions import AuthenticationFailed
 
 from .models import ApiSession, User
 
@@ -19,9 +20,7 @@ class LoginSerializer(serializers.Serializer):
         )
 
         if user is None:
-            raise serializers.ValidationError(
-                {"credentials": ["Invalid login or password."]}
-            )
+            raise AuthenticationFailed("Invalid login or password.")
 
         attrs["user"] = user
         return attrs
@@ -66,3 +65,11 @@ class ApiSessionSerializer(serializers.ModelSerializer):
         request = self.context.get("request")
         current_session = getattr(request, "auth", None) if request is not None else None
         return bool(current_session and current_session.pk == obj.pk)
+
+
+class LoginResponseSerializer(serializers.Serializer):
+    token = serializers.CharField(read_only=True)
+    token_type = serializers.CharField(read_only=True)
+    expires_at = serializers.DateTimeField(read_only=True)
+    session = ApiSessionSerializer(read_only=True)
+    user = UserSerializer(read_only=True)
