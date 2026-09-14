@@ -12,13 +12,13 @@ Global tracker: #6
 
 Phase issues:
 
-- #1 — product, editions and license decisions;
-- #2 — architecture and deployment baseline;
-- #3 — first pilot and acceptance criteria;
-- #4 — architecture decision records;
-- #5 — Phase 1 backlog preparation;
-- #7 — first country localization and initial support model;
-- #8 — managed cloud provider and cost strategy.
+- [x] #1 — product, editions and license decisions;
+- [x] #2 — architecture and deployment baseline;
+- [x] #3 — first pilot and acceptance criteria;
+- [x] #4 — architecture decision records;
+- [x] #5 — Phase 1 backlog preparation;
+- [ ] #7 — first country localization and initial support model;
+- [ ] #8 — managed cloud provider and cost strategy.
 
 ## Objectives
 
@@ -28,21 +28,28 @@ Phase issues:
 - confirm repository, branch and CI conventions;
 - prepare the transition to Phase 1 — Foundation.
 
-## Decisions to close
+## Decisions already closed
 
-The functional and technical specification still leaves several framing decisions open. Phase 0 must explicitly confirm or defer them, including:
+- FashionERP is the definitive product name;
+- Community core license: LGPL-3.0-only;
+- commercial licensing remains separate for Business, Enterprise Plus and premium components;
+- edition usage limits are documented;
+- architecture baseline is accepted;
+- desktop OS baseline is Windows 11, macOS 14+ and Ubuntu 24.04 LTS+;
+- first-pilot reference scenario is documented;
+- minimum structural ADR set is accepted;
+- Phase 1 backlog is prepared.
 
-- final product naming and branding status;
-- exact licensing boundaries between Community and commercial components;
-- supported operating systems and minimum versions for installable applications;
-- first country localization to implement;
-- initial usage or edition limits where applicable;
-- initial managed-cloud assumptions;
-- support model and pilot conditions.
+## Decisions still open
+
+The remaining Phase 0 framing decisions are:
+
+- first country/localization to implement and the initial pilot support model (#7);
+- managed cloud provider and cost strategy (#8).
 
 ## Architecture baseline
 
-Phase 0 must preserve the architecture already defined by the specification:
+Phase 0 preserves the architecture defined by the specification:
 
 - separation between Control Plane and Data Plane;
 - private ERP data boundary per customer organization;
@@ -50,9 +57,9 @@ Phase 0 must preserve the architecture already defined by the specification:
 - S3/MinIO-compatible document storage;
 - REST/OpenAPI interfaces;
 - Tauri + Owl/TypeScript for the desktop application;
-- supported managed cloud, customizable cloud, on-premise and private-server deployment modes.
+- managed cloud, customizable cloud, on-premise and private-server deployment modes.
 
-No new implementation technology should be introduced during Phase 0 without an explicit architecture decision.
+No new implementation technology is introduced as accepted without an explicit decision. The main server framework and mobile framework therefore remain open and are tracked for later decision before their implementation becomes necessary.
 
 ## Exit criteria
 
@@ -62,5 +69,6 @@ Phase 0 is complete when:
 - the first pilot scope is documented;
 - Phase 1 scope is unambiguous;
 - relevant architecture decisions are recorded;
-- GitHub issues for Phase 1 can be created from an agreed baseline;
-- repository CI remains test-only with no deployment automation.
+- GitHub issues for Phase 1 are ready from an agreed baseline;
+- repository CI remains test-only with no deployment automation;
+- relevant CI checks are green before the Phase 0 PR is considered ready.
