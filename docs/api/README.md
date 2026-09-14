@@ -98,7 +98,7 @@ drf-spectacular generates the schema from implemented Django routes, serializers
 The CI contract check must generate and validate the schema without deploying anything:
 
 ```bash
-python manage.py spectacular --file /tmp/fashionerp-openapi.yaml --validate
+python manage.py spectacular --file /tmp/fashionerp-openapi.yaml --validate --fail-on-warn
 ```
 
 When the first Foundation endpoints exist, the project may commit a deterministic schema snapshot for review and drift checking.
