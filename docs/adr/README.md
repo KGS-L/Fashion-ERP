@@ -18,6 +18,7 @@ Each ADR records context, decision, consequences, status and relevant alternativ
 - `0010-django-server-baseline.md` — Django as the explicitly validated FashionERP backend/server framework;
 - `0011-drf-drf-spectacular.md` — Django REST Framework + drf-spectacular as the accepted REST/OpenAPI implementation baseline.
 - `0012-python314-django52-lts.md` — Python 3.14 + Django 5.2 LTS as the accepted server runtime baseline.
+- `0013-api-auth-revocable-sessions.md` — opaque revocable server-side Bearer sessions as the accepted API authentication baseline.
 
 Decisions that remain open in the functional and technical specification must not be presented as finalized ADRs until explicitly validated.
 
