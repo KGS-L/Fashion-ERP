@@ -23,6 +23,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "django_filters",
     "drf_spectacular",
+    "fashionerp.identity.apps.IdentityConfig",
 ]
 
 MIDDLEWARE = [
@@ -68,6 +69,15 @@ DATABASES = {
     }
 }
 
+AUTH_USER_MODEL = "identity.User"
+
+PASSWORD_HASHERS = [
+    "django.contrib.auth.hashers.Argon2PasswordHasher",
+    "django.contrib.auth.hashers.PBKDF2PasswordHasher",
+    "django.contrib.auth.hashers.PBKDF2SHA1PasswordHasher",
+    "django.contrib.auth.hashers.ScryptPasswordHasher",
+]
+
 AUTH_PASSWORD_VALIDATORS = [
     {
         "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
@@ -91,6 +101,13 @@ USE_TZ = True
 STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
+FASHIONERP_SESSION_ABSOLUTE_TTL_SECONDS = int(
+    os.getenv("FASHIONERP_SESSION_ABSOLUTE_TTL_SECONDS", str(30 * 24 * 60 * 60))
+)
+FASHIONERP_SESSION_IDLE_TTL_SECONDS = int(
+    os.getenv("FASHIONERP_SESSION_IDLE_TTL_SECONDS", str(12 * 60 * 60))
+)
+
 REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     "DEFAULT_PAGINATION_CLASS": "fashionerp.api.pagination.StandardPageNumberPagination",
@@ -99,13 +116,15 @@ REST_FRAMEWORK = {
         "rest_framework.filters.SearchFilter",
         "rest_framework.filters.OrderingFilter",
     ],
-    # Authentication/session mechanics are deliberately deferred to Phase 1 issue #10.
-    # Until then, accidentally introduced API endpoints are not authenticated by an
-    # implicit framework default.
-    "DEFAULT_AUTHENTICATION_CLASSES": [],
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "fashionerp.identity.authentication.OpaqueBearerAuthentication",
+    ],
     "DEFAULT_PERMISSION_CLASSES": [
         "rest_framework.permissions.IsAuthenticated",
     ],
+    "DEFAULT_THROTTLE_RATES": {
+        "login": os.getenv("FASHIONERP_LOGIN_THROTTLE_RATE", "10/min"),
+    },
     "EXCEPTION_HANDLER": "fashionerp.api.exceptions.fashionerp_exception_handler",
 }
 
