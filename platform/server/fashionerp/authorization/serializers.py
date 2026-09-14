@@ -4,6 +4,7 @@ from django.core.exceptions import ValidationError as DjangoValidationError
 from django.utils import timezone
 from rest_framework import serializers
 
+from fashionerp.identity.services import revoke_user_sessions, two_factor_enabled
 from fashionerp.organizations.models import Company, Establishment
 
 from .models import AccessGrant, AccessGroup, Permission, Role
@@ -206,6 +207,7 @@ class AccessGrantSerializer(serializers.ModelSerializer):
 
 class AccessUserSerializer(serializers.ModelSerializer):
     login = serializers.CharField(source="username")
+    two_factor_enabled = serializers.SerializerMethodField()
     password = serializers.CharField(
         write_only=True,
         required=False,
@@ -222,9 +224,13 @@ class AccessUserSerializer(serializers.ModelSerializer):
             "email",
             "language_code",
             "is_active",
+            "two_factor_enabled",
             "password",
         )
-        read_only_fields = ("id",)
+        read_only_fields = ("id", "two_factor_enabled")
+
+    def get_two_factor_enabled(self, obj) -> bool:
+        return two_factor_enabled(obj)
 
     def validate_password(self, password):
         validate_password(password)
@@ -260,9 +266,7 @@ class AccessUserSerializer(serializers.ModelSerializer):
         if password:
             instance.set_password(password)
             instance.save(update_fields=["password"])
+            revoke_user_sessions(instance, reason="password_changed")
         if was_active and not instance.is_active:
-            instance.api_sessions.filter(revoked_at__isnull=True).update(
-                revoked_at=timezone.now(),
-                revocation_reason="user_deactivated",
-            )
+            revoke_user_sessions(instance, reason="user_deactivated")
         return instance
