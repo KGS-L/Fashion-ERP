@@ -29,9 +29,14 @@ The FashionERP specification explicitly defines:
 - Tauri + Owl/TypeScript for desktop;
 - Docker as the supported direction for on-premise complexity.
 
-The backend framework has now been explicitly confirmed for FashionERP as **Django**. This project decision is documented in `docs/adr/0010-django-server-baseline.md`.
+Validated project implementation decisions:
 
-The following Django implementation details remain open until explicitly validated: Django version, Python runtime version, REST layer, OpenAPI tooling, authentication/session packages, queue/realtime stack and reverse proxy.
+- Django is the backend/server framework — ADR 0010;
+- Django REST Framework is the REST layer — ADR 0011;
+- drf-spectacular generates and validates the OpenAPI contract — ADR 0011;
+- django-filter is the filtering helper for declared resource filters — ADR 0011.
+
+The Python runtime version and Django version are intentionally not inferred. They are tracked in #33 before server dependencies are pinned and the first Django scaffold is generated.
 
 ## Implementation order
 
@@ -39,9 +44,10 @@ The following Django implementation details remain open until explicitly validat
 
 - #25 — completed: Django explicitly validated as the FashionERP backend framework.
 
-### API/OpenAPI implementation decision
+### Gate 1 — REST/OpenAPI decision
 
-- #30 — define the concrete Django REST/OpenAPI implementation without changing the already accepted `/api/v1` and OpenAPI requirements.
+- #30 — DRF + drf-spectacular accepted; conventions documented in `docs/api/README.md` and ADR 0011.
+- #33 — validate Python runtime and Django version, then verify dependency compatibility before dependency pinning/scaffolding.
 
 ### Foundation sequence
 
