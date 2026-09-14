@@ -220,6 +220,7 @@ class AccessUserSerializer(serializers.ModelSerializer):
             "first_name",
             "last_name",
             "email",
+            "language_code",
             "is_active",
             "password",
         )
