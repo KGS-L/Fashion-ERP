@@ -5,4 +5,5 @@ app_name = "api_v1"
 
 urlpatterns = [
     path("auth/", include("fashionerp.identity.urls")),
+    path("organizations/", include("fashionerp.organizations.urls")),
 ]
