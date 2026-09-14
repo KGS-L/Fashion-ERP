@@ -8,6 +8,7 @@ from .serializers import AuditEventSerializer
 
 
 class AuditEventListView(generics.ListAPIView):
+    queryset = AuditEvent.objects.none()
     serializer_class = AuditEventSerializer
     permission_classes = [CanViewAudit]
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
