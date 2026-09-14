@@ -27,6 +27,33 @@ class AuditJournalTests(APITestCase):
         _, token = create_api_session(user=self.user)
         self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {token}")
 
+    def test_authorized_admin_can_read_and_filter_audit_events(self):
+        record_audit_event(
+            organization=self.organization,
+            actor=self.user,
+            action="test.visible",
+            object_type="test.object",
+            object_id="visible",
+        )
+        record_audit_event(
+            organization=self.organization,
+            actor=self.user,
+            action="test.other",
+            object_type="test.object",
+            object_id="other",
+        )
+
+        response = self.client.get(
+            "/api/v1/audit/events/?action=test.visible"
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["count"], 1)
+        self.assertEqual(
+            response.data["results"][0]["action"],
+            "test.visible",
+        )
+
     def test_audit_api_is_read_only(self):
         response = self.client.post(
             "/api/v1/audit/events/",
