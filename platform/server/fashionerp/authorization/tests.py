@@ -75,6 +75,16 @@ class ScopedRbacTests(APITestCase):
         self.assertEqual(establishments.status_code, status.HTTP_200_OK)
         self.assertEqual(establishments.data["count"], 0)
 
+    def test_django_superuser_flag_does_not_bypass_business_rbac(self):
+        self.user.is_superuser = True
+        self.user.is_staff = True
+        self.user.save(update_fields=["is_superuser", "is_staff"])
+
+        response = self.client.get("/api/v1/companies/")
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["count"], 0)
+
     def test_company_scoped_grant_limits_company_and_establishment_lists(self):
         AccessGrant.objects.create(
             user=self.user,
