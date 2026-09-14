@@ -23,6 +23,8 @@ FOUNDATION_PERMISSIONS = (
     ),
     ("foundation.access.manage", "foundation", "access.manage", "Manage access"),
     ("foundation.audit.view", "foundation", "audit.view", "View audit journal"),
+    ("foundation.i18n.view", "foundation", "i18n.view", "View international settings"),
+    ("foundation.i18n.manage", "foundation", "i18n.manage", "Manage international settings"),
 )
 
 
