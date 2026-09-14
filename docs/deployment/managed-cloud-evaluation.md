@@ -22,6 +22,8 @@ The provider choice must preserve:
 
 FashionERP will use **OVHcloud VPS-2 as the initial managed-cloud baseline for the pilot and early small managed-cloud customers**.
 
+This choice was explicitly approved during Phase 0 after comparing the VPS-2 option against the earlier Hetzner proposal and other managed-cloud alternatives.
+
 This is an initial infrastructure choice, not a permanent provider lock-in.
 
 ### OVHcloud VPS-2 reference
@@ -99,7 +101,7 @@ Actual sizing must be increased when workload, concurrency, storage, SLA or resi
 
 ### Hetzner Cloud
 
-Remains a valid alternative if its compute/storage economics, regions or operational characteristics become more attractive for a future customer or migration.
+Remains a valid alternative if its compute/storage economics, regions or operational characteristics become more attractive for a future customer or migration. The earlier Phase 0 proposal to use Hetzner as the initial provider is superseded by the accepted OVHcloud VPS-2 decision.
 
 ### DigitalOcean
 
