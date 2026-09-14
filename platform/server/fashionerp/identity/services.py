@@ -49,7 +49,7 @@ def recovery_code_digest(code: str) -> str:
     normalized = code.replace("-", "").replace(" ", "").upper()
     return hmac.new(
         settings.SECRET_KEY.encode("utf-8"),
-        normalized.encode("ascii"),
+        normalized.encode("utf-8"),
         hashlib.sha256,
     ).hexdigest()
 
