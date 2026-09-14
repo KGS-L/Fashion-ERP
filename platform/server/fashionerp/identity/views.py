@@ -12,7 +12,7 @@ from fashionerp.audit.models import AuditEvent
 from fashionerp.audit.services import audit_snapshot, record_audit_event
 from fashionerp.organizations.models import Organization
 
-from .exceptions import InvalidSecondFactor
+from .exceptions import InvalidSecondFactor, TwoFactorRequired
 from .models import ApiSession, TotpCredential
 from .serializers import (
     ApiSessionSerializer,
@@ -71,9 +71,15 @@ class LoginView(APIView):
         serializer = LoginSerializer(data=request.data, context={"request": request})
         try:
             serializer.is_valid(raise_exception=True)
-        except AuthenticationFailed:
+        except AuthenticationFailed as exc:
             organization = Organization.objects.first()
             if organization is not None:
+                if isinstance(exc, TwoFactorRequired):
+                    reason = "two_factor_required"
+                elif isinstance(exc, InvalidSecondFactor):
+                    reason = "invalid_two_factor"
+                else:
+                    reason = "invalid_credentials"
                 record_audit_event(
                     organization=organization,
                     action="auth.login",
@@ -81,7 +87,7 @@ class LoginView(APIView):
                     object_label=str(request.data.get("login", ""))[:255],
                     result=AuditEvent.Result.FAILURE,
                     request=request,
-                    metadata={"reason": "authentication_failed"},
+                    metadata={"reason": reason},
                 )
             raise
 
