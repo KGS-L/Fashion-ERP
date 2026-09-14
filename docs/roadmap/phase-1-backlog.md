@@ -36,7 +36,8 @@ Validated project implementation decisions:
 - drf-spectacular generates and validates the OpenAPI contract — ADR 0011;
 - django-filter is the filtering helper for declared resource filters — ADR 0011;
 - Python 3.14 + Django 5.2 LTS are the server runtime baseline — ADR 0012;
-- opaque revocable PostgreSQL-backed Bearer sessions are the API authentication baseline — ADR 0013.
+- opaque revocable PostgreSQL-backed Bearer sessions are the API authentication baseline — ADR 0013;
+- one customer organization per private ERP Data Plane database is the isolation baseline — ADR 0014.
 
 ## Implementation order
 
@@ -53,7 +54,7 @@ Validated project implementation decisions:
 ### Foundation sequence
 
 1. #10 — completed: authentication and revocable session lifecycle
-2. #11 — organizations and isolation
+2. #11 — completed: organizations and private-database isolation
 3. #12 — companies and establishments hierarchy/scopes
 4. #13 — users, groups, roles and permissions
 5. #14 — audit and traceability
