@@ -55,6 +55,7 @@ jobs:
       POSTGRES_PASSWORD: fashionerp_ci
       POSTGRES_HOST: 127.0.0.1
       POSTGRES_PORT: '5432'
+      POSTGRES_TENANT_B_DB: fashionerp_tenant_b
       PIP_DISABLE_PIP_VERSION_CHECK: '1'
 
     steps:
@@ -77,8 +78,18 @@ jobs:
       - name: Check migrations
         run: python manage.py makemigrations --check --dry-run
 
-      - name: Apply migrations on PostgreSQL
+      - name: Create second isolated tenant database
+        env:
+          PGPASSWORD: fashionerp_ci
+        run: |
+          psql -h 127.0.0.1 -U fashionerp -d postgres \
+            -c "CREATE DATABASE fashionerp_tenant_b OWNER fashionerp;"
+
+      - name: Apply migrations on primary PostgreSQL
         run: python manage.py migrate --noinput
+
+      - name: Apply migrations on isolated tenant PostgreSQL
+        run: python manage.py migrate --database=tenant_b --noinput
 
       - name: Validate OpenAPI schema
         run: python manage.py spectacular --file /tmp/fashionerp-openapi.yaml --validate
