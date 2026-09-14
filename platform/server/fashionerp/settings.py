@@ -1,6 +1,8 @@
 import os
 from pathlib import Path
 
+from django.utils.translation import gettext_lazy as _
+
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -27,6 +29,7 @@ INSTALLED_APPS = [
     "fashionerp.organizations.apps.OrganizationsConfig",
     "fashionerp.authorization.apps.AuthorizationConfig",
     "fashionerp.audit.apps.AuditConfig",
+    "fashionerp.internationalization.apps.InternationalizationConfig",
 ]
 
 MIDDLEWARE = [
@@ -109,6 +112,13 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 LANGUAGE_CODE = os.getenv("DJANGO_LANGUAGE_CODE", "fr")
+LANGUAGES = [
+    ("fr", _("French")),
+    ("en", _("English")),
+    ("es", _("Spanish")),
+    ("pt", _("Portuguese")),
+    ("ar", _("Arabic")),
+]
 TIME_ZONE = os.getenv("DJANGO_TIME_ZONE", "UTC")
 USE_I18N = True
 USE_TZ = True
