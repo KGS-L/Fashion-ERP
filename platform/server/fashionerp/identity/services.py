@@ -53,7 +53,11 @@ def touch_api_session(session: ApiSession) -> None:
     )
     next_idle_expiry = min(now + idle_lifetime, session.expires_at)
 
-    ApiSession.objects.filter(pk=session.pk, revoked_at__isnull=True).update(
+    database_alias = session._state.db or "default"
+    ApiSession.objects.using(database_alias).filter(
+        pk=session.pk,
+        revoked_at__isnull=True,
+    ).update(
         last_seen_at=now,
         idle_expires_at=next_idle_expiry,
     )
