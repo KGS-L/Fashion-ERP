@@ -20,6 +20,8 @@ SAFE_FIELDS = {
         "device_id",
         "device_label",
         "user_agent",
+        "ip_address",
+        "two_factor_verified",
         "created_at",
         "expires_at",
         "idle_expires_at",
