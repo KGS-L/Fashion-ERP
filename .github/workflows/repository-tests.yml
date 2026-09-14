@@ -1,0 +1,71 @@
+name: Repository Tests
+
+on:
+  pull_request:
+    paths:
+      - 'apps/**'
+      - 'platform/**'
+      - 'modules/**'
+      - 'infrastructure/**'
+      - 'localizations/**'
+      - 'docs/**'
+      - 'tests/**'
+      - '.github/workflows/repository-tests.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'apps/**'
+      - 'platform/**'
+      - 'modules/**'
+      - 'infrastructure/**'
+      - 'localizations/**'
+      - 'docs/**'
+      - 'tests/**'
+      - '.github/workflows/repository-tests.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  structure:
+    name: Test ${{ matrix.area }} structure
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        area:
+          - apps
+          - platform
+          - modules
+          - infrastructure
+          - localizations
+          - docs
+          - tests
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Verify area documentation
+        shell: bash
+        run: |
+          test -f "${{ matrix.area }}/README.md" || {
+            echo "::error::Missing ${{ matrix.area }}/README.md"
+            exit 1
+          }
+
+      - name: Verify directory documentation
+        shell: bash
+        run: |
+          missing=0
+
+          while IFS= read -r -d '' directory; do
+            if [ ! -f "$directory/README.md" ]; then
+              echo "::error file=$directory::Missing README.md"
+              missing=1
+            fi
+          done < <(find "${{ matrix.area }}" -mindepth 1 -type d -print0)
+
+          exit "$missing"
