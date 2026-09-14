@@ -1,9 +1,11 @@
+from django.db import transaction
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.permissions import IsAuthenticated
 
+from fashionerp.audit.services import audit_snapshot, record_audit_event
 from fashionerp.authorization.services import (
     authorized_company_ids,
     authorized_establishment_ids,
@@ -76,7 +78,18 @@ class CompanyListView(generics.ListCreateAPIView):
             raise PermissionDenied(
                 "Organization-level company management permission is required."
             )
-        serializer.save(organization=self.request.user.organization)
+        with transaction.atomic():
+            company = serializer.save(
+                organization=self.request.user.organization
+            )
+            record_audit_event(
+                organization=self.request.user.organization,
+                actor=self.request.user,
+                action="foundation.company.create",
+                object_instance=company,
+                after=audit_snapshot(company),
+                request=self.request,
+            )
 
 
 class CompanyDetailView(generics.RetrieveUpdateAPIView):
@@ -96,6 +109,20 @@ class CompanyDetailView(generics.RetrieveUpdateAPIView):
             organization_id=self.request.user.organization_id,
             id__in=allowed_ids,
         )
+
+    def perform_update(self, serializer):
+        with transaction.atomic():
+            before = audit_snapshot(serializer.instance)
+            company = serializer.save()
+            record_audit_event(
+                organization=self.request.user.organization,
+                actor=self.request.user,
+                action="foundation.company.update",
+                object_instance=company,
+                before=before,
+                after=audit_snapshot(company),
+                request=self.request,
+            )
 
 
 class EstablishmentListView(generics.ListCreateAPIView):
@@ -122,6 +149,20 @@ class EstablishmentListView(generics.ListCreateAPIView):
             id__in=allowed_ids,
         ).select_related("company")
 
+    def perform_update(self, serializer):
+        with transaction.atomic():
+            before = audit_snapshot(serializer.instance)
+            establishment = serializer.save()
+            record_audit_event(
+                organization=self.request.user.organization,
+                actor=self.request.user,
+                action="foundation.establishment.update",
+                object_instance=establishment,
+                before=before,
+                after=audit_snapshot(establishment),
+                request=self.request,
+            )
+
     def perform_create(self, serializer):
         company = serializer.validated_data["company"]
         if not has_permission(
@@ -132,7 +173,16 @@ class EstablishmentListView(generics.ListCreateAPIView):
             raise PermissionDenied(
                 "You cannot manage establishments for this company."
             )
-        serializer.save()
+        with transaction.atomic():
+            establishment = serializer.save()
+            record_audit_event(
+                organization=self.request.user.organization,
+                actor=self.request.user,
+                action="foundation.establishment.create",
+                object_instance=establishment,
+                after=audit_snapshot(establishment),
+                request=self.request,
+            )
 
 
 class EstablishmentDetailView(generics.RetrieveUpdateAPIView):
