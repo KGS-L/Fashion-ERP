@@ -64,7 +64,7 @@ Validated project implementation decisions:
 5. #14 — completed: immutable audit and traceability
 6. #15 — completed: base internationalization
 7. #18 — completed: 2FA and device/session management
-8. #19 — Foundation REST/OpenAPI conventions
+8. #19 — completed: Foundation REST/OpenAPI conventions and contract guards
 9. #20 — versioned Foundation migrations
 10. #21 — PostgreSQL/test storage support
 11. #17 — reproducible Foundation reference data
