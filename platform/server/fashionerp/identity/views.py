@@ -1,5 +1,5 @@
 from django.db import transaction
-from django.utils import timezone
+from django.utils import timezone, translation
 from drf_spectacular.utils import extend_schema
 from rest_framework import generics, status
 from rest_framework.exceptions import AuthenticationFailed, NotFound
@@ -48,6 +48,7 @@ class LoginView(APIView):
             raise
 
         user = serializer.validated_data["user"]
+        translation.activate(user.language_code)
         with transaction.atomic():
             session, raw_token = create_api_session(
                 user=user,
