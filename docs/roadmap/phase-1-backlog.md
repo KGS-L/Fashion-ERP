@@ -48,6 +48,7 @@ Python 3.14 and Django 5.2 LTS are now the accepted runtime baseline — ADR 001
 
 - #30 — DRF + drf-spectacular accepted; conventions documented in `docs/api/README.md` and ADR 0011.
 - #33 — completed: Python 3.14 + Django 5.2 LTS validated; dependency pinning/scaffolding is now unblocked.
+- #34 — completed: initial Django server scaffold, PostgreSQL-backed CI checks and OpenAPI validation added.
 
 ### Foundation sequence
 
