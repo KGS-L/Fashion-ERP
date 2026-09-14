@@ -55,7 +55,7 @@ Validated project implementation decisions:
 
 1. #10 — completed: authentication and revocable session lifecycle
 2. #11 — completed: organizations and private-database isolation
-3. #12 — companies and establishments hierarchy/scopes
+3. #12 — completed: companies and establishments hierarchy/scope foundation
 4. #13 — users, groups, roles and permissions
 5. #14 — audit and traceability
 6. #15 — base internationalization
