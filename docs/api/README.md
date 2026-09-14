@@ -87,6 +87,8 @@ Foundation Data Plane authorization uses scoped RBAC (ADR 0015). Authentication 
 
 Access administration lives under `/api/v1/access/` and requires Organization-scope `foundation.access.manage`.
 
+The immutable Foundation audit journal is read-only under `/api/v1/audit/events/` and requires Organization-scope `foundation.audit.view`. Sensitive mutations record actor/date/object/result and allow-listed before/after snapshots. Audit writes are server-side only.
+
 Tests must include negative cases proving that unauthorized data is not returned through list, retrieve, update, delete or action endpoints.
 
 ## OpenAPI contract
