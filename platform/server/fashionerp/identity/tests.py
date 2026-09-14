@@ -75,6 +75,18 @@ class AuthenticationLifecycleTests(APITestCase):
 
         self.assertEqual(denied.status_code, status.HTTP_401_UNAUTHORIZED)
 
+    def test_idle_expired_session_is_rejected(self):
+        response = self.login()
+        token = response.data["token"]
+        session = ApiSession.objects.get(user=self.user)
+        session.idle_expires_at = timezone.now() - timedelta(seconds=1)
+        session.save(update_fields=["idle_expires_at"])
+
+        self.authorize(token)
+        denied = self.client.get("/api/v1/auth/me/")
+
+        self.assertEqual(denied.status_code, status.HTTP_401_UNAUTHORIZED)
+
     def test_inactive_user_session_is_rejected(self):
         response = self.login()
         token = response.data["token"]
@@ -94,7 +106,8 @@ class AuthenticationLifecycleTests(APITestCase):
 
         sessions = self.client.get("/api/v1/auth/sessions/")
         self.assertEqual(sessions.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(sessions.data), 1)
+        self.assertEqual(sessions.data["count"], 1)
+        self.assertEqual(len(sessions.data["results"]), 1)
 
         revoked = self.client.post(
             f"/api/v1/auth/sessions/{session_id}/revoke/"
@@ -103,6 +116,29 @@ class AuthenticationLifecycleTests(APITestCase):
 
         denied = self.client.get("/api/v1/auth/me/")
         self.assertEqual(denied.status_code, status.HTTP_401_UNAUTHORIZED)
+
+    def test_user_cannot_revoke_another_users_session(self):
+        other_user = get_user_model().objects.create_user(
+            username="other.user",
+            password="Another-Strong-Password-42!",
+        )
+        other_session = ApiSession.objects.create(
+            user=other_user,
+            token_digest="a" * 64,
+            expires_at=timezone.now() + timedelta(hours=1),
+            idle_expires_at=timezone.now() + timedelta(hours=1),
+        )
+
+        response = self.login()
+        self.authorize(response.data["token"])
+
+        denied = self.client.post(
+            f"/api/v1/auth/sessions/{other_session.id}/revoke/"
+        )
+
+        self.assertEqual(denied.status_code, status.HTTP_404_NOT_FOUND)
+        other_session.refresh_from_db()
+        self.assertIsNone(other_session.revoked_at)
 
     def test_invalid_login_does_not_disclose_account_existence(self):
         known = self.client.post(
@@ -116,7 +152,8 @@ class AuthenticationLifecycleTests(APITestCase):
             format="json",
         )
 
-        self.assertEqual(known.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(unknown.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(known.data["error"]["code"], "validation_error")
-        self.assertEqual(unknown.data["error"]["code"], "validation_error")
+        self.assertEqual(known.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(unknown.status_code, status.HTTP_401_UNAUTHORIZED)
+        self.assertEqual(known.data["error"]["code"], "authentication_required")
+        self.assertEqual(unknown.data["error"]["code"], "authentication_required")
+        self.assertEqual(known.data["error"]["message"], unknown.data["error"]["message"])
