@@ -149,20 +149,6 @@ class EstablishmentListView(generics.ListCreateAPIView):
             id__in=allowed_ids,
         ).select_related("company")
 
-    def perform_update(self, serializer):
-        with transaction.atomic():
-            before = audit_snapshot(serializer.instance)
-            establishment = serializer.save()
-            record_audit_event(
-                organization=self.request.user.organization,
-                actor=self.request.user,
-                action="foundation.establishment.update",
-                object_instance=establishment,
-                before=before,
-                after=audit_snapshot(establishment),
-                request=self.request,
-            )
-
     def perform_create(self, serializer):
         company = serializer.validated_data["company"]
         if not has_permission(
@@ -205,3 +191,17 @@ class EstablishmentDetailView(generics.RetrieveUpdateAPIView):
             company__organization_id=self.request.user.organization_id,
             id__in=allowed_ids,
         ).select_related("company")
+
+    def perform_update(self, serializer):
+        with transaction.atomic():
+            before = audit_snapshot(serializer.instance)
+            establishment = serializer.save()
+            record_audit_event(
+                organization=self.request.user.organization,
+                actor=self.request.user,
+                action="foundation.establishment.update",
+                object_instance=establishment,
+                before=before,
+                after=audit_snapshot(establishment),
+                request=self.request,
+            )
