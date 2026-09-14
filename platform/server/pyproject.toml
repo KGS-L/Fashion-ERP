@@ -14,6 +14,7 @@ dependencies = [
     "drf-spectacular==0.30.0",
     "django-filter==26.1",
     "psycopg[binary]==3.3.4",
+    "argon2-cffi==25.1.0",
 ]
 
 [tool.setuptools.packages.find]
