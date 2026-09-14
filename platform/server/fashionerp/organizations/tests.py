@@ -1,3 +1,4 @@
+import unittest
 import uuid
 
 from django.conf import settings
@@ -66,7 +67,7 @@ class PhysicalDatabaseIsolationTests(TestCase):
     @classmethod
     def setUpClass(cls):
         if "tenant_b" not in settings.DATABASES:
-            raise cls.skipTest("tenant_b database alias is not configured")
+            raise unittest.SkipTest("tenant_b database alias is not configured")
         super().setUpClass()
 
     def test_customer_databases_are_physically_isolated(self):
