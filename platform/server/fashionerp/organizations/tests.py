@@ -54,6 +54,15 @@ class OrganizationApiTests(APITestCase):
         self.assertEqual(len(response.data), 1)
         self.assertEqual(str(response.data[0]["id"]), str(self.organization.id))
 
+    def test_organization_creation_is_not_exposed_by_api(self):
+        response = self.client.post(
+            "/api/v1/organizations/",
+            {"name": "Tenant B", "slug": "tenant-b"},
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
+
     def test_unknown_organization_uuid_returns_not_found(self):
         response = self.client.get(
             f"/api/v1/organizations/{uuid.uuid4()}/"
