@@ -1,6 +1,6 @@
 from django.contrib.auth import get_user_model
 from rest_framework import status
-from rest_framework.test import APITestCase
+from rest_framework.test import APIClient, APITestCase
 
 from fashionerp.identity.services import create_api_session
 from fashionerp.organizations.models import Company, Establishment, Organization
@@ -98,6 +98,42 @@ class ScopedRbacTests(APITestCase):
             {str(self.site_a1.id), str(self.site_a2.id)},
         )
         self.assertNotIn(str(self.site_b1.id), returned_sites)
+
+    def test_two_users_with_different_company_scopes_see_different_data(self):
+        second_user = get_user_model().objects.create_user(
+            username="second.scoped.user",
+            password="Second-Strong-Password-42!",
+            organization=self.organization,
+        )
+        AccessGrant.objects.create(
+            user=self.user,
+            role=self.company_reader,
+            company=self.company_a,
+        )
+        AccessGrant.objects.create(
+            user=second_user,
+            role=self.company_reader,
+            company=self.company_b,
+        )
+        _, second_token = create_api_session(user=second_user)
+        second_client = APIClient()
+        second_client.credentials(
+            HTTP_AUTHORIZATION=f"Bearer {second_token}"
+        )
+
+        first_response = self.client.get("/api/v1/companies/")
+        second_response = second_client.get("/api/v1/companies/")
+
+        self.assertEqual(first_response.data["count"], 1)
+        self.assertEqual(second_response.data["count"], 1)
+        self.assertEqual(
+            str(first_response.data["results"][0]["id"]),
+            str(self.company_a.id),
+        )
+        self.assertEqual(
+            str(second_response.data["results"][0]["id"]),
+            str(self.company_b.id),
+        )
 
     def test_establishment_scoped_grant_only_exposes_that_site(self):
         AccessGrant.objects.create(
