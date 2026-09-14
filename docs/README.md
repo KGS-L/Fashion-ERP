@@ -15,5 +15,9 @@ Current documentation areas:
 - `internationalization/` — internationalization and country localizations
 - `development/` — developer guides and project conventions
 - `roadmap/` — phases, milestones and acceptance criteria
+- `foundation/` — implemented Phase 1 Foundation behavior and boundaries
+- `testing/` — test dependencies and reproducible reference data
+- `migrations/` — migration, rollback and restore procedure
+- `compliance/` — dependency-license review and notices
 
 The functional and technical specification remains the primary reference until more detailed documents are validated.
