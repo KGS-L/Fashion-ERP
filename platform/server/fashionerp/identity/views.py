@@ -1,6 +1,6 @@
 from django.utils import timezone
 from drf_spectacular.utils import extend_schema
-from rest_framework import status
+from rest_framework import generics, status
 from rest_framework.exceptions import NotFound
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
@@ -8,7 +8,12 @@ from rest_framework.throttling import ScopedRateThrottle
 from rest_framework.views import APIView
 
 from .models import ApiSession
-from .serializers import ApiSessionSerializer, LoginSerializer, UserSerializer
+from .serializers import (
+    ApiSessionSerializer,
+    LoginResponseSerializer,
+    LoginSerializer,
+    UserSerializer,
+)
 from .services import create_api_session
 
 
@@ -18,7 +23,7 @@ class LoginView(APIView):
     throttle_classes = [ScopedRateThrottle]
     throttle_scope = "login"
 
-    @extend_schema(request=LoginSerializer, responses={200: UserSerializer})
+    @extend_schema(request=LoginSerializer, responses={200: LoginResponseSerializer})
     def post(self, request):
         serializer = LoginSerializer(data=request.data, context={"request": request})
         serializer.is_valid(raise_exception=True)
@@ -65,28 +70,18 @@ class MeView(APIView):
         return Response(UserSerializer(request.user).data)
 
 
-class SessionListView(APIView):
+class SessionListView(generics.ListAPIView):
+    serializer_class = ApiSessionSerializer
     permission_classes = [IsAuthenticated]
 
-    @extend_schema(responses={200: ApiSessionSerializer(many=True)})
-    def get(self, request):
+    def get_queryset(self):
         now = timezone.now()
-        sessions = (
-            ApiSession.objects.filter(
-                user=request.user,
-                revoked_at__isnull=True,
-                expires_at__gt=now,
-                idle_expires_at__gt=now,
-            )
-            .order_by("-created_at")
-        )
-        return Response(
-            ApiSessionSerializer(
-                sessions,
-                many=True,
-                context={"request": request},
-            ).data
-        )
+        return ApiSession.objects.filter(
+            user=self.request.user,
+            revoked_at__isnull=True,
+            expires_at__gt=now,
+            idle_expires_at__gt=now,
+        ).order_by("-created_at")
 
 
 class SessionRevokeView(APIView):
