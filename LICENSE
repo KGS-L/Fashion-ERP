@@ -1,0 +1,28 @@
+FashionERP Open Core License Notice
+
+Copyright (c) 2026 KGS-L
+
+FashionERP follows an open-core licensing model.
+
+Community components
+--------------------
+Unless a source file or directory states otherwise, the FashionERP Community core is licensed under the GNU Lesser General Public License, version 3.0 (LGPL-3.0-only).
+
+You may use, modify and redistribute the Community core under the terms of the GNU LGPL v3. The official license text is available from the Free Software Foundation:
+https://www.gnu.org/licenses/lgpl-3.0.html
+
+Commercial components
+---------------------
+Business, Enterprise Plus, premium modules, proprietary connectors and other components explicitly identified as commercial are NOT licensed under the LGPL merely because they interact with or are distributed alongside the Community core.
+
+Those components may be distributed under separate commercial license terms.
+
+Third-party software
+--------------------
+Third-party libraries, assets and dependencies remain subject to their respective licenses. Where applicable, their license notices must be preserved.
+
+No warranty
+-----------
+The Community software is provided without warranty, subject to the warranty and liability provisions of the GNU LGPL v3.
+
+SPDX-License-Identifier: LGPL-3.0-only
