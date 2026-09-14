@@ -33,3 +33,16 @@ These are implementation defaults, not immutable product rules. Production deplo
 2FA, scoped RBAC and persistent security audit are implemented by their dedicated Phase 1 issues.
 
 Configuration is environment-driven. Production secrets must never be committed to the repository.
+
+
+## Phase 1 review
+
+The implemented Foundation behavior and final review checklist are documented in:
+
+- `docs/foundation/README.md`;
+- `docs/foundation/review-checklist.md`;
+- `docs/security/foundation-exit-review.md`;
+- `docs/compliance/THIRD_PARTY_NOTICES.md`;
+- `docs/migrations/README.md`.
+
+The server Foundation is intentionally limited to platform primitives. Phase 2 business modules and production deployment automation are not part of this implementation.
