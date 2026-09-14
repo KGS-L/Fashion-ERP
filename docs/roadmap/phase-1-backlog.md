@@ -36,7 +36,7 @@ Validated project implementation decisions:
 - drf-spectacular generates and validates the OpenAPI contract — ADR 0011;
 - django-filter is the filtering helper for declared resource filters — ADR 0011.
 
-The Python runtime version and Django version are intentionally not inferred. They are tracked in #33 before server dependencies are pinned and the first Django scaffold is generated.
+Python 3.14 and Django 5.2 LTS are now the accepted runtime baseline — ADR 0012. Server dependencies may now be pinned and the first Django scaffold can be generated.
 
 ## Implementation order
 
@@ -47,7 +47,7 @@ The Python runtime version and Django version are intentionally not inferred. Th
 ### Gate 1 — REST/OpenAPI decision
 
 - #30 — DRF + drf-spectacular accepted; conventions documented in `docs/api/README.md` and ADR 0011.
-- #33 — validate Python runtime and Django version, then verify dependency compatibility before dependency pinning/scaffolding.
+- #33 — completed: Python 3.14 + Django 5.2 LTS validated; dependency pinning/scaffolding is now unblocked.
 
 ### Foundation sequence
 
