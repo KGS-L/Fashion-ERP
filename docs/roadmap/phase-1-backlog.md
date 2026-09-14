@@ -67,8 +67,8 @@ Validated project implementation decisions:
 8. #19 — completed: Foundation REST/OpenAPI conventions and contract guards
 9. #20 — completed: versioned Foundation migrations and recovery procedure
 10. #21 — PostgreSQL/test storage support
-11. #17 — reproducible Foundation reference data
-12. #16 — integration, authorization and isolation tests
+11. #17 — completed: reproducible Foundation reference data
+12. #16 — completed: integration, authorization and isolation tests
 13. #22 — security exit review
 14. #23 — Foundation documentation/review preparation
 15. #27 — implementation CI checks as test tooling becomes available
