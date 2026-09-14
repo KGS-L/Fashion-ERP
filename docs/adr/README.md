@@ -29,3 +29,5 @@ Before introducing or changing a technical decision, the project specification a
 - `0016-append-only-postgresql-audit-journal.md` — append-only PostgreSQL audit events for sensitive Foundation operations.
 
 - `0017-foundation-internationalization-boundary.md` — five-language Foundation catalogs, locale preferences, currencies, dated rates, timezones and configurable units without country fiscal rules.
+
+- `0018-totp-two-factor-authentication.md` — TOTP 2FA, encrypted enrollment secrets, one-time recovery codes and secure administrator reset.
