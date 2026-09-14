@@ -50,6 +50,7 @@ jobs:
     env:
       DJANGO_SECRET_KEY: ci-only-secret-key-not-for-production
       DJANGO_DEBUG: 'false'
+      FASHIONERP_2FA_ENCRYPTION_KEY: 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA='
       POSTGRES_DB: fashionerp_test
       POSTGRES_USER: fashionerp
       POSTGRES_PASSWORD: fashionerp_ci
