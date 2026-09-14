@@ -25,6 +25,12 @@ from .services import create_api_session
 class LoginView(APIView):
     authentication_classes = []
     permission_classes = [AllowAny]
+
+    def get_authenticate_header(self, request) -> str:
+        # DRF otherwise coerces AuthenticationFailed to 403 when a view has
+        # no authenticators. Invalid credentials are an authentication
+        # failure and must remain a 401 response.
+        return "Bearer"
     throttle_classes = [ScopedRateThrottle]
     throttle_scope = "login"
 
