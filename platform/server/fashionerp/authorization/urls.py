@@ -3,6 +3,7 @@ from django.urls import path
 from .views import (
     AccessUserDetailView,
     AccessUserListView,
+    AccessUserTwoFactorResetView,
     GrantListCreateView,
     GrantRevokeView,
     GroupDetailView,
@@ -33,4 +34,9 @@ urlpatterns = [
     ),
     path("users/", AccessUserListView.as_view(), name="user-list"),
     path("users/<uuid:user_id>/", AccessUserDetailView.as_view(), name="user-detail"),
+    path(
+        "users/<uuid:user_id>/2fa/reset/",
+        AccessUserTwoFactorResetView.as_view(),
+        name="user-two-factor-reset",
+    ),
 ]
