@@ -6,15 +6,22 @@ from django.utils import timezone
 from rest_framework import status
 from rest_framework.test import APITestCase
 
+from fashionerp.organizations.models import Organization
+
 from .models import ApiSession
 
 
 class AuthenticationLifecycleTests(APITestCase):
     def setUp(self):
+        self.organization = Organization.objects.create(
+            name="Test Organization",
+            slug="test-organization",
+        )
         self.user = get_user_model().objects.create_user(
             username="atelier.user",
             password="Strong-Test-Password-42!",
             email="atelier@example.test",
+            organization=self.organization,
         )
 
     def login(self):
@@ -133,6 +140,7 @@ class AuthenticationLifecycleTests(APITestCase):
         other_user = get_user_model().objects.create_user(
             username="other.user",
             password="Another-Strong-Password-42!",
+            organization=self.organization,
         )
         other_session = ApiSession.objects.create(
             user=other_user,
