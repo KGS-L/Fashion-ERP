@@ -116,6 +116,29 @@ class InternationalizationApiTests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         return Currency.objects.get(pk=code)
 
+    def test_user_without_i18n_permission_cannot_manage_reference_data(self):
+        limited_user = get_user_model().objects.create_user(
+            username="i18n.limited",
+            password="Limited-Strong-Password-42!",
+            organization=self.organization,
+        )
+        _, token = create_api_session(user=limited_user)
+        self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {token}")
+
+        response = self.client.post(
+            "/api/v1/i18n/currencies/",
+            {
+                "code": "ZZZ",
+                "name": "Blocked currency",
+                "decimal_places": 2,
+                "rounding": "0.01",
+            },
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertFalse(Currency.objects.filter(pk="ZZZ").exists())
+
     def test_initial_language_set_and_arabic_direction(self):
         response = self.client.get("/api/v1/i18n/languages/")
 
