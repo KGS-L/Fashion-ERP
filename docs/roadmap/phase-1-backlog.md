@@ -69,7 +69,7 @@ Validated project implementation decisions:
 10. #21 — PostgreSQL/test storage support
 11. #17 — completed: reproducible Foundation reference data
 12. #16 — completed: integration, authorization and isolation tests
-13. #22 — security exit review
+13. #22 — completed: Foundation security exit review
 14. #23 — Foundation documentation/review preparation
 15. #27 — implementation CI checks as test tooling becomes available
 16. #28 — dependency-license compliance review
