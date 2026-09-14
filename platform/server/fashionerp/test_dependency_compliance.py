@@ -6,7 +6,7 @@ from pathlib import Path
 from django.test import SimpleTestCase
 
 
-SERVER_ROOT = Path(__file__).resolve().parents[2]
+SERVER_ROOT = Path(__file__).resolve().parents[1]
 REPOSITORY_ROOT = SERVER_ROOT.parents[1]
 PYPROJECT = SERVER_ROOT / "pyproject.toml"
 LICENSE_MANIFEST = (
