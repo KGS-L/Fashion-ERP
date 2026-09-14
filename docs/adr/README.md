@@ -27,3 +27,5 @@ Decisions that remain open in the functional and technical specification must no
 Before introducing or changing a technical decision, the project specification and relevant source files must be reviewed first. A technology must not be treated as a FashionERP decision merely because it is used in another project or appears in the project owner's general toolset.
 
 - `0016-append-only-postgresql-audit-journal.md` — append-only PostgreSQL audit events for sensitive Foundation operations.
+
+- `0017-foundation-internationalization-boundary.md` — five-language Foundation catalogs, locale preferences, currencies, dated rates, timezones and configurable units without country fiscal rules.
