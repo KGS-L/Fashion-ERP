@@ -20,3 +20,7 @@ dependencies = [
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["fashionerp*"]
+
+
+[tool.setuptools.package-data]
+"fashionerp.internationalization" = ["catalogs/*.json"]
