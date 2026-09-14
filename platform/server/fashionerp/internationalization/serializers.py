@@ -1,4 +1,3 @@
-from django.core.exceptions import ValidationError as DjangoValidationError
 from rest_framework import serializers
 
 from .models import Currency, ExchangeRate, UnitOfMeasure
@@ -17,7 +16,12 @@ class CurrencySerializer(serializers.ModelSerializer):
         )
 
     def validate_code(self, value):
-        return value.upper()
+        value = value.upper()
+        if self.instance is not None and value != self.instance.code:
+            raise serializers.ValidationError(
+                "Currency code cannot be changed."
+            )
+        return value
 
 
 class ExchangeRateSerializer(serializers.ModelSerializer):
@@ -45,16 +49,26 @@ class ExchangeRateSerializer(serializers.ModelSerializer):
         read_only_fields = ("id", "organization_id", "created_at")
 
     def validate(self, attrs):
-        instance = ExchangeRate(
-            organization=self.context["request"].user.organization,
-            **attrs,
+        base_currency = attrs.get(
+            "base_currency",
+            getattr(self.instance, "base_currency", None),
         )
-        try:
-            instance.full_clean(exclude=("id",))
-        except DjangoValidationError as exc:
+        quote_currency = attrs.get(
+            "quote_currency",
+            getattr(self.instance, "quote_currency", None),
+        )
+        if (
+            base_currency is not None
+            and quote_currency is not None
+            and base_currency.pk == quote_currency.pk
+        ):
             raise serializers.ValidationError(
-                exc.message_dict or exc.messages
-            ) from exc
+                {
+                    "quote_currency_code": (
+                        "Base and quote currencies must differ."
+                    )
+                }
+            )
         return attrs
 
     def create(self, validated_data):
