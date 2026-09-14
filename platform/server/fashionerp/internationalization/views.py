@@ -1,5 +1,6 @@
 from django.db import transaction
 from django_filters.rest_framework import DjangoFilterBackend
+from drf_spectacular.utils import extend_schema
 from rest_framework import generics
 from rest_framework.exceptions import NotFound, ValidationError
 from rest_framework.filters import OrderingFilter, SearchFilter
@@ -20,6 +21,9 @@ from .permissions import CanAccessInternationalSettings
 from .serializers import (
     CurrencySerializer,
     ExchangeRateSerializer,
+    InternationalizationContextResponseSerializer,
+    LanguageOptionSerializer,
+    TranslationCatalogResponseSerializer,
     UnitOfMeasureSerializer,
 )
 from .services import (
@@ -33,6 +37,10 @@ from .services import (
 class LanguageListView(APIView):
     permission_classes = [IsAuthenticated]
 
+    @extend_schema(
+        request=None,
+        responses={200: LanguageOptionSerializer(many=True)},
+    )
     def get(self, request):
         return Response(
             [
@@ -49,6 +57,10 @@ class LanguageListView(APIView):
 class TranslationCatalogView(APIView):
     permission_classes = [IsAuthenticated]
 
+    @extend_schema(
+        request=None,
+        responses={200: TranslationCatalogResponseSerializer},
+    )
     def get(self, request):
         requested = request.query_params.get("language")
         language_code = resolve_effective_language(
@@ -68,6 +80,10 @@ class TranslationCatalogView(APIView):
 class InternationalizationContextView(APIView):
     permission_classes = [IsAuthenticated]
 
+    @extend_schema(
+        request=None,
+        responses={200: InternationalizationContextResponseSerializer},
+    )
     def get(self, request):
         company = self._company(request)
         establishment = self._establishment(request, company=company)
@@ -202,8 +218,8 @@ class ExchangeRateListCreateView(generics.ListCreateAPIView):
     permission_classes = [CanAccessInternationalSettings]
     filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_fields = (
-        "base_currency_id",
-        "quote_currency_id",
+        "base_currency",
+        "quote_currency",
         "valid_on",
     )
     ordering_fields = ("valid_on", "created_at")
