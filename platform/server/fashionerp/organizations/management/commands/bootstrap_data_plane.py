@@ -5,6 +5,7 @@ from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 
+from fashionerp.audit.services import audit_snapshot, record_audit_event
 from fashionerp.authorization.services import grant_organization_admin
 from fashionerp.organizations.services import provision_local_organization
 
@@ -50,7 +51,15 @@ class Command(BaseCommand):
             is_active=True,
         )
 
-        grant_organization_admin(user=user)
+        grant = grant_organization_admin(user=user)
+        record_audit_event(
+            organization=organization,
+            actor=user,
+            action="access.bootstrap.organization_admin",
+            object_instance=grant,
+            after=audit_snapshot(grant),
+            metadata={"bootstrap": True},
+        )
 
         self.stdout.write(
             self.style.SUCCESS(
