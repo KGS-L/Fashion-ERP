@@ -5,6 +5,7 @@ from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 
+from fashionerp.authorization.services import grant_organization_admin
 from fashionerp.organizations.services import provision_local_organization
 
 
@@ -48,6 +49,8 @@ class Command(BaseCommand):
             organization=organization,
             is_active=True,
         )
+
+        grant_organization_admin(user=user)
 
         self.stdout.write(
             self.style.SUCCESS(
