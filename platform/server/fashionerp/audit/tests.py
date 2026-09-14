@@ -236,6 +236,25 @@ class AuthenticationAuditTests(APITestCase):
             organization=self.organization,
         )
 
+    def test_failed_login_is_audited_without_password(self):
+        response = self.client.post(
+            "/api/v1/auth/login/",
+            {
+                "login": "login.user",
+                "password": "wrong-password",
+            },
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
+        event = AuditEvent.objects.get(
+            action="auth.login",
+            result=AuditEvent.Result.FAILURE,
+        )
+        self.assertEqual(event.object_label, "login.user")
+        self.assertEqual(event.metadata["reason"], "invalid_credentials")
+        self.assertNotIn("password", event.metadata)
+
     def test_login_and_logout_are_audited_without_token_material(self):
         login = self.client.post(
             "/api/v1/auth/login/",
