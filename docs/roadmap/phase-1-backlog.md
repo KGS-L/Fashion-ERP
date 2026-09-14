@@ -72,7 +72,7 @@ Validated project implementation decisions:
 13. #22 — completed: Foundation security exit review
 14. #23 — completed: Foundation documentation/review preparation
 15. #27 — completed: implementation CI checks
-16. #28 — dependency-license compliance review
+16. #28 — completed: dependency-license compliance review
 17. #24 — Phase 1 exit gate and PR to `main`
 
 ## Deferred/non-blocking technology decision
