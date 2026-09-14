@@ -38,7 +38,8 @@ Validated project implementation decisions:
 - Python 3.14 + Django 5.2 LTS are the server runtime baseline — ADR 0012;
 - opaque revocable PostgreSQL-backed Bearer sessions are the API authentication baseline — ADR 0013;
 - one customer organization per private ERP Data Plane database is the isolation baseline — ADR 0014;
-- scoped deny-by-default RBAC with role grants is the authorization baseline — ADR 0015.
+- scoped deny-by-default RBAC with role grants is the authorization baseline — ADR 0015;
+- append-only PostgreSQL audit events are the sensitive-operation traceability baseline — ADR 0016.
 
 ## Implementation order
 
@@ -58,7 +59,7 @@ Validated project implementation decisions:
 2. #11 — completed: organizations and private-database isolation
 3. #12 — completed: companies and establishments hierarchy/scope foundation
 4. #13 — completed: users, groups, roles, permissions and scoped grants
-5. #14 — audit and traceability
+5. #14 — completed: immutable audit and traceability
 6. #15 — base internationalization
 7. #18 — 2FA and device/session management
 8. #19 — Foundation REST/OpenAPI conventions
