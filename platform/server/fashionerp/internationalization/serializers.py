@@ -140,3 +140,41 @@ class UnitOfMeasureSerializer(serializers.ModelSerializer):
             organization=self.context["request"].user.organization,
             **validated_data,
         )
+
+
+class LanguageOptionSerializer(serializers.Serializer):
+    code = serializers.CharField(read_only=True)
+    name = serializers.CharField(read_only=True)
+    direction = serializers.ChoiceField(
+        choices=("ltr", "rtl"),
+        read_only=True,
+    )
+
+
+class TranslationCatalogResponseSerializer(serializers.Serializer):
+    language = serializers.CharField(read_only=True)
+    direction = serializers.ChoiceField(
+        choices=("ltr", "rtl"),
+        read_only=True,
+    )
+    catalog = serializers.JSONField(read_only=True)
+    formats = serializers.JSONField(read_only=True)
+
+
+class InternationalizationContextResponseSerializer(serializers.Serializer):
+    language = serializers.CharField(read_only=True)
+    direction = serializers.ChoiceField(
+        choices=("ltr", "rtl"),
+        read_only=True,
+    )
+    formats = serializers.JSONField(read_only=True)
+    functional_currency = CurrencySerializer(
+        read_only=True,
+        allow_null=True,
+    )
+    timezone = serializers.CharField(read_only=True)
+    company_id = serializers.UUIDField(read_only=True, allow_null=True)
+    establishment_id = serializers.UUIDField(
+        read_only=True,
+        allow_null=True,
+    )
