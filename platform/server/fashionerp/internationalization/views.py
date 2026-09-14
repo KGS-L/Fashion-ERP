@@ -1,6 +1,6 @@
 from django.db import transaction
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import generics, status
+from rest_framework import generics
 from rest_framework.exceptions import NotFound, ValidationError
 from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.permissions import IsAuthenticated
@@ -26,7 +26,6 @@ from .services import (
     load_catalog,
     locale_direction,
     locale_formats,
-    normalize_language_code,
     resolve_effective_language,
 )
 
@@ -72,6 +71,8 @@ class InternationalizationContextView(APIView):
     def get(self, request):
         company = self._company(request)
         establishment = self._establishment(request, company=company)
+        if company is None and establishment is not None:
+            company = establishment.company
         language_code = resolve_effective_language(
             user=request.user,
             company=company,
