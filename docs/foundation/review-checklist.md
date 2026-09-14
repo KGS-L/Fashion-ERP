@@ -90,14 +90,15 @@ The following are not Phase 1 implemented capabilities:
 
 ## Final gate
 
-The pull request to `main` may be opened when:
+The pull request to `main` is ready to be opened because:
 
-- all mandatory Phase 1 issues are closed;
-- #16 integration/isolation tests are green;
-- #22 security review is closed;
-- #27 CI checks are closed/green;
-- #28 dependency compliance is closed;
-- latest branch CI is green;
-- no Phase 2 functionality has been introduced early.
+- [x] all mandatory Phase 1 implementation issues are closed;
+- [x] #16 integration/isolation tests are green;
+- [x] #22 security review is closed;
+- [x] #27 CI checks are closed/green;
+- [x] #28 dependency compliance is closed;
+- [x] latest branch Backend Tests are green;
+- [x] latest branch Repository Tests are green;
+- [x] no Phase 2 functionality has been introduced early.
 
-Opening the pull request does not itself authorize merging it.
+Opening the pull request does not itself authorize merging it. Merge remains a review decision.
