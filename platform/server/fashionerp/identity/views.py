@@ -2,13 +2,15 @@ from django.db import transaction
 from django.utils import timezone
 from drf_spectacular.utils import extend_schema
 from rest_framework import generics, status
-from rest_framework.exceptions import NotFound
+from rest_framework.exceptions import AuthenticationFailed, NotFound
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.throttling import ScopedRateThrottle
 from rest_framework.views import APIView
 
+from fashionerp.audit.models import AuditEvent
 from fashionerp.audit.services import audit_snapshot, record_audit_event
+from fashionerp.organizations.models import Organization
 
 from .models import ApiSession
 from .serializers import (
@@ -29,7 +31,21 @@ class LoginView(APIView):
     @extend_schema(request=LoginSerializer, responses={200: LoginResponseSerializer})
     def post(self, request):
         serializer = LoginSerializer(data=request.data, context={"request": request})
-        serializer.is_valid(raise_exception=True)
+        try:
+            serializer.is_valid(raise_exception=True)
+        except AuthenticationFailed:
+            organization = Organization.objects.first()
+            if organization is not None:
+                record_audit_event(
+                    organization=organization,
+                    action="auth.login",
+                    object_type="identity.login",
+                    object_label=str(request.data.get("login", ""))[:255],
+                    result=AuditEvent.Result.FAILURE,
+                    request=request,
+                    metadata={"reason": "invalid_credentials"},
+                )
+            raise
 
         user = serializer.validated_data["user"]
         with transaction.atomic():
