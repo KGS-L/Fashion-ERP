@@ -10,6 +10,7 @@ from rest_framework import status
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.test import APITestCase
 
+from fashionerp.authorization.services import grant_organization_admin
 from fashionerp.identity.authentication import resolve_api_session
 from fashionerp.identity.models import ApiSession
 from fashionerp.identity.services import create_api_session, digest_token
@@ -44,6 +45,7 @@ class OrganizationApiTests(APITestCase):
             password="Strong-Test-Password-42!",
             organization=self.organization,
         )
+        grant_organization_admin(user=self.user)
         session, self.token = create_api_session(user=self.user)
         self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {self.token}")
 
@@ -131,6 +133,7 @@ class CompanyEstablishmentHierarchyTests(APITestCase):
             password="Strong-Test-Password-42!",
             organization=self.organization,
         )
+        grant_organization_admin(user=self.user)
         _, token = create_api_session(user=self.user)
         self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {token}")
 
