@@ -1,9 +1,12 @@
 from django.contrib.auth import get_user_model
+from django.db import transaction
 from drf_spectacular.utils import extend_schema
 from rest_framework import generics, status
 from rest_framework.exceptions import NotFound, PermissionDenied
 from rest_framework.response import Response
 from rest_framework.views import APIView
+
+from fashionerp.audit.services import audit_snapshot, record_audit_event
 
 from .models import AccessGrant, AccessGroup, Permission, Role
 from .permissions import CanManageAccess
@@ -14,6 +17,19 @@ from .serializers import (
     PermissionSerializer,
     RoleSerializer,
 )
+
+
+def _audit_mutation(*, request, action, instance, before=None, metadata=None):
+    record_audit_event(
+        organization=request.user.organization,
+        actor=request.user,
+        action=action,
+        object_instance=instance,
+        before=before,
+        after=audit_snapshot(instance),
+        request=request,
+        metadata=metadata,
+    )
 
 
 class PermissionListView(generics.ListAPIView):
@@ -32,6 +48,15 @@ class RoleListCreateView(generics.ListCreateAPIView):
             organization_id=self.request.user.organization_id
         ).prefetch_related("permissions")
 
+    def perform_create(self, serializer):
+        with transaction.atomic():
+            role = serializer.save()
+            _audit_mutation(
+                request=self.request,
+                action="access.role.create",
+                instance=role,
+            )
+
 
 class RoleDetailView(generics.RetrieveUpdateAPIView):
     serializer_class = RoleSerializer
@@ -43,6 +68,17 @@ class RoleDetailView(generics.RetrieveUpdateAPIView):
             organization_id=self.request.user.organization_id
         ).prefetch_related("permissions")
 
+    def perform_update(self, serializer):
+        with transaction.atomic():
+            before = audit_snapshot(serializer.instance)
+            role = serializer.save()
+            _audit_mutation(
+                request=self.request,
+                action="access.role.update",
+                instance=role,
+                before=before,
+            )
+
 
 class GroupListCreateView(generics.ListCreateAPIView):
     serializer_class = AccessGroupSerializer
@@ -52,6 +88,15 @@ class GroupListCreateView(generics.ListCreateAPIView):
         return AccessGroup.objects.filter(
             organization_id=self.request.user.organization_id
         ).prefetch_related("members")
+
+    def perform_create(self, serializer):
+        with transaction.atomic():
+            group = serializer.save()
+            _audit_mutation(
+                request=self.request,
+                action="access.group.create",
+                instance=group,
+            )
 
 
 class GroupDetailView(generics.RetrieveUpdateAPIView):
@@ -63,6 +108,17 @@ class GroupDetailView(generics.RetrieveUpdateAPIView):
         return AccessGroup.objects.filter(
             organization_id=self.request.user.organization_id
         ).prefetch_related("members")
+
+    def perform_update(self, serializer):
+        with transaction.atomic():
+            before = audit_snapshot(serializer.instance)
+            group = serializer.save()
+            _audit_mutation(
+                request=self.request,
+                action="access.group.update",
+                instance=group,
+                before=before,
+            )
 
 
 class GrantListCreateView(generics.ListCreateAPIView):
@@ -79,6 +135,15 @@ class GrantListCreateView(generics.ListCreateAPIView):
             "company",
             "establishment",
         )
+
+    def perform_create(self, serializer):
+        with transaction.atomic():
+            grant = serializer.save()
+            _audit_mutation(
+                request=self.request,
+                action="access.grant.create",
+                instance=grant,
+            )
 
 
 class GrantRevokeView(APIView):
@@ -108,7 +173,15 @@ class GrantRevokeView(APIView):
                     "The last organization administrator grant cannot be revoked."
                 )
 
-        grant.revoke()
+        with transaction.atomic():
+            before = audit_snapshot(grant)
+            grant.revoke()
+            _audit_mutation(
+                request=request,
+                action="access.grant.revoke",
+                instance=grant,
+                before=before,
+            )
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
@@ -121,6 +194,15 @@ class AccessUserListView(generics.ListCreateAPIView):
             organization_id=self.request.user.organization_id
         ).order_by("username")
 
+    def perform_create(self, serializer):
+        with transaction.atomic():
+            user = serializer.save()
+            _audit_mutation(
+                request=self.request,
+                action="access.user.create",
+                instance=user,
+            )
+
 
 class AccessUserDetailView(generics.RetrieveUpdateAPIView):
     serializer_class = AccessUserSerializer
@@ -131,3 +213,26 @@ class AccessUserDetailView(generics.RetrieveUpdateAPIView):
         return get_user_model().objects.filter(
             organization_id=self.request.user.organization_id
         )
+
+    def perform_update(self, serializer):
+        with transaction.atomic():
+            before = audit_snapshot(serializer.instance)
+            active_sessions_before = serializer.instance.api_sessions.filter(
+                revoked_at__isnull=True
+            ).count()
+            user = serializer.save()
+            active_sessions_after = user.api_sessions.filter(
+                revoked_at__isnull=True
+            ).count()
+            _audit_mutation(
+                request=self.request,
+                action="access.user.update",
+                instance=user,
+                before=before,
+                metadata={
+                    "sessions_revoked": max(
+                        active_sessions_before - active_sessions_after,
+                        0,
+                    )
+                },
+            )
