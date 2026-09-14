@@ -35,6 +35,8 @@ class ApiSession(models.Model):
     device_id = models.CharField(max_length=128, blank=True)
     device_label = models.CharField(max_length=128, blank=True)
     user_agent = models.CharField(max_length=512, blank=True)
+    ip_address = models.GenericIPAddressField(null=True, blank=True)
+    two_factor_verified = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     last_seen_at = models.DateTimeField(default=timezone.now)
     expires_at = models.DateTimeField()
@@ -58,3 +60,44 @@ class ApiSession(models.Model):
             self.revoked_at = timezone.now()
             self.revocation_reason = reason
             self.save(update_fields=["revoked_at", "revocation_reason"])
+
+
+class TotpCredential(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="totp_credential",
+    )
+    encrypted_secret = models.TextField(editable=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    confirmed_at = models.DateTimeField(null=True, blank=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ("user_id",)
+
+    @property
+    def is_confirmed(self) -> bool:
+        return self.confirmed_at is not None
+
+
+class RecoveryCode(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="recovery_codes",
+    )
+    code_digest = models.CharField(max_length=64, editable=False)
+    created_at = models.DateTimeField(auto_now_add=True)
+    used_at = models.DateTimeField(null=True, blank=True)
+
+    class Meta:
+        ordering = ("created_at",)
+        constraints = [
+            models.UniqueConstraint(
+                fields=("user", "code_digest"),
+                name="identity_unique_recovery_code_digest_per_user",
+            )
+        ]
