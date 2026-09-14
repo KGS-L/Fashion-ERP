@@ -65,7 +65,7 @@ Validated project implementation decisions:
 6. #15 — completed: base internationalization
 7. #18 — completed: 2FA and device/session management
 8. #19 — completed: Foundation REST/OpenAPI conventions and contract guards
-9. #20 — versioned Foundation migrations
+9. #20 — completed: versioned Foundation migrations and recovery procedure
 10. #21 — PostgreSQL/test storage support
 11. #17 — reproducible Foundation reference data
 12. #16 — integration, authorization and isolation tests
