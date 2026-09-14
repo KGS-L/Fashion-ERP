@@ -17,7 +17,8 @@ Phase issues:
 - #3 — first pilot and acceptance criteria;
 - #4 — architecture decision records;
 - #5 — Phase 1 backlog preparation;
-- #7 — first country localization and initial support model.
+- #7 — first country localization and initial support model;
+- #8 — managed cloud provider and cost strategy.
 
 ## Objectives
 
