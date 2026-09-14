@@ -1,4 +1,5 @@
 from django.contrib.auth import get_user_model
+from django.core.cache import cache
 from django.db import DatabaseError, transaction
 from rest_framework import status
 from rest_framework.test import APITestCase
@@ -253,6 +254,7 @@ class AuditJournalTests(APITestCase):
 
 class AuthenticationAuditTests(APITestCase):
     def setUp(self):
+        cache.clear()
         self.organization = Organization.objects.create(
             name="Tenant A",
             slug="tenant-a",
