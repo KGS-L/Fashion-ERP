@@ -6,6 +6,7 @@ on:
       - 'platform/server/**'
       - 'docs/api/**'
       - 'docs/adr/**'
+      - 'docs/migrations/**'
       - '.github/workflows/backend-tests.yml'
   push:
     branches:
@@ -15,6 +16,7 @@ on:
       - 'platform/server/**'
       - 'docs/api/**'
       - 'docs/adr/**'
+      - 'docs/migrations/**'
       - '.github/workflows/backend-tests.yml'
   workflow_dispatch:
 
@@ -79,6 +81,11 @@ jobs:
       - name: Check migrations
         run: python manage.py makemigrations --check --dry-run
 
+      - name: Inspect Foundation migration plan
+        run: |
+          python manage.py showmigrations identity organizations authorization audit internationalization --plan
+          python manage.py migrate --plan
+
       - name: Create second isolated tenant database
         env:
           PGPASSWORD: fashionerp_ci
@@ -91,6 +98,11 @@ jobs:
 
       - name: Apply migrations on isolated tenant PostgreSQL
         run: python manage.py migrate --database=tenant_b --noinput
+
+      - name: Verify no unapplied migrations remain
+        run: |
+          python manage.py migrate --check
+          python manage.py migrate --database=tenant_b --check
 
       - name: Validate OpenAPI schema
         run: python manage.py spectacular --file /tmp/fashionerp-openapi.yaml --validate --fail-on-warn
