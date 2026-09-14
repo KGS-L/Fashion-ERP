@@ -214,6 +214,7 @@ class CurrencyDetailView(generics.RetrieveUpdateAPIView):
 
 
 class ExchangeRateListCreateView(generics.ListCreateAPIView):
+    queryset = ExchangeRate.objects.none()
     serializer_class = ExchangeRateSerializer
     permission_classes = [CanAccessInternationalSettings]
     filter_backends = [DjangoFilterBackend, OrderingFilter]
@@ -244,6 +245,7 @@ class ExchangeRateListCreateView(generics.ListCreateAPIView):
 
 
 class ExchangeRateDetailView(generics.RetrieveUpdateAPIView):
+    queryset = ExchangeRate.objects.none()
     serializer_class = ExchangeRateSerializer
     permission_classes = [CanAccessInternationalSettings]
     lookup_url_kwarg = "rate_id"
@@ -269,6 +271,7 @@ class ExchangeRateDetailView(generics.RetrieveUpdateAPIView):
 
 
 class UnitOfMeasureListCreateView(generics.ListCreateAPIView):
+    queryset = UnitOfMeasure.objects.none()
     serializer_class = UnitOfMeasureSerializer
     permission_classes = [CanAccessInternationalSettings]
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
@@ -296,6 +299,7 @@ class UnitOfMeasureListCreateView(generics.ListCreateAPIView):
 
 
 class UnitOfMeasureDetailView(generics.RetrieveUpdateAPIView):
+    queryset = UnitOfMeasure.objects.none()
     serializer_class = UnitOfMeasureSerializer
     permission_classes = [CanAccessInternationalSettings]
     lookup_url_kwarg = "unit_id"
