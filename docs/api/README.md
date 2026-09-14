@@ -116,3 +116,24 @@ Endpoint descriptions should state:
 - action semantics for domain transitions.
 
 The generated OpenAPI description is not a substitute for domain rules in the specification or module documentation.
+
+
+## Foundation internationalization
+
+Internationalization resources live under `/api/v1/i18n/`.
+
+The Foundation exposes:
+
+- supported languages (`fr`, `en`, `es`, `pt`, `ar`);
+- stable-key translation catalogs with plural forms and RTL/LTR direction;
+- locale format metadata;
+- effective user/company/establishment internationalization context;
+- configurable currencies;
+- Organization-scoped dated exchange rates;
+- Organization-scoped units of measure.
+
+Catalog/context reads are available to authenticated users. Reference-data reads/writes are protected by `foundation.i18n.view` and `foundation.i18n.manage`.
+
+Company carries its language default and optional functional currency. Establishment carries a validated IANA timezone. User carries its interface language preference.
+
+No country fiscal/accounting rule is exposed by the common i18n API.
