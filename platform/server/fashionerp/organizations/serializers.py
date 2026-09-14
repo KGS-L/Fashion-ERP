@@ -1,5 +1,7 @@
 from rest_framework import serializers
 
+from fashionerp.internationalization.models import Currency
+
 from .models import Company, Establishment, Organization
 
 
@@ -20,6 +22,12 @@ class OrganizationSerializer(serializers.ModelSerializer):
 
 class CompanySerializer(serializers.ModelSerializer):
     organization_id = serializers.UUIDField(read_only=True)
+    functional_currency_id = serializers.PrimaryKeyRelatedField(
+        source="functional_currency",
+        queryset=Currency.objects.filter(is_active=True),
+        allow_null=True,
+        required=False,
+    )
 
     class Meta:
         model = Company
