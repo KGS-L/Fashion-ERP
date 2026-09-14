@@ -233,6 +233,7 @@ class AccessUserDetailView(generics.RetrieveUpdateAPIView):
                     "sessions_revoked": max(
                         active_sessions_before - active_sessions_after,
                         0,
-                    )
+                    ),
+                    "password_changed": "password" in serializer.validated_data,
                 },
             )
