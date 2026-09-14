@@ -24,6 +24,7 @@ INSTALLED_APPS = [
     "django_filters",
     "drf_spectacular",
     "fashionerp.identity.apps.IdentityConfig",
+    "fashionerp.organizations.apps.OrganizationsConfig",
 ]
 
 MIDDLEWARE = [
@@ -68,6 +69,18 @@ DATABASES = {
         "CONN_MAX_AGE": int(os.getenv("POSTGRES_CONN_MAX_AGE", "60")),
     }
 }
+
+tenant_b_database = os.getenv("POSTGRES_TENANT_B_DB")
+if tenant_b_database:
+    DATABASES["tenant_b"] = {
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": tenant_b_database,
+        "USER": os.getenv("POSTGRES_USER", "fashionerp"),
+        "PASSWORD": os.getenv("POSTGRES_PASSWORD", ""),
+        "HOST": os.getenv("POSTGRES_HOST", "127.0.0.1"),
+        "PORT": os.getenv("POSTGRES_PORT", "5432"),
+        "CONN_MAX_AGE": 0,
+    }
 
 AUTH_USER_MODEL = "identity.User"
 
