@@ -1,0 +1,87 @@
+name: Backend Tests
+
+on:
+  pull_request:
+    paths:
+      - 'platform/server/**'
+      - 'docs/api/**'
+      - 'docs/adr/**'
+      - '.github/workflows/backend-tests.yml'
+  push:
+    branches:
+      - main
+      - 'phase/**'
+    paths:
+      - 'platform/server/**'
+      - 'docs/api/**'
+      - 'docs/adr/**'
+      - '.github/workflows/backend-tests.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  django:
+    name: Django / Python 3.14
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        # CI compatibility fixture only. The production PostgreSQL version
+        # remains governed by the dedicated PostgreSQL/storage work.
+        image: postgres:17-alpine
+        env:
+          POSTGRES_DB: fashionerp_test
+          POSTGRES_USER: fashionerp
+          POSTGRES_PASSWORD: fashionerp_ci
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U fashionerp -d fashionerp_test"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    defaults:
+      run:
+        working-directory: platform/server
+
+    env:
+      DJANGO_SECRET_KEY: ci-only-secret-key-not-for-production
+      DJANGO_DEBUG: 'false'
+      POSTGRES_DB: fashionerp_test
+      POSTGRES_USER: fashionerp
+      POSTGRES_PASSWORD: fashionerp_ci
+      POSTGRES_HOST: 127.0.0.1
+      POSTGRES_PORT: '5432'
+      PIP_DISABLE_PIP_VERSION_CHECK: '1'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.14'
+          cache: pip
+          cache-dependency-path: platform/server/pyproject.toml
+
+      - name: Install backend
+        run: python -m pip install --upgrade pip && python -m pip install .
+
+      - name: Django system checks
+        run: python manage.py check
+
+      - name: Check migrations
+        run: python manage.py makemigrations --check --dry-run
+
+      - name: Apply migrations on PostgreSQL
+        run: python manage.py migrate --noinput
+
+      - name: Validate OpenAPI schema
+        run: python manage.py spectacular --file /tmp/fashionerp-openapi.yaml --validate
+
+      - name: Run Django tests
+        run: python manage.py test
