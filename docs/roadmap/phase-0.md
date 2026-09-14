@@ -2,6 +2,23 @@
 
 Phase 0 establishes the decisions and acceptance baseline required before implementation of the FashionERP foundation begins.
 
+## Branch
+
+`phase/0-framing`
+
+## Tracking
+
+Global tracker: #6
+
+Phase issues:
+
+- #1 — product, editions and license decisions;
+- #2 — architecture and deployment baseline;
+- #3 — first pilot and acceptance criteria;
+- #4 — architecture decision records;
+- #5 — Phase 1 backlog preparation;
+- #7 — first country localization and initial support model.
+
 ## Objectives
 
 - confirm the product scope and edition boundaries;
