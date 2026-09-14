@@ -1,6 +1,6 @@
 # ADR 0014 — One customer organization per ERP Data Plane database
 
-Status: `proposed`
+Status: `accepted`
 
 Decision owner: Phase 1 / issue #11.
 
@@ -18,7 +18,7 @@ Issue #11 must implement `Organization` without weakening ADR 0001 or ADR 0002 b
 
 The current Django scaffold is a single ERP server runtime backed by one PostgreSQL connection. Introducing transparent request-time routing across many customer databases would be a new infrastructure mechanism not required by the specification for the Foundation domain model itself.
 
-## Proposed decision
+## Decision
 
 ### Data Plane boundary
 
@@ -135,4 +135,4 @@ This ADR does not decide:
 
 ## Validation
 
-This ADR remains `proposed` until explicitly validated by the FashionERP project owner.
+Explicitly validated by the FashionERP project owner in issue #11 on 2026-09-14.
