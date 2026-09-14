@@ -8,13 +8,22 @@ The Phase 1 backlog is derived from the FashionERP specification and must not in
 
 GitHub issue #9.
 
+## Source rule
+
+Before introducing or changing a technical choice, consult the FashionERP specification and the relevant uploaded/source files first.
+
+- If a choice is explicitly defined in the sources, preserve it.
+- If the sources do not define it, do not infer a replacement technology; keep the decision open and request explicit validation only when it becomes blocking.
+- Recommendations must be identified as recommendations, not as decisions from the specification.
+
 ## Implementation order
 
-### Gate 0 — implementation technology decision
+### Gate 0 — source verification before implementation
 
-- #25 — define the server framework before server-side implementation begins.
+- #25 — verify the already-established server/backend direction against the project sources before any server-side implementation begins.
+- #30 — define the OpenAPI integration/validation strategy without changing the accepted REST/OpenAPI requirement.
 
-This is intentionally separate because the specification does not name the main server framework.
+The specification explicitly defines PostgreSQL, REST `/api/v1`, OpenAPI, Control Plane/Data Plane, S3/MinIO and Tauri + Owl/TypeScript for desktop. It does not by itself justify replacing or introducing a server framework.
 
 ### Foundation sequence
 
