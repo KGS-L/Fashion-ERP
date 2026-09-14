@@ -12,4 +12,6 @@ The functional and technical specification currently defines the following phase
 - Phase 5 — Enterprise Plus
 - Phase 6 — Deployment
 
-Detailed milestones and acceptance criteria will be refined here as implementation progresses.
+Development work follows the phase branch strategy documented in `BRANCHING.md`.
+
+Each phase is refined into GitHub issues, acceptance criteria and implementation tasks before substantive development begins.
