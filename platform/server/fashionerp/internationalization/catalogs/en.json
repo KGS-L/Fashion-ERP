@@ -1,0 +1,20 @@
+{
+  "foundation.app.name": "FashionERP",
+  "foundation.navigation.organizations": "Organizations",
+  "foundation.navigation.companies": "Companies",
+  "foundation.navigation.establishments": "Establishments",
+  "foundation.navigation.access": "Access",
+  "foundation.navigation.audit": "Audit log",
+  "foundation.common.create": "Create",
+  "foundation.common.update": "Update",
+  "foundation.common.save": "Save",
+  "foundation.common.cancel": "Cancel",
+  "foundation.company.count": {
+    "one": "{count} company",
+    "other": "{count} companies"
+  },
+  "foundation.establishment.count": {
+    "one": "{count} establishment",
+    "other": "{count} establishments"
+  }
+}
