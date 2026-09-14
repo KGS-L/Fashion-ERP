@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=80"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "fashionerp-server"
+version = "0.1.0"
+description = "FashionERP Django server"
+requires-python = ">=3.14,<3.15"
+license = "LGPL-3.0-only"
+dependencies = [
+    "Django==5.2.17",
+    "djangorestframework==3.17.2",
+    "drf-spectacular==0.30.0",
+    "django-filter==26.1",
+    "psycopg[binary]==3.3.4",
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["fashionerp*"]
