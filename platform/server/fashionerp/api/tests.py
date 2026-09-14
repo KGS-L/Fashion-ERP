@@ -1,4 +1,5 @@
 from django.test import SimpleTestCase
+from django.urls import Resolver404, resolve
 from drf_spectacular.generators import SchemaGenerator
 from rest_framework import status
 from rest_framework.test import APIClient
@@ -103,6 +104,17 @@ class FoundationOpenApiContractTests(SimpleTestCase):
             [],
             msg=f"Enterprise Plus routes exposed during Foundation: {exposed}",
         )
+
+    def test_phase_2_and_enterprise_plus_paths_are_not_routed(self):
+        forbidden_paths = [
+            *PHASE_2_PREFIXES,
+            "/api/v1/api-keys/",
+            "/api/v1/webhooks/",
+        ]
+        for path in forbidden_paths:
+            with self.subTest(path=path):
+                with self.assertRaises(Resolver404):
+                    resolve(path)
 
     def test_openapi_declares_opaque_bearer_authentication(self):
         security_schemes = self.schema["components"]["securitySchemes"]
