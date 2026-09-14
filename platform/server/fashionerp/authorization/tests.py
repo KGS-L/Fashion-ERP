@@ -205,6 +205,70 @@ class ScopedRbacTests(APITestCase):
         allowed = self.client.get("/api/v1/access/roles/")
         self.assertEqual(allowed.status_code, status.HTTP_200_OK)
 
+    def test_access_admin_can_create_user_role_and_revoke_grant(self):
+        grant_organization_admin(user=self.user)
+
+        created_user = self.client.post(
+            "/api/v1/access/users/",
+            {
+                "login": "new.user",
+                "password": "Another-Strong-Password-42!",
+                "email": "new.user@example.test",
+            },
+            format="json",
+        )
+        self.assertEqual(created_user.status_code, status.HTTP_201_CREATED)
+
+        created_role = self.client.post(
+            "/api/v1/access/roles/",
+            {
+                "code": "sales-reader",
+                "name": "Sales reader",
+                "permission_codes": ["foundation.company.view"],
+            },
+            format="json",
+        )
+        self.assertEqual(created_role.status_code, status.HTTP_201_CREATED)
+
+        created_grant = self.client.post(
+            "/api/v1/access/grants/",
+            {
+                "role_id": created_role.data["id"],
+                "user_id": created_user.data["id"],
+                "company_id": str(self.company_a.id),
+            },
+            format="json",
+        )
+        self.assertEqual(created_grant.status_code, status.HTTP_201_CREATED)
+
+        revoked = self.client.post(
+            f"/api/v1/access/grants/{created_grant.data['id']}/revoke/"
+        )
+        self.assertEqual(revoked.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertIsNotNone(
+            AccessGrant.objects.get(pk=created_grant.data["id"]).revoked_at
+        )
+
+    def test_deactivating_user_revokes_existing_sessions(self):
+        grant_organization_admin(user=self.user)
+        managed_user = get_user_model().objects.create_user(
+            username="managed.user",
+            password="Managed-Strong-Password-42!",
+            organization=self.organization,
+        )
+        session, _ = create_api_session(user=managed_user)
+
+        response = self.client.patch(
+            f"/api/v1/access/users/{managed_user.id}/",
+            {"is_active": False},
+            format="json",
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        session.refresh_from_db()
+        self.assertIsNotNone(session.revoked_at)
+        self.assertEqual(session.revocation_reason, "user_deactivated")
+
     def test_bootstrap_admin_full_access_covers_foundation_permissions(self):
         grant_organization_admin(user=self.user)
 
