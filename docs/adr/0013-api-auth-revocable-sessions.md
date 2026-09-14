@@ -1,6 +1,6 @@
 # ADR 0013 — API authentication and revocable server-side sessions
 
-Status: `proposed`
+Status: `accepted`
 
 Decision owner: Phase 1 / issue #10.
 
@@ -20,7 +20,7 @@ Issue #10 implements the base authentication and session lifecycle. Full 2FA and
 
 The authentication mechanism must therefore provide immediate revocation and a stable foundation for device/session management without prematurely implementing SSO or Enterprise Plus API keys.
 
-## Proposed decision
+## Decision
 
 ### Identity foundation
 
@@ -138,4 +138,4 @@ Useful for same-origin browser applications, but insufficient as the sole contra
 
 ## Validation
 
-This ADR remains `proposed` until explicitly validated by the FashionERP project owner.
+Explicitly validated by the FashionERP project owner in issue #10 on 2026-09-14.
