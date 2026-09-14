@@ -69,6 +69,24 @@ class ExchangeRateSerializer(serializers.ModelSerializer):
                     )
                 }
             )
+
+        valid_on = attrs.get(
+            "valid_on",
+            getattr(self.instance, "valid_on", None),
+        )
+        if base_currency and quote_currency and valid_on:
+            duplicate = ExchangeRate.objects.filter(
+                organization=self.context["request"].user.organization,
+                base_currency=base_currency,
+                quote_currency=quote_currency,
+                valid_on=valid_on,
+            )
+            if self.instance is not None:
+                duplicate = duplicate.exclude(pk=self.instance.pk)
+            if duplicate.exists():
+                raise serializers.ValidationError(
+                    "An exchange rate already exists for this currency pair and date."
+                )
         return attrs
 
     def create(self, validated_data):
@@ -80,6 +98,20 @@ class ExchangeRateSerializer(serializers.ModelSerializer):
 
 class UnitOfMeasureSerializer(serializers.ModelSerializer):
     organization_id = serializers.UUIDField(read_only=True)
+
+    def validate_code(self, value):
+        organization = self.context["request"].user.organization
+        duplicate = UnitOfMeasure.objects.filter(
+            organization=organization,
+            code=value,
+        )
+        if self.instance is not None:
+            duplicate = duplicate.exclude(pk=self.instance.pk)
+        if duplicate.exists():
+            raise serializers.ValidationError(
+                "Unit code already exists in this organization."
+            )
+        return value
 
     class Meta:
         model = UnitOfMeasure
