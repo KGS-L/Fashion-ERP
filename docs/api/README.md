@@ -83,6 +83,10 @@ Field validation information belongs in `details`.
 
 Every endpoint must enforce server-side permission and data scope. Depending on the resource this may include organization, company, establishment or warehouse scope.
 
+Foundation Data Plane authorization uses scoped RBAC (ADR 0015). Authentication alone never grants Company/Establishment business access. Effective permissions are resolved server-side from direct/group role grants on each request, so revocation is not delayed by bearer-token claims.
+
+Access administration lives under `/api/v1/access/` and requires Organization-scope `foundation.access.manage`.
+
 Tests must include negative cases proving that unauthorized data is not returned through list, retrieve, update, delete or action endpoints.
 
 ## OpenAPI contract
