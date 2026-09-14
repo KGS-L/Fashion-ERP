@@ -37,6 +37,7 @@ class UserSerializer(serializers.ModelSerializer):
             "first_name",
             "last_name",
             "email",
+            "language_code",
             "is_active",
         )
         read_only_fields = fields
