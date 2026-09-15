@@ -378,14 +378,8 @@ class BOMActionSerializer(serializers.Serializer):
 
 
 class ManufacturingOrderActionSerializer(serializers.Serializer):
-    action = serializers.ChoiceField(choices=("ready", "start", "done", "cancel"))
+    action = serializers.ChoiceField(choices=("ready", "start", "cancel"))
     reason = serializers.CharField(max_length=255, required=False, allow_blank=True)
-    produced_quantity = serializers.DecimalField(
-        max_digits=18,
-        decimal_places=4,
-        required=False,
-        min_value=Decimal("0"),
-    )
 
 
 class MaterialAllocationSerializer(serializers.Serializer):
