@@ -6,13 +6,13 @@ Decision owner: Phase 1 / issue #25.
 
 ## Context
 
-The FashionERP specification defines the architectural constraints for the server side: PostgreSQL, a REST API versioned under `/api/v1`, OpenAPI, Control Plane / Data Plane separation, S3/MinIO-compatible object storage, strict tenant isolation, versioned migrations, audit, 2FA, RBAC and multiple deployment modes.
+The Ivadoo specification defines the architectural constraints for the server side: PostgreSQL, a REST API versioned under `/api/v1`, OpenAPI, Control Plane / Data Plane separation, S3/MinIO-compatible object storage, strict tenant isolation, versioned migrations, audit, 2FA, RBAC and multiple deployment modes.
 
-The current FashionERP v1.0 specification does not explicitly name the server framework. The project owner has now explicitly confirmed **Django** as the FashionERP backend framework. This is therefore a validated project decision, not a claim attributed to the PDF.
+The current Ivadoo v1.0 specification does not explicitly name the server framework. The project owner has now explicitly confirmed **Django** as the Ivadoo backend framework. This is therefore a validated project decision, not a claim attributed to the PDF.
 
 ## Decision
 
-FashionERP uses **Django** as its primary backend/server framework.
+Ivadoo uses **Django** as its primary backend/server framework.
 
 The following remain unchanged and authoritative from the specification:
 
@@ -47,11 +47,11 @@ These choices must follow the project source-first rule and be validated only wh
 ## Consequences
 
 - Phase 1 server-side implementation must be Django-based.
-- API implementation must conform to the FashionERP REST/OpenAPI contract rather than redefine it.
+- API implementation must conform to the Ivadoo REST/OpenAPI contract rather than redefine it.
 - PostgreSQL remains authoritative; framework convenience must not compromise portability or tenant isolation.
 - Authorization must be enforced server-side and covered by negative isolation tests.
-- No PHP/Laravel runtime or dependency is part of the FashionERP backend baseline.
+- No PHP/Laravel runtime or dependency is part of the Ivadoo backend baseline.
 
 ## Source-first rule
 
-Before introducing or changing a foundational technology, consult the FashionERP specification and relevant project sources first. A technology used in another project, profile or previous conversation must not be imported into FashionERP unless explicitly part of this project or validated by the project owner.
+Before introducing or changing a foundational technology, consult the Ivadoo specification and relevant project sources first. A technology used in another project, profile or previous conversation must not be imported into Ivadoo unless explicitly part of this project or validated by the project owner.

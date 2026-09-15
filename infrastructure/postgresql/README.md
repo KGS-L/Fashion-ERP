@@ -1,6 +1,6 @@
 # PostgreSQL
 
-FashionERP uses PostgreSQL for relational data storage.
+Ivadoo uses PostgreSQL for relational data storage.
 
 According to the specification, business databases are isolated per customer environment, while platform-level data remains separated from customer business data.
 

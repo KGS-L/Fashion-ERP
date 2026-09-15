@@ -1,6 +1,6 @@
 # Architecture
 
-Architecture documentation for FashionERP.
+Architecture documentation for Ivadoo.
 
 This section describes the platform structure, including:
 

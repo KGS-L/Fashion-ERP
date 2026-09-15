@@ -2,7 +2,7 @@
 
 Status: `active`.
 
-The Phase 1 backlog is derived from the FashionERP specification and must not introduce Phase 2 business modules.
+The Phase 1 backlog is derived from the Ivadoo specification and must not introduce Phase 2 business modules.
 
 ## Tracker
 
@@ -10,16 +10,16 @@ GitHub issue #9.
 
 ## Source rule
 
-Before introducing or changing a technical choice, consult the FashionERP specification and the relevant uploaded/source files first.
+Before introducing or changing a technical choice, consult the Ivadoo specification and the relevant uploaded/source files first.
 
 - If a choice is explicitly defined in the sources, preserve it.
 - If the sources do not define it, do not infer a replacement technology from another project, a CV, or developer familiarity.
-- A choice explicitly confirmed by the FashionERP project owner becomes a project decision and must be documented as such.
+- A choice explicitly confirmed by the Ivadoo project owner becomes a project decision and must be documented as such.
 - Genuinely new choices remain open until they become blocking and are explicitly validated.
 
 ## Validated implementation baseline
 
-The FashionERP specification explicitly defines:
+The Ivadoo specification explicitly defines:
 
 - PostgreSQL;
 - REST `/api/v1`;
@@ -47,7 +47,7 @@ Validated project implementation decisions:
 
 ### Gate 0 — backend decision completed
 
-- #25 — completed: Django explicitly validated as the FashionERP backend framework.
+- #25 — completed: Django explicitly validated as the Ivadoo backend framework.
 
 ### Gate 1 — REST/OpenAPI and runtime
 

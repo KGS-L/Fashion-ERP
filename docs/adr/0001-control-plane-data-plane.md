@@ -3,7 +3,7 @@
 Status: `accepted`
 
 ## Context
-FashionERP must manage platform concerns without centralizing customer business data by default.
+Ivadoo must manage platform concerns without centralizing customer business data by default.
 
 ## Decision
 Separate the platform into a Control Plane and customer ERP Data Plane environments. The Control Plane manages organizations, licenses, subscriptions, modules, installations, versions and support. Customer operational data remains in the Data Plane.

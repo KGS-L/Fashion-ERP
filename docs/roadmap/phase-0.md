@@ -1,6 +1,6 @@
 # Phase 0 — Framing
 
-Phase 0 establishes the decisions and acceptance baseline required before implementation of the FashionERP foundation begins.
+Phase 0 establishes the decisions and acceptance baseline required before implementation of the Ivadoo foundation begins.
 
 ## Branch
 
@@ -30,7 +30,7 @@ Phase issues:
 
 ## Decisions closed
 
-- FashionERP is the definitive product name;
+- Ivadoo is the definitive product name;
 - Community core license: LGPL-3.0-only;
 - commercial licensing remains separate for Business, Enterprise Plus and premium components;
 - edition usage limits are documented;

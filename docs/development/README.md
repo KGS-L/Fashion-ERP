@@ -1,6 +1,6 @@
 # Development guides
 
-Developer-facing documentation for FashionERP belongs here.
+Developer-facing documentation for Ivadoo belongs here.
 
 This section will contain validated setup instructions, coding conventions, testing guidance, module development rules, migration procedures and contribution workflows as implementation progresses.
 

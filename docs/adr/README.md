@@ -1,6 +1,6 @@
 # Architecture Decision Records
 
-Architecture Decision Records (ADRs) document important technical and product-architecture decisions made during Ivadoo development. Historical ADRs may still use the legacy FashionERP working name where they record decisions made before the final product-brand decision.
+Architecture Decision Records (ADRs) document important technical and product-architecture decisions made during Ivadoo development.
 
 Each ADR records context, decision, consequences, status and relevant alternatives or deferred choices.
 
@@ -29,7 +29,7 @@ Each ADR records context, decision, consequences, status and relevant alternativ
 - `0021-metadata-api-from-authoritative-model-registry.md` — runtime metadata derived from code manifests, Django fields, organization custom fields and RBAC;
 - `0022-customization-security-boundary.md` — deny-by-default customization with protected native invariants and layered field permissions;
 - `0023-generic-tabular-data-import-export.md` — CSV/XLSX import/export through explicitly registered, scoped domain adapters;
-- `0024-ivadoo-product-brand-and-technical-namespace.md` — Ivadoo as the definitive public product brand while compatibility-sensitive `fashionerp`/`FASHIONERP_*` technical identifiers remain stable.
+- `0024-ivadoo-product-brand-and-technical-namespace.md` — Ivadoo as the definitive product identity, including the `ivadoo` Python namespace and `IVADOO_*` configuration namespace.
 
 Decisions that remain open in the functional and technical specification must not be presented as finalized ADRs until explicitly validated.
 

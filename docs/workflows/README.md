@@ -1,6 +1,6 @@
 # Workflows
 
-Business workflow documentation for FashionERP.
+Business workflow documentation for Ivadoo.
 
 The initial specification defines the main end-to-end workflows for:
 

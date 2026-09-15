@@ -1,0 +1,20 @@
+{
+  "foundation.app.name": "Ivadoo",
+  "foundation.navigation.organizations": "Organisations",
+  "foundation.navigation.companies": "Sociétés",
+  "foundation.navigation.establishments": "Établissements",
+  "foundation.navigation.access": "Accès",
+  "foundation.navigation.audit": "Journal d’audit",
+  "foundation.common.create": "Créer",
+  "foundation.common.update": "Modifier",
+  "foundation.common.save": "Enregistrer",
+  "foundation.common.cancel": "Annuler",
+  "foundation.company.count": {
+    "one": "{count} société",
+    "other": "{count} sociétés"
+  },
+  "foundation.establishment.count": {
+    "one": "{count} établissement",
+    "other": "{count} établissements"
+  }
+}

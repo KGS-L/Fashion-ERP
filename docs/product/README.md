@@ -4,4 +4,4 @@ Product-level documentation for Ivadoo.
 
 This area contains the validated functional and technical scope, editions, target users, deployment modes, acceptance criteria, risks and open product decisions.
 
-The original functional and technical specification was written under the legacy working name **FashionERP**. It remains the primary source for requirements until more detailed specifications are validated; accepted ADRs and owner decisions record subsequent decisions such as the Ivadoo product brand.
+The functional and technical specification remains the primary requirements reference until more detailed specifications are validated. Accepted ADRs and explicit project-owner decisions record subsequent product and architecture decisions.

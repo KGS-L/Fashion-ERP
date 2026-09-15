@@ -6,7 +6,7 @@ Decision owner: platform extensibility / issue #140.
 
 ## Context
 
-The FashionERP specification requires that each domain can be installed, activated and updated. It also requires an open-core product with Community, Business and Enterprise Plus capabilities while keeping business data traceable and secure.
+The Ivadoo specification requires that each domain can be installed, activated and updated. It also requires an open-core product with Community, Business and Enterprise Plus capabilities while keeping business data traceable and secure.
 
 Django applications and database migrations are deployment-time code/schema concerns. Allowing a customer administrator to dynamically uninstall Python packages or reverse arbitrary schema migrations at runtime would make upgrades, audit and referential integrity unsafe.
 
@@ -14,7 +14,7 @@ The existing Phase 1/2 modules are already deployed in the server package and mu
 
 ## Decision
 
-FashionERP separates **code availability** from **organization capability activation**.
+Ivadoo separates **code availability** from **organization capability activation**.
 
 ### Code manifest
 
@@ -27,7 +27,7 @@ Every deployable domain registers a static `ModuleManifest` containing:
 - edition metadata;
 - API prefixes owned by the module.
 
-The code manifest is version controlled and changes with a FashionERP release.
+The code manifest is version controlled and changes with a Ivadoo release.
 
 ### Organization installation state
 

@@ -22,7 +22,7 @@ dependencies = [
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["fashionerp*"]
+include = ["ivadoo*"]
 
 [tool.setuptools.package-data]
-"fashionerp.internationalization" = ["catalogs/*.json"]
+"ivadoo.internationalization" = ["catalogs/*.json"]

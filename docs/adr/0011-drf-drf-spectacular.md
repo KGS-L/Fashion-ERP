@@ -6,13 +6,13 @@ Decision owner: Phase 1 / issue #30.
 
 ## Context
 
-FashionERP already requires a versioned REST API under `/api/v1`, OpenAPI documentation, pagination, filtering, sorting, search, server-side permissions and explicit business actions. Django is the accepted backend framework from ADR 0010.
+Ivadoo already requires a versioned REST API under `/api/v1`, OpenAPI documentation, pagination, filtering, sorting, search, server-side permissions and explicit business actions. Django is the accepted backend framework from ADR 0010.
 
 The REST/OpenAPI layer must support the Foundation scope first and remain suitable for later ERP modules without allowing the generated contract to drift away from implemented routes.
 
 ## Decision
 
-FashionERP uses:
+Ivadoo uses:
 
 - **Django REST Framework (DRF)** as the primary REST API layer;
 - **drf-spectacular** as the OpenAPI 3 schema generator and documentation integration;
@@ -118,7 +118,7 @@ The generated schema is an implementation artifact; hand-maintained duplicate en
 Once the Django server scaffold exists, CI must run a schema generation/validation command equivalent to:
 
 ```bash
-python manage.py spectacular --file /tmp/fashionerp-openapi.yaml --validate
+python manage.py spectacular --file /tmp/ivadoo-openapi.yaml --validate
 ```
 
 The command must fail CI on invalid schema generation. A committed snapshot may later be compared in CI when the first Foundation routes exist, but deployment or publication is outside this issue.
@@ -136,7 +136,7 @@ The command must fail CI on invalid schema generation. A committed snapshot may 
 
 ### Django Ninja
 
-Django Ninja provides strong typing and automatic OpenAPI generation, but the FashionERP core is expected to be heavily resource-, permission- and CRUD-oriented. DRF offers the more mature baseline for serializers, ViewSets, permission classes, pagination and filtering in that context.
+Django Ninja provides strong typing and automatic OpenAPI generation, but the Ivadoo core is expected to be heavily resource-, permission- and CRUD-oriented. DRF offers the more mature baseline for serializers, ViewSets, permission classes, pagination and filtering in that context.
 
 ### DRF without drf-spectacular
 

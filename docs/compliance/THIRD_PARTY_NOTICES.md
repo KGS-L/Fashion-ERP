@@ -1,6 +1,6 @@
 # Third-party notices — Phase 1 Foundation
 
-FashionERP Community core is licensed under LGPL-3.0-only unless otherwise stated.
+Ivadoo Community core is licensed under LGPL-3.0-only unless otherwise stated.
 
 The Phase 1 server directly relies on the following third-party projects.
 
@@ -27,7 +27,7 @@ This engineering review does not replace legal advice.
 
 ## Distribution rule
 
-A packaged FashionERP distribution must preserve applicable third-party copyright/license notices shipped by its dependencies.
+A packaged Ivadoo distribution must preserve applicable third-party copyright/license notices shipped by its dependencies.
 
 Before adding or upgrading a direct dependency:
 

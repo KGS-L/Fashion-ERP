@@ -1,6 +1,6 @@
 # Roadmap
 
-Roadmap and acceptance documentation for FashionERP.
+Roadmap and acceptance documentation for Ivadoo.
 
 The functional and technical specification currently defines the following phases:
 

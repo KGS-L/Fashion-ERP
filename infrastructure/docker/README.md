@@ -1,6 +1,6 @@
 # Docker
 
-This directory contains Docker-related deployment assets for FashionERP.
+This directory contains Docker-related deployment assets for Ivadoo.
 
 The specification requires Docker to support official on-premise installation scenarios.
 

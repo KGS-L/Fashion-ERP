@@ -4,7 +4,7 @@ Status: `accepted` during Phase 0.
 
 Decision date: 2026-09-14.
 
-This document records the initial managed-cloud infrastructure choice for FashionERP without changing the portability rules already accepted in the architecture baseline.
+This document records the initial managed-cloud infrastructure choice for Ivadoo without changing the portability rules already accepted in the architecture baseline.
 
 ## Non-negotiable architecture rules
 
@@ -20,7 +20,7 @@ The provider choice must preserve:
 
 ## Accepted initial provider
 
-FashionERP will use **OVHcloud VPS-2 as the initial managed-cloud baseline for the pilot and early small managed-cloud customers**.
+Ivadoo will use **OVHcloud VPS-2 as the initial managed-cloud baseline for the pilot and early small managed-cloud customers**.
 
 This choice was explicitly approved during Phase 0 after comparing the VPS-2 option against the earlier Hetzner proposal and other managed-cloud alternatives.
 
@@ -37,13 +37,13 @@ Official OVHcloud pricing checked on 2026-09-14 lists VPS-2 from **EUR 7.21 excl
 - unlimited traffic;
 - one automated daily backup representing the previous 24 hours.
 
-The built-in one-day backup is useful for short recovery windows but **does not replace FashionERP's application-level backup policy**.
+The built-in one-day backup is useful for short recovery windows but **does not replace Ivadoo's application-level backup policy**.
 
 Reference: https://www.ovhcloud.com/fr/vps/unmetered-vps/
 
 ## Object storage and backup strategy
 
-OVHcloud Object Storage is compatible with the S3 model required by FashionERP.
+OVHcloud Object Storage is compatible with the S3 model required by Ivadoo.
 
 At the time of this decision, OVHcloud One Zone Standard Object Storage is listed at approximately **EUR 0.0070956 per GiB/month**, with external ingress/egress and API requests shown as free in the current French price list.
 
@@ -55,10 +55,10 @@ Planning references:
 
 Reference: https://www.ovhcloud.com/fr/public-cloud/prices/
 
-FashionERP backups must therefore use two complementary layers:
+Ivadoo backups must therefore use two complementary layers:
 
 1. the OVH VPS daily backup for short-term server recovery;
-2. application-level PostgreSQL dumps and required business-file backup artifacts stored separately in object storage with FashionERP retention rules.
+2. application-level PostgreSQL dumps and required business-file backup artifacts stored separately in object storage with Ivadoo retention rules.
 
 The application-level retention policy remains daily/weekly/monthly as defined by the project specification and must be tested through restore exercises.
 
@@ -66,7 +66,7 @@ The application-level retention policy remains daily/weekly/monthly as defined b
 
 For the first managed-cloud pilot:
 
-- 1 x OVHcloud VPS-2 for the customer's isolated FashionERP environment;
+- 1 x OVHcloud VPS-2 for the customer's isolated Ivadoo environment;
 - PostgreSQL self-managed inside the isolated customer environment;
 - application services isolated from other customer organizations;
 - customer-specific S3-compatible object-storage boundary/credentials;
@@ -109,11 +109,11 @@ Remains a valid alternative when a simpler managed-PostgreSQL operating model is
 
 ### OVHcloud Public Cloud / managed PostgreSQL
 
-Remains a natural upgrade path when FashionERP needs stronger managed-service guarantees, high availability, contractual SLA requirements or separation of application and database operations.
+Remains a natural upgrade path when Ivadoo needs stronger managed-service guarantees, high availability, contractual SLA requirements or separation of application and database operations.
 
 ## Operational consequence
 
-Using VPS-2 means FashionERP initially operates PostgreSQL itself. The team therefore owns:
+Using VPS-2 means Ivadoo initially operates PostgreSQL itself. The team therefore owns:
 
 - PostgreSQL patching and upgrades;
 - database monitoring;
@@ -140,8 +140,8 @@ The choice must be reviewed when one of the following becomes true:
 
 ## Decision
 
-**Accepted:** OVHcloud VPS-2 is the initial managed-cloud baseline for FashionERP pilot and early small managed-cloud environments.
+**Accepted:** OVHcloud VPS-2 is the initial managed-cloud baseline for Ivadoo pilot and early small managed-cloud environments.
 
-PostgreSQL and S3-compatible object storage remain the portability boundary. The provider choice must not be encoded into FashionERP business logic.
+PostgreSQL and S3-compatible object storage remain the portability boundary. The provider choice must not be encoded into Ivadoo business logic.
 
 This decision does **not** authorize deployment automation in GitHub Actions. CI remains validation/test-only until the deployment phase is explicitly approved.

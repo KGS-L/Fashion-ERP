@@ -2,11 +2,11 @@
 
 Status: `accepted` — Phase 0.
 
-The FashionERP specification requires the cloud provider and cost strategy to be confirmed before development.
+The Ivadoo specification requires the cloud provider and cost strategy to be confirmed before development.
 
 ## Decision
 
-FashionERP will use **OVHcloud VPS-2 as the initial managed-cloud baseline for the pilot and early small managed-cloud customers**.
+Ivadoo will use **OVHcloud VPS-2 as the initial managed-cloud baseline for the pilot and early small managed-cloud customers**.
 
 This decision does not change the validated deployment model: managed cloud, customizable cloud, on-premise and private server remain supported product directions.
 
@@ -16,7 +16,7 @@ The initial managed-cloud topology keeps the architecture portable:
 - PostgreSQL is initially self-managed inside each isolated customer environment;
 - business files and backup artifacts use S3-compatible object storage;
 - database backups remain exportable;
-- provider-specific services must not be embedded into FashionERP business logic;
+- provider-specific services must not be embedded into Ivadoo business logic;
 - migration to another provider remains possible.
 
 ## Initial cost reference
@@ -29,7 +29,7 @@ These figures are planning references, not contractual customer pricing.
 
 ## Backup rule
 
-The provider's one-day VPS backup does not replace FashionERP's own backup policy. PostgreSQL dumps and required backup artifacts must be exported to separate object storage with the project's daily/weekly/monthly retention and tested restore procedures.
+The provider's one-day VPS backup does not replace Ivadoo's own backup policy. PostgreSQL dumps and required backup artifacts must be exported to separate object storage with the project's daily/weekly/monthly retention and tested restore procedures.
 
 ## Re-evaluation
 

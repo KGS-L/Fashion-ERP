@@ -1,6 +1,6 @@
 # Tests
 
-Automated tests for FashionERP belong here when they are not colocated with a component.
+Automated tests for Ivadoo belong here when they are not colocated with a component.
 
 Current test areas:
 

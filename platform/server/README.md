@@ -2,7 +2,7 @@
 
 This directory contains the Django server runtime for the Ivadoo platform.
 
-The Python/Django package namespace remains `fashionerp` for compatibility with existing imports, Django app labels, migrations and deployment configuration. The Ivadoo rebrand does not rewrite migration history or persisted technical identifiers.
+The Python/Django package namespace is `ivadoo`. Django business application labels remain stable independently from the project package name so the migration graph and database table naming stay coherent.
 
 Validated baseline:
 
@@ -22,13 +22,13 @@ The business API is versioned under `/api/v1/`. OpenAPI is generated from the im
 
 The Phase 1 authentication lifecycle is exposed under `/api/v1/auth/`.
 
-Session/security policy is environment-configurable. Existing `FASHIONERP_*` variable names are retained as stable technical configuration keys during the product rebrand:
+Session/security policy is environment-configurable through Ivadoo configuration keys:
 
-- `FASHIONERP_SESSION_ABSOLUTE_TTL_SECONDS`: 30 days by default;
-- `FASHIONERP_SESSION_IDLE_TTL_SECONDS`: 12 hours by default;
-- `FASHIONERP_LOGIN_THROTTLE_RATE`: `10/min` by default;
-- `FASHIONERP_2FA_ENCRYPTION_KEY`: required Fernet key used only to encrypt TOTP secrets;
-- `FASHIONERP_TOTP_ISSUER`: authenticator issuer label, `Ivadoo` by default.
+- `IVADOO_SESSION_ABSOLUTE_TTL_SECONDS`: 30 days by default;
+- `IVADOO_SESSION_IDLE_TTL_SECONDS`: 12 hours by default;
+- `IVADOO_LOGIN_THROTTLE_RATE`: `10/min` by default;
+- `IVADOO_2FA_ENCRYPTION_KEY`: required Fernet key used only to encrypt TOTP secrets;
+- `IVADOO_TOTP_ISSUER`: authenticator issuer label, `Ivadoo` by default.
 
 These are implementation defaults, not immutable product rules. Production deployments must use HTTPS and must keep bearer tokens and secrets out of logs.
 

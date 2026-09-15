@@ -6,9 +6,9 @@ Decision owner: Phase 1 / issue #33.
 
 ## Context
 
-FashionERP has validated Django as its backend framework and Django REST Framework + drf-spectacular + django-filter as its REST/OpenAPI stack.
+Ivadoo has validated Django as its backend framework and Django REST Framework + drf-spectacular + django-filter as its REST/OpenAPI stack.
 
-The FashionERP specification does not prescribe a Python or Django version. The runtime therefore requires an explicit project decision based on current upstream support, compatibility and the long-lived nature of an ERP product.
+The Ivadoo specification does not prescribe a Python or Django version. The runtime therefore requires an explicit project decision based on current upstream support, compatibility and the long-lived nature of an ERP product.
 
 Research performed for issue #33 on 2026-09-14 shows:
 
@@ -21,7 +21,7 @@ Research performed for issue #33 on 2026-09-14 shows:
 
 ## Decision
 
-Use **Python 3.14** as the FashionERP server runtime series and **Django 5.2 LTS** as the Django framework series for the initial implementation baseline.
+Use **Python 3.14** as the Ivadoo server runtime series and **Django 5.2 LTS** as the Django framework series for the initial implementation baseline.
 
 Dependency compatibility baseline for initial scaffolding:
 
@@ -37,7 +37,7 @@ Exact transitive dependency locking belongs to the server scaffold/dependency-ma
 
 Django 6.1 is newer and supports Python 3.12–3.14, but its mainstream/extended support window is shorter than the 5.2 LTS line.
 
-More importantly for the already validated FashionERP API stack, drf-spectacular 0.30.0 currently documents Django support through 6.0 and DRF through 3.17, while DRF 3.18 is the release adding Django 6.1 support. Choosing Django 6.1 now would therefore move FashionERP ahead of the officially documented compatibility matrix of the selected OpenAPI generator.
+More importantly for the already validated Ivadoo API stack, drf-spectacular 0.30.0 currently documents Django support through 6.0 and DRF through 3.17, while DRF 3.18 is the release adding Django 6.1 support. Choosing Django 6.1 now would therefore move Ivadoo ahead of the officially documented compatibility matrix of the selected OpenAPI generator.
 
 For an ERP foundation, the LTS line with a fully aligned dependency matrix is preferred over adopting the newest non-LTS Django release.
 
@@ -47,7 +47,7 @@ Python 3.14 is the current stable feature series and is officially supported by 
 
 Starting a new codebase on 3.14 avoids selecting a runtime series already closer to its bugfix-support transition while retaining a supported and tested dependency combination.
 
-FashionERP uses the normal CPython build. Experimental free-threaded/no-GIL builds are not part of this baseline.
+Ivadoo uses the normal CPython build. Experimental free-threaded/no-GIL builds are not part of this baseline.
 
 ## Update policy
 
@@ -79,4 +79,4 @@ Rejected for the initial baseline because Django 6.1 is non-LTS and the selected
 
 ## Validation
 
-Explicitly validated by the FashionERP project owner in issue #33 on 2026-09-14.
+Explicitly validated by the Ivadoo project owner in issue #33 on 2026-09-14.

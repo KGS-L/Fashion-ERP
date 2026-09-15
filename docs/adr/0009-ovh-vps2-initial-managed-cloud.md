@@ -6,17 +6,17 @@ Date: 2026-09-14
 
 ## Context
 
-FashionERP requires a managed-cloud option while preserving the architecture already accepted in Phase 0: private ERP data boundaries per customer organization, PostgreSQL, S3-compatible object storage and portability to customizable cloud, on-premise or private-server deployments.
+Ivadoo requires a managed-cloud option while preserving the architecture already accepted in Phase 0: private ERP data boundaries per customer organization, PostgreSQL, S3-compatible object storage and portability to customizable cloud, on-premise or private-server deployments.
 
 The first pilot needs a low-cost infrastructure baseline without introducing a provider-specific application runtime or managed database dependency.
 
 ## Decision
 
-Use **OVHcloud VPS-2** as the initial managed-cloud baseline for the FashionERP pilot and early small managed-cloud customers.
+Use **OVHcloud VPS-2** as the initial managed-cloud baseline for the Ivadoo pilot and early small managed-cloud customers.
 
 The initial topology uses self-managed PostgreSQL in the isolated customer environment and S3-compatible object storage for business files and backup artifacts.
 
-The provider's one-day automated VPS backup is complementary only. FashionERP must still create application-level PostgreSQL backups and apply its own retention and restore-testing policy.
+The provider's one-day automated VPS backup is complementary only. Ivadoo must still create application-level PostgreSQL backups and apply its own retention and restore-testing policy.
 
 ## Consequences
 
@@ -30,7 +30,7 @@ Positive:
 
 Negative / responsibilities:
 
-- FashionERP operates PostgreSQL itself initially;
+- Ivadoo operates PostgreSQL itself initially;
 - the team owns patching, monitoring, backup retention and restore validation;
 - a single VPS is not an Enterprise Plus high-availability architecture;
 - latency from Burkina Faso must be measured during the real pilot.

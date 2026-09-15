@@ -6,11 +6,11 @@ Decision owner: platform extensibility / issue #150.
 
 ## Context
 
-Custom fields, Studio and imports increase flexibility but must never become an alternate path around FashionERP's typed domain rules, private-database boundary, scoped RBAC or audit journal. A configurable ERP needs a strict line between presentation customization and protected system invariants.
+Custom fields, Studio and imports increase flexibility but must never become an alternate path around Ivadoo's typed domain rules, private-database boundary, scoped RBAC or audit journal. A configurable ERP needs a strict line between presentation customization and protected system invariants.
 
 ## Decision
 
-FashionERP applies customization deny-by-default.
+Ivadoo applies customization deny-by-default.
 
 ### Registered models only
 

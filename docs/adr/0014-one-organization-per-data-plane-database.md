@@ -6,7 +6,7 @@ Decision owner: Phase 1 / issue #11.
 
 ## Context
 
-The FashionERP specification and accepted ADRs establish that:
+The Ivadoo specification and accepted ADRs establish that:
 
 - each customer organization has its own ERP environment and private database;
 - one organization may contain several legal companies and establishments;
@@ -22,7 +22,7 @@ The current Django scaffold is a single ERP server runtime backed by one Postgre
 
 ### Data Plane boundary
 
-Treat one running FashionERP ERP Data Plane environment as bound to **exactly one customer organization database**.
+Treat one running Ivadoo ERP Data Plane environment as bound to **exactly one customer organization database**.
 
 The PostgreSQL connection configured for the ERP runtime is therefore the private database of that customer organization.
 
@@ -111,7 +111,7 @@ A conventional shared-database SaaS design using `organization_id` filters every
 
 Django supports multiple databases and database routers, but cross-database relations are constrained and routing/provisioning introduces infrastructure complexity.
 
-The FashionERP specification requires the private-database boundary, but does not require that one Django process dynamically host every tenant database. Selecting that deployment mechanism now would conflate the domain isolation decision with later cloud provisioning.
+The Ivadoo specification requires the private-database boundary, but does not require that one Django process dynamically host every tenant database. Selecting that deployment mechanism now would conflate the domain isolation decision with later cloud provisioning.
 
 ## Consequences
 
@@ -135,4 +135,4 @@ This ADR does not decide:
 
 ## Validation
 
-Explicitly validated by the FashionERP project owner in issue #11 on 2026-09-14.
+Explicitly validated by the Ivadoo project owner in issue #11 on 2026-09-14.

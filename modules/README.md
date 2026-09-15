@@ -1,6 +1,6 @@
 # Business modules
 
-FashionERP is organized around modular business domains.
+Ivadoo is organized around modular business domains.
 
 Planned modules include:
 

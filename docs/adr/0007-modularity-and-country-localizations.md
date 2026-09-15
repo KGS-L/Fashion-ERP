@@ -3,7 +3,7 @@
 Status: `accepted`
 
 ## Context
-FashionERP must support multiple business modules and international expansion without embedding country-specific fiscal/accounting rules into common ERP logic.
+Ivadoo must support multiple business modules and international expansion without embedding country-specific fiscal/accounting rules into common ERP logic.
 
 ## Decision
 Keep business domains modular and keep country localizations separate from the common ERP core. Common sales, purchasing, stock and production rules must not be rewritten for each country.

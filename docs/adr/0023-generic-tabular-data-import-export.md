@@ -6,11 +6,11 @@ Decision owner: platform extensibility / issue #144.
 
 ## Context
 
-FashionERP customers must be able to migrate spreadsheets instead of re-entering master data row by row. A naive generic ORM importer would be dangerous because stock, accounting, order states and tenant scopes require domain validation and audited transitions.
+Ivadoo customers must be able to migrate spreadsheets instead of re-entering master data row by row. A naive generic ORM importer would be dangerous because stock, accounting, order states and tenant scopes require domain validation and audited transitions.
 
 ## Decision
 
-FashionERP provides a generic tabular import/export engine with an explicit adapter registry.
+Ivadoo provides a generic tabular import/export engine with an explicit adapter registry.
 
 ### Supported foundation formats
 

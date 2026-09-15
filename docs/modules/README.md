@@ -1,6 +1,6 @@
 # Module specifications
 
-Detailed functional specifications for FashionERP business modules belong here.
+Detailed functional specifications for Ivadoo business modules belong here.
 
 Each module specification should define its scope, actors, business rules, workflows, entities, permissions, validations, interactions with other modules and acceptance criteria before implementation.
 

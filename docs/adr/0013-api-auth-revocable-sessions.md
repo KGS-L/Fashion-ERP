@@ -6,7 +6,7 @@ Decision owner: Phase 1 / issue #10.
 
 ## Context
 
-The FashionERP specification requires:
+The Ivadoo specification requires:
 
 - authentication under `/api/v1/auth/`;
 - hashed passwords;
@@ -32,7 +32,7 @@ Email is an account attribute, not silently assumed to be the mandatory login id
 
 ### Passwords
 
-Use Django's password framework rather than implementing password cryptography in FashionERP.
+Use Django's password framework rather than implementing password cryptography in Ivadoo.
 
 Use Argon2id as the preferred password hasher, with Django's supported hashers retained for verification/migration compatibility.
 
@@ -64,11 +64,11 @@ The DRF authenticator hashes the supplied token, resolves the active server-side
 
 ### Why opaque server-side sessions
 
-FashionERP explicitly requires revocable sessions and device/session management. A server-side session record makes revocation effective on the next authenticated request and provides a natural object for #18.
+Ivadoo explicitly requires revocable sessions and device/session management. A server-side session record makes revocation effective on the next authenticated request and provides a natural object for #18.
 
 DRF's built-in TokenAuthentication is intentionally simple and does not provide the required per-device expiry/revocation lifecycle by itself.
 
-JWT remains useful in other architectures, but a stateless access token would complicate immediate revocation unless FashionERP adds blacklist/state checks, reducing the main benefit of stateless JWTs.
+JWT remains useful in other architectures, but a stateless access token would complicate immediate revocation unless Ivadoo adds blacklist/state checks, reducing the main benefit of stateless JWTs.
 
 ### Session lifetime
 
@@ -126,16 +126,16 @@ Security-sensitive events should expose integration points so #14 can persist au
 
 ### DRF TokenAuthentication
 
-Rejected as the primary FashionERP mechanism because DRF documents it as a fairly simple implementation and it does not natively model multiple expiring/revocable device sessions.
+Rejected as the primary Ivadoo mechanism because DRF documents it as a fairly simple implementation and it does not natively model multiple expiring/revocable device sessions.
 
 ### Stateless JWT access/refresh tokens
 
-Not selected for the Foundation baseline because FashionERP's immediate revocation and device-session requirements make server-side state desirable. A blacklist/state check would reintroduce server-side session state while increasing token lifecycle complexity.
+Not selected for the Foundation baseline because Ivadoo's immediate revocation and device-session requirements make server-side state desirable. A blacklist/state check would reintroduce server-side session state while increasing token lifecycle complexity.
 
 ### Django cookie sessions only
 
-Useful for same-origin browser applications, but insufficient as the sole contract for FashionERP's Tauri desktop and mobile API clients.
+Useful for same-origin browser applications, but insufficient as the sole contract for Ivadoo's Tauri desktop and mobile API clients.
 
 ## Validation
 
-Explicitly validated by the FashionERP project owner in issue #10 on 2026-09-14.
+Explicitly validated by the Ivadoo project owner in issue #10 on 2026-09-14.
