@@ -2,9 +2,9 @@
 
 Status: `accepted` for Phase 1.
 
-This document defines the operating contract for FashionERP Foundation database migrations.
+This document defines the operating contract for Ivadoo Foundation database migrations.
 
-The FashionERP specification requires versioned database migrations, development/test/staging/production environments, a backup before migration, documented compatibility, rollback or restoration, and periodic restoration testing. This document applies those requirements to the Django/PostgreSQL Foundation baseline.
+The Ivadoo specification requires versioned database migrations, development/test/staging/production environments, a backup before migration, documented compatibility, rollback or restoration, and periodic restoration testing. This document applies those requirements to the Django/PostgreSQL Foundation baseline.
 
 ## Source of truth
 

@@ -8,7 +8,7 @@ The definitive product name is **Ivadoo**.
 
 The canonical product domain selected by the project owner is **ivadoo.com**.
 
-The project was originally framed under the working name **FashionERP**. Historical specifications, issues, commits and stable internal technical identifiers may continue to use that legacy name where changing them would create unnecessary compatibility or migration risk. Those references do not change the accepted public product brand.
+The project was originally framed under the working name **Ivadoo**. Historical specifications, issues, commits and stable internal technical identifiers may continue to use that legacy name where changing them would create unnecessary compatibility or migration risk. Those references do not change the accepted public product brand.
 
 ## Open-core licensing
 

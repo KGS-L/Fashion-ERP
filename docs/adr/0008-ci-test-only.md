@@ -3,7 +3,7 @@
 Status: `accepted`
 
 ## Context
-FashionERP needs automated validation from the beginning, while deployment/provider choices remain separate and some implementation technologies are still open.
+Ivadoo needs automated validation from the beginning, while deployment/provider choices remain separate and some implementation technologies are still open.
 
 ## Decision
 Use GitHub Actions for repository validation and automated tests only at this stage. CI may evolve to run linting, unit, integration, security, migration and contract tests as they become available, but it must not deploy production environments, publish releases or provision customer infrastructure.

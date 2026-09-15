@@ -2,11 +2,11 @@
 
 Status: `proposal` — Phase 0 decision required.
 
-The FashionERP specification requires the minimum supported Windows, macOS and Linux versions to be confirmed before implementation.
+The Ivadoo specification requires the minimum supported Windows, macOS and Linux versions to be confirmed before implementation.
 
 ## Proposed support policy
 
-Rather than targeting the oldest operating systems technically supported by Tauri, FashionERP should define a product support baseline based on currently maintained operating systems.
+Rather than targeting the oldest operating systems technically supported by Tauri, Ivadoo should define a product support baseline based on currently maintained operating systems.
 
 Proposed minimums:
 
@@ -16,11 +16,11 @@ Proposed minimums:
 
 ## Compatibility note
 
-Tauri itself supports older operating systems than this proposal. The FashionERP product baseline can intentionally be stricter to reduce security, packaging, WebView and support complexity.
+Tauri itself supports older operating systems than this proposal. The Ivadoo product baseline can intentionally be stricter to reduce security, packaging, WebView and support complexity.
 
 ## Windows 10
 
-Windows 10 reached general end of support in October 2025. It may still be technically capable of running a Tauri application, but it should not be treated as the normal FashionERP production baseline unless a specific pilot requires a temporary compatibility policy.
+Windows 10 reached general end of support in October 2025. It may still be technically capable of running a Tauri application, but it should not be treated as the normal Ivadoo production baseline unless a specific pilot requires a temporary compatibility policy.
 
 ## Decision required
 

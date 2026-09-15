@@ -1,6 +1,6 @@
 # Deployment and operations
 
-Deployment and operational documentation for FashionERP.
+Deployment and operational documentation for Ivadoo.
 
 This section covers the deployment modes defined by the specification:
 

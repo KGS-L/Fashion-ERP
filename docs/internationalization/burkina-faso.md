@@ -2,7 +2,7 @@
 
 Status: `accepted` during Phase 0.
 
-Burkina Faso is the first country localization targeted by FashionERP.
+Burkina Faso is the first country localization targeted by Ivadoo.
 
 ## Scope
 
@@ -26,4 +26,4 @@ The first implementation must document and validate, before production use:
 
 Country-specific fiscal and accounting behavior must be verified against current official rules before it is presented as production-ready.
 
-The common FashionERP core must remain usable by other country localizations without embedding Burkina Faso-specific assumptions.
+The common Ivadoo core must remain usable by other country localizations without embedding Burkina Faso-specific assumptions.

@@ -3,7 +3,7 @@
 Status: `accepted`
 
 ## Context
-FashionERP requires transactional ERP data, scoped entities, versioned migrations, backup/restore and multi-environment operation.
+Ivadoo requires transactional ERP data, scoped entities, versioned migrations, backup/restore and multi-environment operation.
 
 ## Decision
 Use PostgreSQL as the primary relational database for ERP data and file metadata.

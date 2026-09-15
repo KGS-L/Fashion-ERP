@@ -1,6 +1,6 @@
 # Country localizations
 
-Country-specific FashionERP localization modules belong here.
+Country-specific Ivadoo localization modules belong here.
 
 A country localization may define the fiscal, accounting, tax, legal document and regulatory adaptations required for that country.
 

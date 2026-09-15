@@ -6,7 +6,7 @@ Decision owner: Phase 1 / issue #15.
 
 ## Context
 
-The FashionERP specification requires:
+The Ivadoo specification requires:
 
 - initial languages: French, English, Spanish, Portuguese and Arabic;
 - translations by keys, plurals, formats and documents;
@@ -39,7 +39,7 @@ French remains the server fallback because that is the existing project setting.
 
 Foundation UI text lives in language catalog files under:
 
-`fashionerp/internationalization/catalogs/`
+`ivadoo/internationalization/catalogs/`
 
 Business/UI code consumes stable keys rather than embedding translated labels.
 
@@ -64,7 +64,7 @@ Customer language and customer/supplier currency are deferred until those entiti
 
 Currency is configurable reference data identified by a three-letter uppercase code.
 
-FashionERP does not seed an arbitrary default currency in Phase 1 because the specification does not select one.
+Ivadoo does not seed an arbitrary default currency in Phase 1 because the specification does not select one.
 
 A Company may reference one functional currency.
 

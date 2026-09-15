@@ -1,6 +1,6 @@
 # Infrastructure
 
-Deployment and operational assets for FashionERP belong here.
+Deployment and operational assets for Ivadoo belong here.
 
 The specifications require support for:
 

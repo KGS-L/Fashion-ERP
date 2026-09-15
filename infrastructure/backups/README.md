@@ -1,6 +1,6 @@
 # Backups and restore
 
-FashionERP requires backups for both PostgreSQL databases and the file/object storage layer.
+Ivadoo requires backups for both PostgreSQL databases and the file/object storage layer.
 
 The specification calls for:
 

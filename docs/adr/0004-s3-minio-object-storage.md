@@ -3,7 +3,7 @@
 Status: `accepted`
 
 ## Context
-FashionERP stores measurements-related photos, documents and other business files while keeping structured metadata in PostgreSQL.
+Ivadoo stores measurements-related photos, documents and other business files while keeping structured metadata in PostgreSQL.
 
 ## Decision
 Store business file bytes in S3/MinIO-compatible object storage and keep file metadata in PostgreSQL.

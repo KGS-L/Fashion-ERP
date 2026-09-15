@@ -46,7 +46,7 @@ Raw passwords, Bearer tokens, TOTP secrets and recovery codes are excluded from 
 
 Business API access is deny-by-default.
 
-FashionERP scoped RBAC is independent from Django's `is_superuser` flag for business authorization.
+Ivadoo scoped RBAC is independent from Django's `is_superuser` flag for business authorization.
 
 Effective access is resolved server-side from current PostgreSQL grants/roles/permissions rather than long-lived authorization claims in Bearer tokens.
 

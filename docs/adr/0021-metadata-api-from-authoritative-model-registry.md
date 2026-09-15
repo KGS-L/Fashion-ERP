@@ -6,13 +6,13 @@ Decision owner: platform extensibility / issue #149.
 
 ## Context
 
-FashionERP desktop, future mobile/web clients, Studio and generic import/export must understand which modules, models and fields are available for the authenticated organization. Hard-coding every form separately would make customer-defined fields and modular activation diverge between clients.
+Ivadoo desktop, future mobile/web clients, Studio and generic import/export must understand which modules, models and fields are available for the authenticated organization. Hard-coding every form separately would make customer-defined fields and modular activation diverge between clients.
 
 Metadata is also security-sensitive: the server must not disclose disabled modules or registered models the current user cannot view.
 
 ## Decision
 
-FashionERP exposes versioned metadata below `/api/v1/platform/metadata/`.
+Ivadoo exposes versioned metadata below `/api/v1/platform/metadata/`.
 
 The metadata projection is generated from authoritative sources rather than stored as a second editable schema:
 
@@ -39,4 +39,4 @@ Unauthorized or disabled model detail requests return `404` to avoid turning the
 
 ## Deferred
 
-View/layout metadata is added with FashionERP Studio (#142). Configurable workflow transitions and computed fields are added by their dedicated tracker issues.
+View/layout metadata is added with Ivadoo Studio (#142). Configurable workflow transitions and computed fields are added by their dedicated tracker issues.

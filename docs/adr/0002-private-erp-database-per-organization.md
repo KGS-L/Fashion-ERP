@@ -3,7 +3,7 @@
 Status: `accepted`
 
 ## Context
-FashionERP targets cloud, customizable cloud, on-premise and private-server deployments while requiring strict customer isolation.
+Ivadoo targets cloud, customizable cloud, on-premise and private-server deployments while requiring strict customer isolation.
 
 ## Decision
 Each customer organization has its own ERP environment and private database boundary. An organization may contain multiple legal companies and establishments inside that boundary.

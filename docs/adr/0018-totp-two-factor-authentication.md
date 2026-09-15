@@ -6,7 +6,7 @@ Decision owner: Phase 1 / issue #18.
 
 ## Context
 
-The FashionERP specification requires sessions, devices, 2FA, revocation and API tokens in the platform core. It also requires hashed passwords, revocable sessions, immutable audit and isolation.
+The Ivadoo specification requires sessions, devices, 2FA, revocation and API tokens in the platform core. It also requires hashed passwords, revocable sessions, immutable audit and isolation.
 
 The specification does not mandate a 2FA mechanism, recovery channel or external identity provider.
 
@@ -16,13 +16,13 @@ Phase 1 already has opaque PostgreSQL-backed Bearer sessions, scoped RBAC and im
 
 ### Primary second factor
 
-FashionERP Foundation uses TOTP for interactive user 2FA.
+Ivadoo Foundation uses TOTP for interactive user 2FA.
 
 TOTP is compatible with standard authenticator applications and does not require SMS, email or a third-party identity service.
 
 The TOTP implementation uses PyOTP. The stored TOTP secret is encrypted at rest with Fernet from the cryptography package.
 
-The encryption key is supplied through the `FASHIONERP_2FA_ENCRYPTION_KEY` environment variable and must not be committed as a production secret.
+The encryption key is supplied through the `IVADOO_2FA_ENCRYPTION_KEY` environment variable and must not be committed as a production secret.
 
 ### Enrollment
 

@@ -1,6 +1,6 @@
 # Phase branching strategy
 
-FashionERP development is organized by roadmap phase.
+Ivadoo development is organized by roadmap phase.
 
 Each implementation phase is developed on its own long-lived phase branch and merged into `main` through a pull request once the phase acceptance criteria are satisfied.
 

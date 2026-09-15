@@ -1,6 +1,6 @@
 # Platform core
 
-The FashionERP platform core contains the shared capabilities required by the ERP foundation.
+The Ivadoo platform core contains the shared capabilities required by the ERP foundation.
 
 It covers:
 
@@ -12,4 +12,4 @@ It covers:
 - Documents
 - Notifications
 
-These areas follow the platform core requirements defined in the FashionERP functional and technical specification.
+These areas follow the platform core requirements defined in the Ivadoo functional and technical specification.

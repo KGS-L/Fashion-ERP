@@ -3,10 +3,10 @@
 Status: `accepted`
 
 ## Context
-FashionERP requires an installable PC application for administration, configuration, accounting, production, inventory, purchasing, reporting and multi-company operation.
+Ivadoo requires an installable PC application for administration, configuration, accounting, production, inventory, purchasing, reporting and multi-company operation.
 
 ## Decision
-Use Tauri with Owl/TypeScript for the installable desktop application, connected to the FashionERP API.
+Use Tauri with Owl/TypeScript for the installable desktop application, connected to the Ivadoo API.
 
 ## Consequences
 - `apps/desktop` follows this stack;

@@ -2,7 +2,7 @@
 
 Status: `accepted` for Phase 0 framing.
 
-This document turns the first-pilot acceptance criteria from the FashionERP specification into a reference validation scenario. It does not identify a real pilot company yet.
+This document turns the first-pilot acceptance criteria from the Ivadoo specification into a reference validation scenario. It does not identify a real pilot company yet.
 
 ## Target pilot profile
 

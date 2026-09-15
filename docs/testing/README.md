@@ -1,6 +1,6 @@
 # Foundation test dependencies
 
-FashionERP Foundation tests require PostgreSQL.
+Ivadoo Foundation tests require PostgreSQL.
 
 ## PostgreSQL
 

@@ -8,4 +8,4 @@ Planned application surfaces:
 - Workshop mobile application
 - Client/public application
 
-Technology choices must follow the validated project specifications. The original specification may still use the legacy FashionERP name. At this stage, the desktop application is defined as Tauri + Owl/TypeScript.
+Technology choices must follow the validated project specifications. The original specification may still use the legacy Ivadoo name. At this stage, the desktop application is defined as Tauri + Owl/TypeScript.

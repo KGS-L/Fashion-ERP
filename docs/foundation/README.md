@@ -55,7 +55,7 @@ Not implemented in Phase 1:
 
 ## Scoped RBAC
 
-FashionERP business authorization is deny-by-default and independent from Django's global superuser semantics.
+Ivadoo business authorization is deny-by-default and independent from Django's global superuser semantics.
 
 The authorization model is:
 

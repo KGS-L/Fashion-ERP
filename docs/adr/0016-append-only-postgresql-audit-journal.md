@@ -6,7 +6,7 @@ Decision owner: Phase 1 / issue #14.
 
 ## Context
 
-The FashionERP specification requires:
+The Ivadoo specification requires:
 
 - an audit journal containing user, date, object, old value and new value;
 - an immutable audit journal for sensitive operations;
@@ -21,7 +21,7 @@ The specification does not require a SIEM, event broker, external audit product 
 
 ## Decision
 
-FashionERP stores Foundation audit events in a dedicated Django `audit` app in the customer's private Data Plane PostgreSQL database.
+Ivadoo stores Foundation audit events in a dedicated Django `audit` app in the customer's private Data Plane PostgreSQL database.
 
 ### AuditEvent
 
@@ -99,4 +99,4 @@ The specification requires configurable retention, but it does not yet define re
 
 ## Validation
 
-Validated by the FashionERP project owner through the delegated Phase 1 implementation direction on 2026-09-14, with the requirement that implementation remain coherent with the FashionERP specification and technically sound for a real ERP.
+Validated by the Ivadoo project owner through the delegated Phase 1 implementation direction on 2026-09-14, with the requirement that implementation remain coherent with the Ivadoo specification and technically sound for a real ERP.

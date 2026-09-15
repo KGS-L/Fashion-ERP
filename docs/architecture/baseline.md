@@ -2,7 +2,7 @@
 
 Status: `accepted` during Phase 0.
 
-This document records the architecture and deployment decisions already defined by the project functional and technical specification, together with the minimum desktop operating-system policy accepted during Phase 0. The original specification was written under the legacy working name **FashionERP**; the accepted product brand is now **Ivadoo**. This document does not introduce an application framework or infrastructure technology that is not explicitly validated.
+This document records the architecture and deployment decisions already defined by the project functional and technical specification, together with the minimum desktop operating-system policy accepted during Phase 0. The original specification was written under the legacy working name **Ivadoo**; the accepted product brand is now **Ivadoo**. This document does not introduce an application framework or infrastructure technology that is not explicitly validated.
 
 ## Platform separation
 

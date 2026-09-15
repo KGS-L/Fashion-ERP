@@ -1,6 +1,6 @@
 # Client public application
 
-This application covers the public and client-facing FashionERP experience.
+This application covers the public and client-facing Ivadoo experience.
 
 Its scope includes company and catalogue discovery, quote requests, photo submission, appointments, order tracking and notifications.
 

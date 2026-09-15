@@ -6,11 +6,11 @@ Decision owner: platform extensibility / issue #141.
 
 ## Context
 
-FashionERP must support customer-defined fields while preserving typed ERP invariants, safe upgrades and a private PostgreSQL database per organization. Creating or dropping physical PostgreSQL columns every time a customer edits a form would couple tenant customization to deployment migrations and make upgrades difficult. Storing the entire ERP record as schemaless JSON would weaken constraints on orders, stock, accounting and security scopes.
+Ivadoo must support customer-defined fields while preserving typed ERP invariants, safe upgrades and a private PostgreSQL database per organization. Creating or dropping physical PostgreSQL columns every time a customer edits a form would couple tenant customization to deployment migrations and make upgrades difficult. Storing the entire ERP record as schemaless JSON would weaken constraints on orders, stock, accounting and security scopes.
 
 ## Decision
 
-FashionERP uses a hybrid model.
+Ivadoo uses a hybrid model.
 
 ### Core fields stay relational and typed
 

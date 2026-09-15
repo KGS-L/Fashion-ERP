@@ -8,11 +8,11 @@ Decision owner: project owner / product naming decision.
 
 ## Context
 
-The functional and technical specification originally framed the project under the working name **FashionERP** and explicitly left the definitive product name and brand as a decision to confirm.
+The functional and technical specification originally framed the project under the working name **Ivadoo** and explicitly left the definitive product name and brand as a decision to confirm.
 
 The project owner has selected **Ivadoo** as the definitive public product name and **ivadoo.com** as the canonical product domain.
 
-The implementation already contains a mature Django package namespace (`fashionerp`), migration history, environment-variable names and other technical identifiers created before the final brand decision. Renaming these identifiers only for branding would create avoidable compatibility and migration risk without changing product behavior.
+The implementation already contains a mature Django package namespace (`ivadoo`), migration history, environment-variable names and other technical identifiers created before the final brand decision. Renaming these identifiers only for branding would create avoidable compatibility and migration risk without changing product behavior.
 
 ## Decision
 
@@ -33,7 +33,7 @@ The canonical product domain is **ivadoo.com**.
 
 ### Legacy source references
 
-The original functional and technical specification remains an authoritative requirements source even where it still uses the FashionERP name. In historical specifications, issues, commits and accepted records, FashionERP is treated as the legacy working name for the product now branded Ivadoo.
+The original functional and technical specification remains an authoritative requirements source even where it still uses the Ivadoo name. In historical specifications, issues, commits and accepted records, Ivadoo is treated as the legacy working name for the product now branded Ivadoo.
 
 Historical records are not rewritten solely to erase the former name.
 
@@ -43,10 +43,10 @@ The rebrand does **not** rename existing compatibility-sensitive technical ident
 
 The following remain unchanged for now:
 
-- the Python/Django package namespace `fashionerp`;
+- the Python/Django package namespace `ivadoo`;
 - existing Django application labels and migration history;
 - stable database/application identifiers already encoded in migrations or operational configuration;
-- existing `FASHIONERP_*` environment-variable keys;
+- existing `IVADOO_*` environment-variable keys;
 - other persisted identifiers whose rename would require a compatibility migration.
 
 These identifiers are implementation details and do not define the current public product name.
@@ -55,19 +55,19 @@ These identifiers are implementation details and do not define the current publi
 
 Where a value is presentation-facing rather than a compatibility key, the Ivadoo name is used. In particular:
 
-- the default TOTP authenticator issuer becomes `Ivadoo` while the environment key remains `FASHIONERP_TOTP_ISSUER`;
+- the default TOTP authenticator issuer becomes `Ivadoo` while the environment key remains `IVADOO_TOTP_ISSUER`;
 - OpenAPI title and description use Ivadoo;
-- Python distribution metadata may use the Ivadoo product name while continuing to package the `fashionerp` module namespace.
+- Python distribution metadata may use the Ivadoo product name while continuing to package the `ivadoo` module namespace.
 
 ### Repository name
 
-This ADR does not rename the GitHub repository slug `KGS-L/Fashion-ERP`. A repository rename is a separate operational decision because it changes clone/remotes and external references.
+This ADR does not rename the GitHub repository slug `KGS-L/Ivadoo`. A repository rename is a separate operational decision because it changes clone/remotes and external references.
 
 ## Consequences
 
 - users and new documentation see one definitive brand: Ivadoo;
 - the rebrand does not require database migrations or changes to Django migration history;
 - deployed environments can keep existing configuration keys during the transition;
-- internal `fashionerp` references may remain visible to developers without implying that FashionERP is still the product brand;
+- internal `ivadoo` references may remain visible to developers without implying that Ivadoo is still the product brand;
 - historical source documents remain traceable and continue to support requirement decisions;
 - any future internal namespace migration must have its own compatibility plan and explicit decision before implementation.

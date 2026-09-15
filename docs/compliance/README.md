@@ -1,6 +1,6 @@
 # Dependency and license compliance
 
-FashionERP Community follows an LGPL-3.0-only open-core direction unless a source file or directory states otherwise.
+Ivadoo Community follows an LGPL-3.0-only open-core direction unless a source file or directory states otherwise.
 
 This directory records the Phase 1 dependency-license review and the notices expected to accompany distributions.
 

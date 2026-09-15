@@ -1,8 +1,8 @@
-# FashionERP REST/OpenAPI conventions
+# Ivadoo REST/OpenAPI conventions
 
 Status: `accepted` for Phase 1 Foundation.
 
-This directory documents the API contract conventions selected in issue #30. The functional requirements remain defined by the FashionERP specification; the implementation decision is recorded in `docs/adr/0011-drf-drf-spectacular.md`.
+This directory documents the API contract conventions selected in issue #30. The functional requirements remain defined by the Ivadoo specification; the implementation decision is recorded in `docs/adr/0011-drf-drf-spectacular.md`.
 
 ## Stack
 
@@ -98,7 +98,7 @@ drf-spectacular generates the schema from implemented Django routes, serializers
 The CI contract check must generate and validate the schema without deploying anything:
 
 ```bash
-python manage.py spectacular --file /tmp/fashionerp-openapi.yaml --validate --fail-on-warn
+python manage.py spectacular --file /tmp/ivadoo-openapi.yaml --validate --fail-on-warn
 ```
 
 When the first Foundation endpoints exist, the project may commit a deterministic schema snapshot for review and drift checking.

@@ -6,7 +6,7 @@ Decision owner: Phase 1 / issue #13.
 
 ## Context
 
-The FashionERP specification requires:
+The Ivadoo specification requires:
 
 - users, groups, roles and permissions by module/action/company/site;
 - security by default, limited by company, establishment and role;
@@ -20,7 +20,7 @@ The specification does not define role inheritance, explicit deny rules or a spe
 
 ## Decision
 
-FashionERP uses a project-owned scoped RBAC model rather than relying only on Django's global `Group`/`Permission` tables.
+Ivadoo uses a project-owned scoped RBAC model rather than relying only on Django's global `Group`/`Permission` tables.
 
 ### Concepts
 
@@ -74,15 +74,15 @@ This is intentional:
 
 - explicit deny introduces precedence rules that are easy to misconfigure;
 - role inheritance introduces graph/cycle complexity;
-- neither is required by the FashionERP specification.
+- neither is required by the Ivadoo specification.
 
 Roles are composable through multiple grants instead.
 
 ### Django built-in authorization
 
-Django's authentication primitives remain useful for framework/admin integration, but FashionERP business API authorization is resolved through the scoped RBAC model.
+Django's authentication primitives remain useful for framework/admin integration, but Ivadoo business API authorization is resolved through the scoped RBAC model.
 
-Django `is_superuser` must not silently bypass FashionERP Data Plane scope checks.
+Django `is_superuser` must not silently bypass Ivadoo Data Plane scope checks.
 
 ### Organization administrator
 
@@ -119,4 +119,4 @@ Future modules add their own stable permission codes without changing the RBAC s
 
 ## Validation
 
-Validated by the FashionERP project owner through the delegated Phase 1 implementation direction on 2026-09-14, with the requirement that technical choices remain coherent with the specification and suitable for implementing the ERP correctly.
+Validated by the Ivadoo project owner through the delegated Phase 1 implementation direction on 2026-09-14, with the requirement that technical choices remain coherent with the specification and suitable for implementing the ERP correctly.
