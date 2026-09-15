@@ -201,3 +201,89 @@ register_model(
         },
     )
 )
+register_model(
+    ModelManifest(
+        key="employees.productivitysnapshot",
+        label="Employee productivity snapshot",
+        django_model="employees.ProductivitySnapshot",
+        module_code="enterprise.employees",
+        view_permission="enterprise.employee.performance.view",
+        manage_permission="enterprise.employee.performance.manage",
+        protected_fields=BASE_PROTECTED
+        | {
+            "employee",
+            "employee_id",
+            "company",
+            "company_id",
+            "establishment",
+            "establishment_id",
+            "workshop",
+            "workshop_id",
+            "period_start",
+            "period_end",
+            "formula_version",
+            "source_fingerprint",
+            "source_summary",
+        },
+    )
+)
+register_model(
+    ModelManifest(
+        key="employees.commissionrule",
+        label="Employee commission rule",
+        django_model="employees.CommissionRule",
+        module_code="enterprise.employees",
+        view_permission="enterprise.employee.commission.view",
+        manage_permission="enterprise.employee.commission.manage",
+        protected_fields=BASE_PROTECTED
+        | {
+            "organization",
+            "organization_id",
+            "company",
+            "company_id",
+            "establishment",
+            "establishment_id",
+            "workshop",
+            "workshop_id",
+            "employee",
+            "employee_id",
+            "basis",
+            "currency",
+            "currency_id",
+        },
+    )
+)
+register_model(
+    ModelManifest(
+        key="employees.commissioncalculation",
+        label="Employee commission calculation",
+        django_model="employees.CommissionCalculation",
+        module_code="enterprise.employees",
+        view_permission="enterprise.employee.commission.view",
+        manage_permission="enterprise.employee.commission.manage",
+        protected_fields=BASE_PROTECTED
+        | {
+            "rule",
+            "rule_id",
+            "employee",
+            "employee_id",
+            "company",
+            "company_id",
+            "establishment",
+            "establishment_id",
+            "workshop",
+            "workshop_id",
+            "period_start",
+            "period_end",
+            "basis_quantity",
+            "rate_snapshot",
+            "amount",
+            "currency",
+            "currency_id",
+            "formula_version",
+            "source_fingerprint",
+            "rule_snapshot",
+            "source_summary",
+        },
+    )
+)
