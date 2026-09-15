@@ -220,7 +220,7 @@ def reserve_manufacturing_materials(
     *, manufacturing_order, allocations, actor, request=None
 ):
     manufacturing_order = ManufacturingOrder.objects.select_for_update().select_related(
-        "warehouse", "warehouse__company", "order"
+        "warehouse", "warehouse__company"
     ).get(pk=manufacturing_order.pk)
     if manufacturing_order.status != ManufacturingOrder.Status.READY:
         raise ValidationError(
