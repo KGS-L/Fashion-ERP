@@ -4,8 +4,6 @@ Ivadoo is a modular open-core ERP platform built for fashion, textile and garmen
 
 It is designed for fashion houses, tailoring workshops, ready-to-wear brands, uniform manufacturers, textile companies, fabric distributors and multi-site fashion groups.
 
-The product was originally framed under the working name **Ivadoo**. Historical specifications, issues, commits and some stable internal technical identifiers may still use that legacy name.
-
 The main Ivadoo modules include:
 
 - CRM and customer management
@@ -37,7 +35,7 @@ Implementation continues through the Phase 3 roadmap on `phase/3-operations` aft
 
 ## Documentation
 
-Project documentation and module specifications are maintained in the `docs/` directory. Historical source material may still refer to Ivadoo; the accepted product brand is now Ivadoo.
+Project documentation and module specifications are maintained in the `docs/` directory. The functional and technical specification remains the primary requirements reference until more detailed module specifications are validated.
 
 ## Security
 
