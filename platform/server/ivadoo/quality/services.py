@@ -51,12 +51,11 @@ def complete_inspection(*, inspection, decision, actor, reason="", rework_instru
     inspection.save(update_fields=("status", "decision", "completed_by", "completed_at", "completion_reason", "updated_at"))
 
     if decision == QualityInspection.Decision.REWORK:
-        operation = inspection.manufacturing_operation
         QualityRework.objects.create(
             organization=inspection.organization,
             company=inspection.company,
             inspection=inspection,
-            manufacturing_operation=operation,
+            manufacturing_operation=inspection.manufacturing_operation,
             instructions=rework_instructions,
             created_by=actor,
         )
@@ -100,11 +99,7 @@ def complete_rework(*, rework, actor, result_notes="", request=None):
 
 def _latest_blocking_inspection(**context):
     return (
-        QualityInspection.objects.filter(
-            status=QualityInspection.Status.COMPLETED,
-            blocking=True,
-            **context,
-        )
+        QualityInspection.objects.filter(status=QualityInspection.Status.COMPLETED, blocking=True, **context)
         .order_by("-completed_at", "-created_at")
         .first()
     )
@@ -113,19 +108,17 @@ def _latest_blocking_inspection(**context):
 def assert_quality_gate_passed(**context):
     inspection = _latest_blocking_inspection(**context)
     if inspection and inspection.decision != QualityInspection.Decision.ACCEPT:
-        raise ValidationError(
-            f"Quality gate blocked by inspection {inspection.id} with decision {inspection.decision}."
-        )
+        raise ValidationError(f"Quality gate blocked by inspection {inspection.id} with decision {inspection.decision}.")
     return inspection
 
 
 def quality_summary(queryset):
     completed = queryset.filter(status=QualityInspection.Status.COMPLETED)
     aggregates = completed.aggregate(
-        total=Count("id"),
-        accepted=Count("id", filter=Q(decision=QualityInspection.Decision.ACCEPT)),
-        rejected=Count("id", filter=Q(decision=QualityInspection.Decision.REJECT)),
-        rework=Count("id", filter=Q(decision=QualityInspection.Decision.REWORK)),
+        total=Count("id", distinct=True),
+        accepted=Count("id", filter=Q(decision=QualityInspection.Decision.ACCEPT), distinct=True),
+        rejected=Count("id", filter=Q(decision=QualityInspection.Decision.REJECT), distinct=True),
+        rework=Count("id", filter=Q(decision=QualityInspection.Decision.REWORK), distinct=True),
         with_defects=Count("id", filter=Q(defects__isnull=False), distinct=True),
         defect_count=Count("defects"),
     )

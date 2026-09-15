@@ -23,69 +23,21 @@ class QualityInspection(models.Model):
         REWORK = "rework", "Rework"
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    organization = models.ForeignKey(
-        "organizations.Organization",
-        on_delete=models.PROTECT,
-        related_name="quality_inspections",
-    )
-    company = models.ForeignKey(
-        "organizations.Company",
-        on_delete=models.PROTECT,
-        related_name="quality_inspections",
-    )
+    organization = models.ForeignKey("organizations.Organization", on_delete=models.PROTECT, related_name="quality_inspections")
+    company = models.ForeignKey("organizations.Company", on_delete=models.PROTECT, related_name="quality_inspections")
     inspection_type = models.CharField(max_length=16, choices=InspectionType.choices)
     status = models.CharField(max_length=16, choices=Status.choices, default=Status.DRAFT)
     decision = models.CharField(max_length=16, choices=Decision.choices, default=Decision.PENDING)
     blocking = models.BooleanField(default=True)
-    purchase_receipt_line = models.ForeignKey(
-        "purchases.PurchaseReceiptLine",
-        on_delete=models.PROTECT,
-        related_name="quality_inspections",
-        null=True,
-        blank=True,
-    )
-    manufacturing_order = models.ForeignKey(
-        "manufacturing.ManufacturingOrder",
-        on_delete=models.PROTECT,
-        related_name="quality_inspections",
-        null=True,
-        blank=True,
-    )
-    manufacturing_operation = models.ForeignKey(
-        "manufacturing.ManufacturingOperation",
-        on_delete=models.PROTECT,
-        related_name="quality_inspections",
-        null=True,
-        blank=True,
-    )
-    output_receipt = models.ForeignKey(
-        "manufacturing.ManufacturingOutputReceipt",
-        on_delete=models.PROTECT,
-        related_name="quality_inspections",
-        null=True,
-        blank=True,
-    )
-    parent_inspection = models.ForeignKey(
-        "self",
-        on_delete=models.PROTECT,
-        related_name="reinspections",
-        null=True,
-        blank=True,
-    )
+    purchase_receipt_line = models.ForeignKey("purchases.PurchaseReceiptLine", on_delete=models.PROTECT, related_name="quality_inspections", null=True, blank=True)
+    manufacturing_order = models.ForeignKey("manufacturing.ManufacturingOrder", on_delete=models.PROTECT, related_name="quality_inspections", null=True, blank=True)
+    manufacturing_operation = models.ForeignKey("manufacturing.ManufacturingOperation", on_delete=models.PROTECT, related_name="quality_inspections", null=True, blank=True)
+    output_receipt = models.ForeignKey("manufacturing.ManufacturingOutputReceipt", on_delete=models.PROTECT, related_name="quality_inspections", null=True, blank=True)
+    parent_inspection = models.ForeignKey("self", on_delete=models.PROTECT, related_name="reinspections", null=True, blank=True)
     notes = models.TextField(blank=True)
     completion_reason = models.CharField(max_length=255, blank=True)
-    created_by = models.ForeignKey(
-        "identity.User",
-        on_delete=models.PROTECT,
-        related_name="created_quality_inspections",
-    )
-    completed_by = models.ForeignKey(
-        "identity.User",
-        on_delete=models.PROTECT,
-        related_name="completed_quality_inspections",
-        null=True,
-        blank=True,
-    )
+    created_by = models.ForeignKey("identity.User", on_delete=models.PROTECT, related_name="created_quality_inspections")
+    completed_by = models.ForeignKey("identity.User", on_delete=models.PROTECT, related_name="completed_quality_inspections", null=True, blank=True)
     completed_at = models.DateTimeField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -137,6 +89,12 @@ class QualityInspection(models.Model):
                 raise ValidationError({"parent_inspection": "Parent inspection is outside the local scope."})
             if parent.status != self.Status.COMPLETED or parent.decision != self.Decision.REWORK:
                 raise ValidationError({"parent_inspection": "A reinspection must follow a completed rework decision."})
+            try:
+                parent_rework = parent.rework
+            except QualityRework.DoesNotExist as exc:
+                raise ValidationError({"parent_inspection": "Parent rework record is missing."}) from exc
+            if parent_rework.status != QualityRework.Status.DONE:
+                raise ValidationError({"parent_inspection": "Rework must be completed before reinspection."})
             context_fields = ("purchase_receipt_line_id", "manufacturing_order_id", "manufacturing_operation_id", "output_receipt_id")
             if any(getattr(parent, field) != getattr(self, field) for field in context_fields):
                 raise ValidationError({"parent_inspection": "Reinspection context must match the parent inspection."})
@@ -172,9 +130,7 @@ class QualityCriterion(models.Model):
 
     class Meta:
         ordering = ("position", "id")
-        constraints = [
-            models.UniqueConstraint(fields=("inspection", "code"), name="quality_criterion_unique_code_inspection"),
-        ]
+        constraints = [models.UniqueConstraint(fields=("inspection", "code"), name="quality_criterion_unique_code_inspection")]
 
     def save(self, *args, **kwargs):
         if self.inspection_id and self.inspection.status == QualityInspection.Status.COMPLETED:
@@ -204,9 +160,7 @@ class QualityDefect(models.Model):
 
     class Meta:
         ordering = ("created_at", "id")
-        constraints = [
-            models.CheckConstraint(condition=models.Q(quantity__gt=0), name="quality_defect_quantity_positive"),
-        ]
+        constraints = [models.CheckConstraint(condition=models.Q(quantity__gt=0), name="quality_defect_quantity_positive")]
 
     def save(self, *args, **kwargs):
         if self.inspection_id and self.inspection.status == QualityInspection.Status.COMPLETED:
@@ -228,13 +182,7 @@ class QualityRework(models.Model):
     organization = models.ForeignKey("organizations.Organization", on_delete=models.PROTECT, related_name="quality_reworks")
     company = models.ForeignKey("organizations.Company", on_delete=models.PROTECT, related_name="quality_reworks")
     inspection = models.OneToOneField(QualityInspection, on_delete=models.PROTECT, related_name="rework")
-    manufacturing_operation = models.ForeignKey(
-        "manufacturing.ManufacturingOperation",
-        on_delete=models.PROTECT,
-        related_name="quality_reworks",
-        null=True,
-        blank=True,
-    )
+    manufacturing_operation = models.ForeignKey("manufacturing.ManufacturingOperation", on_delete=models.PROTECT, related_name="quality_reworks", null=True, blank=True)
     status = models.CharField(max_length=16, choices=Status.choices, default=Status.OPEN)
     instructions = models.TextField()
     result_notes = models.TextField(blank=True)
