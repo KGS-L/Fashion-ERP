@@ -7,7 +7,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
     dependencies = [
         ("customers", "0001_initial"),
-        ("identity", "0002_user_international_preferences"),
+        ("identity", "0004_two_factor_security"),
         ("measurements", "0001_initial"),
     ]
 
