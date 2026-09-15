@@ -58,6 +58,14 @@ Phase 0 preserves the architecture defined by the specification:
 
 No new implementation technology is introduced as accepted without an explicit decision. The main server framework and mobile framework therefore remain open and are tracked for later decision before their implementation becomes necessary.
 
+## Deferred UI mockups
+
+The specification roadmap originally describes the Phase 0 deliverable as a validated specification plus mockups. No UI mockups have been produced yet. On 2026-09-15, the project owner explicitly decided to defer them and return to them later.
+
+This is a documented product/design debt, not a claim that mockups already exist. It does not invalidate the architecture/framing gate and does not block Phase 4 hardening or backend work. Before a production desktop/mobile/public UI is implemented, the relevant UX flows and mockups must be produced or explicitly replaced by another approved design artifact.
+
+Tracked by hardening issue #169.
+
 ## Exit criteria
 
 Phase 0 is complete when:
