@@ -45,7 +45,7 @@ class CustomerMasterDataTests(APITestCase):
                 "first_name": "Awa",
                 "last_name": "Test",
                 "language_code": "fr",
-                "preferred_currency_id": self.currency.id,
+                "preferred_currency_id": self.currency.pk,
                 "contacts": [
                     {"contact_type": "whatsapp", "value": "+22600000000", "is_primary": True}
                 ],
