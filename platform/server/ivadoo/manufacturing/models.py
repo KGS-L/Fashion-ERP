@@ -363,3 +363,10 @@ class ManufacturingMaterialRequirement(models.Model):
 
     def delete(self, *args, **kwargs):
         raise ValidationError("Manufacturing material requirement snapshots are immutable.")
+
+
+from .operation_models import (  # noqa: E402,F401
+    ManufacturingOperation,
+    ManufacturingOperationTransition,
+    WorkCenter,
+)
