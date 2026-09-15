@@ -31,6 +31,7 @@ class ModelManifest:
     importable: bool = False
     exportable: bool = False
     protected_fields: frozenset[str] = frozenset()
+    actions: tuple[str, ...] = ()
 
 
 _MODULES: dict[str, ModuleManifest] = {}

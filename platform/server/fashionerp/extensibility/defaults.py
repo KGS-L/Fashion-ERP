@@ -150,6 +150,7 @@ register_model(
         view_permission="fashion.sale.view",
         manage_permission="fashion.sale.manage",
         protected_fields=BASE_PROTECTED | {"number", "status"},
+        actions=("send", "accept", "reject", "expire"),
     )
 )
 register_model(
@@ -161,5 +162,6 @@ register_model(
         view_permission="fashion.sale.view",
         manage_permission="fashion.sale.manage",
         protected_fields=BASE_PROTECTED | {"number", "status", "confirmed_at", "cancelled_at"},
+        actions=("confirm", "cancel"),
     )
 )

@@ -9,7 +9,9 @@ from rest_framework.views import APIView
 from fashionerp.audit.services import record_audit_event
 from fashionerp.authorization.services import has_permission
 
+from .metadata import can_view_model, metadata_etag, model_metadata, visible_model_metadata
 from .models import CustomFieldDefinition
+from .registry import get_model_manifest
 from .serializers import CustomFieldDefinitionSerializer
 from .services import list_module_states, module_state, set_module_state
 
@@ -17,6 +19,17 @@ from .services import list_module_states, module_state, set_module_state
 def _require(user, permission_code: str, message: str) -> None:
     if not has_permission(user, permission_code):
         raise PermissionDenied(message)
+
+
+def _metadata_response(request, payload):
+    etag = metadata_etag(payload)
+    if request.headers.get("If-None-Match") == etag:
+        response = Response(status=status.HTTP_304_NOT_MODIFIED)
+    else:
+        response = Response(payload)
+    response["ETag"] = etag
+    response["Cache-Control"] = "private, must-revalidate"
+    return response
 
 
 class ModuleListView(APIView):
@@ -160,3 +173,24 @@ class CustomFieldDetailView(generics.RetrieveUpdateAPIView):
                 },
                 request=self.request,
             )
+
+
+class MetadataModelListView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        payload = {"models": visible_model_metadata(request.user)}
+        return _metadata_response(request, payload)
+
+
+class MetadataModelDetailView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, model_key):
+        try:
+            manifest = get_model_manifest(model_key)
+        except LookupError:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        if not can_view_model(request.user, manifest):
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        return _metadata_response(request, model_metadata(request.user, manifest))
