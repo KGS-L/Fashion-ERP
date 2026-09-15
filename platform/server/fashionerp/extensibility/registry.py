@@ -62,11 +62,7 @@ def iter_modules() -> tuple[ModuleManifest, ...]:
 
 
 def dependents_of(code: str) -> tuple[ModuleManifest, ...]:
-    return tuple(
-        manifest
-        for manifest in iter_modules()
-        if code in manifest.dependencies
-    )
+    return tuple(manifest for manifest in iter_modules() if code in manifest.dependencies)
 
 
 def module_for_api_path(path: str) -> ModuleManifest | None:
@@ -102,12 +98,20 @@ def iter_model_manifests() -> tuple[ModelManifest, ...]:
     return tuple(sorted(_MODELS.values(), key=lambda item: item.key))
 
 
+def replace_model_manifest(key: str, **changes) -> ModelManifest:
+    current = get_model_manifest(key)
+    values = {
+        field: getattr(current, field)
+        for field in current.__dataclass_fields__
+    }
+    values.update(changes)
+    updated = ModelManifest(**values)
+    _MODELS[key] = updated
+    return updated
+
+
 def resolve_django_model(manifest_or_key):
-    manifest = (
-        get_model_manifest(manifest_or_key)
-        if isinstance(manifest_or_key, str)
-        else manifest_or_key
-    )
+    manifest = get_model_manifest(manifest_or_key) if isinstance(manifest_or_key, str) else manifest_or_key
     app_label, model_name = manifest.django_model.split(".", 1)
     model = apps.get_model(app_label, model_name)
     if model is None:
@@ -123,8 +127,5 @@ def native_api_field_names(manifest_or_key) -> set[str]:
             continue
         if getattr(field, "many_to_many", False):
             continue
-        if getattr(field, "many_to_one", False):
-            names.add(f"{field.name}_id")
-        else:
-            names.add(field.name)
+        names.add(f"{field.name}_id" if getattr(field, "many_to_one", False) else field.name)
     return names

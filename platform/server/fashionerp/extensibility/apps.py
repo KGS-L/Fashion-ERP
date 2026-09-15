@@ -9,3 +9,6 @@ class ExtensibilityConfig(AppConfig):
         # Static manifests describe code capabilities. Per-organization state is
         # stored separately in ModuleInstallation.
         from . import defaults  # noqa: F401
+        from .data_resources import register_default_data_resources
+
+        register_default_data_resources()
