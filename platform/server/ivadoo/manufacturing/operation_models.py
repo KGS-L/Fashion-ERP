@@ -202,3 +202,10 @@ class ManufacturingOperationTransition(models.Model):
 
     def delete(self, *args, **kwargs):
         raise ValidationError("Manufacturing operation transition history is immutable.")
+
+
+from .production_models import (  # noqa: E402,F401
+    ManufacturingMaterialConsumption,
+    ManufacturingMaterialRemnant,
+    ManufacturingOutputReceipt,
+)

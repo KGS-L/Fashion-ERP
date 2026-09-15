@@ -7,6 +7,12 @@ from .operation_views import (
     WorkCenterDetailView,
     WorkCenterListCreateView,
 )
+from .production_views import (
+    ManufacturingMaterialConsumptionView,
+    ManufacturingMaterialRemnantView,
+    ManufacturingMaterialVarianceView,
+    ManufacturingOrderCompletionView,
+)
 from .views import (
     BillOfMaterialsActionView,
     BillOfMaterialsDetailView,
@@ -31,6 +37,10 @@ urlpatterns = [
     path("orders/<uuid:manufacturing_order_id>/actions/", ManufacturingOrderActionView.as_view(), name="order-action"),
     path("orders/<uuid:manufacturing_order_id>/reserve-materials/", ManufacturingMaterialReservationView.as_view(), name="order-reserve-materials"),
     path("orders/<uuid:manufacturing_order_id>/operations/", ManufacturingOperationListCreateView.as_view(), name="operation-list"),
+    path("orders/<uuid:manufacturing_order_id>/consume-materials/", ManufacturingMaterialConsumptionView.as_view(), name="order-consume-materials"),
+    path("orders/<uuid:manufacturing_order_id>/remnants/", ManufacturingMaterialRemnantView.as_view(), name="order-remnants"),
+    path("orders/<uuid:manufacturing_order_id>/material-variance/", ManufacturingMaterialVarianceView.as_view(), name="order-material-variance"),
+    path("orders/<uuid:manufacturing_order_id>/complete-production/", ManufacturingOrderCompletionView.as_view(), name="order-complete-production"),
     path("operations/<uuid:operation_id>/", ManufacturingOperationDetailView.as_view(), name="operation-detail"),
     path("operations/<uuid:operation_id>/actions/", ManufacturingOperationActionView.as_view(), name="operation-action"),
 ]
