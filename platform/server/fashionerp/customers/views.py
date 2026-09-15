@@ -1,4 +1,5 @@
 from django.db import transaction
+from django.db.models import Q
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics
 from rest_framework.exceptions import PermissionDenied
@@ -6,10 +7,28 @@ from rest_framework.filters import OrderingFilter, SearchFilter
 from rest_framework.permissions import IsAuthenticated
 
 from fashionerp.audit.services import audit_snapshot, record_audit_event
-from fashionerp.authorization.services import has_permission
+from fashionerp.authorization.services import (
+    authorized_company_ids,
+    authorized_establishment_ids,
+    has_permission,
+)
 
 from .models import Customer
 from .serializers import CustomerSerializer
+
+
+def scoped_customers(user, permission_code):
+    company_ids = authorized_company_ids(user, permission_code)
+    establishment_ids = authorized_establishment_ids(user, permission_code)
+    if not company_ids and not establishment_ids:
+        return Customer.objects.none()
+    return Customer.objects.filter(
+        organization_id=user.organization_id
+    ).filter(
+        Q(company_id__in=company_ids) | Q(establishment_id__in=establishment_ids)
+    ).select_related(
+        "company", "establishment", "preferred_currency"
+    ).prefetch_related("contacts", "addresses", "consents")
 
 
 class CustomerListView(generics.ListCreateAPIView):
@@ -29,16 +48,7 @@ class CustomerListView(generics.ListCreateAPIView):
     ordering = ("display_name",)
 
     def get_queryset(self):
-        # #37 will replace this organization-level gate with scoped customer
-        # queryset resolution. Keeping the permission explicit preserves
-        # deny-by-default while #36 establishes the customer master model.
-        if not has_permission(self.request.user, "fashion.customer.view"):
-            return Customer.objects.none()
-        return Customer.objects.filter(
-            organization_id=self.request.user.organization_id
-        ).select_related("company", "establishment", "preferred_currency").prefetch_related(
-            "contacts", "addresses", "consents"
-        )
+        return scoped_customers(self.request.user, "fashion.customer.view")
 
     def perform_create(self, serializer):
         company = serializer.validated_data["company"]
@@ -51,9 +61,7 @@ class CustomerListView(generics.ListCreateAPIView):
         ):
             raise PermissionDenied("You cannot manage customers in this scope.")
         with transaction.atomic():
-            customer = serializer.save(
-                organization=self.request.user.organization
-            )
+            customer = serializer.save(organization=self.request.user.organization)
             record_audit_event(
                 organization=self.request.user.organization,
                 actor=self.request.user,
@@ -77,13 +85,7 @@ class CustomerDetailView(generics.RetrieveUpdateAPIView):
             if self.request.method == "GET"
             else "fashion.customer.manage"
         )
-        if not has_permission(self.request.user, permission):
-            return Customer.objects.none()
-        return Customer.objects.filter(
-            organization_id=self.request.user.organization_id
-        ).select_related("company", "establishment", "preferred_currency").prefetch_related(
-            "contacts", "addresses", "consents"
-        )
+        return scoped_customers(self.request.user, permission)
 
     def perform_update(self, serializer):
         with transaction.atomic():
