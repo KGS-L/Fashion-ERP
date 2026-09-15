@@ -8,6 +8,12 @@ from .models import AuditEvent
 
 
 SAFE_FIELDS = {
+    "customers.customer": (
+        "organization_id", "company_id", "establishment_id", "customer_type",
+        "code", "display_name", "first_name", "last_name", "legal_name",
+        "email", "phone", "language_code", "preferred_currency_id",
+        "preferences", "notes", "status", "archived_at",
+    ),
     "identity.user": (
         "username",
         "first_name",
@@ -154,7 +160,10 @@ def _scope_from_object(instance):
         return company_id, establishment_id
 
     model_label = instance._meta.label_lower
-    if model_label == "organizations.company":
+    if model_label == "customers.customer":
+        company_id = instance.company_id
+        establishment_id = instance.establishment_id
+    elif model_label == "organizations.company":
         company_id = instance.id
     elif model_label == "organizations.establishment":
         company_id = instance.company_id
