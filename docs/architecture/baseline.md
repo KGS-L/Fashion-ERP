@@ -2,7 +2,7 @@
 
 Status: `accepted` during Phase 0.
 
-This document records the architecture and deployment decisions already defined by the project functional and technical specification, together with the minimum desktop operating-system policy accepted during Phase 0. The original specification was written under the legacy working name **Ivadoo**; the accepted product brand is now **Ivadoo**. This document does not introduce an application framework or infrastructure technology that is not explicitly validated.
+This document records the architecture and deployment decisions already defined by the project functional and technical specification, together with the minimum desktop operating-system policy accepted during Phase 0. It does not introduce an application framework or infrastructure technology that is not explicitly validated.
 
 ## Platform separation
 
@@ -120,7 +120,7 @@ See `docs/deployment/managed-cloud-evaluation.md` and `docs/adr/0009-ovh-vps2-in
 
 ## Not decided by this baseline
 
-The following are intentionally not selected here unless separately accepted:
+The following were intentionally not selected by this Phase 0 baseline unless separately accepted later:
 
 - server-side application framework;
 - mobile application framework;
@@ -129,4 +129,4 @@ The following are intentionally not selected here unless separately accepted:
 - reverse proxy;
 - final observability stack among the tools listed as possible in the specification.
 
-These choices require explicit decisions when they become necessary.
+Later accepted ADRs supersede this open-decision list where applicable. Choices that remain open still require explicit validation when they become necessary.
