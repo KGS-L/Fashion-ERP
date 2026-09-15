@@ -1,0 +1,15 @@
+Ivadoo Commercial Component License Notice
+
+Copyright (c) 2026 KGS-L. All rights reserved.
+
+SPDX-License-Identifier: LicenseRef-Ivadoo-Commercial
+
+This notice applies only to Ivadoo components that are explicitly identified as commercial by a local LICENSE file, a file-level SPDX identifier, or the authoritative component map in docs/product/component-license-map.json.
+
+Commercial components are not licensed under the repository's default LGPL-3.0-only terms. Possession of, or access to, their source code does not by itself grant permission to use, copy, modify, redistribute, sublicense, host, sell or create derivative commercial distributions of those components.
+
+Rights to commercial components are granted only under a separate written commercial license or agreement issued by KGS-L.
+
+Third-party software incorporated into or used by a commercial component remains governed by its own license terms, which continue to apply independently.
+
+This repository notice defines the technical licensing boundary used by the project. Final customer-facing commercial license terms may be supplemented by a separate signed agreement.
