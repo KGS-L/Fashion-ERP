@@ -14,6 +14,12 @@ from .procurement_views import (
     SupplierQuotationListCreateView,
     SupplierQuotationSelectView,
 )
+from .receipt_views import (
+    PurchaseReceiptActionView,
+    PurchaseReceiptDetailView,
+    PurchaseReceiptListCreateView,
+    SupplierPerformanceView,
+)
 from .views import (
     SupplierAddressDetailView,
     SupplierAddressListCreateView,
@@ -37,6 +43,7 @@ urlpatterns = [
     path("suppliers/<uuid:supplier_id>/addresses/<uuid:address_id>/", SupplierAddressDetailView.as_view(), name="supplier-address-detail"),
     path("suppliers/<uuid:supplier_id>/products/", SupplierProductListCreateView.as_view(), name="supplier-product-list"),
     path("suppliers/<uuid:supplier_id>/products/<uuid:supplier_product_id>/", SupplierProductDetailView.as_view(), name="supplier-product-detail"),
+    path("suppliers/<uuid:supplier_id>/performance/", SupplierPerformanceView.as_view(), name="supplier-performance"),
     path("requests/", PurchaseRequestListCreateView.as_view(), name="request-list"),
     path("requests/<uuid:request_id>/", PurchaseRequestDetailView.as_view(), name="request-detail"),
     path("requests/<uuid:request_id>/actions/", PurchaseRequestActionView.as_view(), name="request-action"),
@@ -49,4 +56,7 @@ urlpatterns = [
     path("orders/", PurchaseOrderListCreateView.as_view(), name="order-list"),
     path("orders/<uuid:purchase_order_id>/", PurchaseOrderDetailView.as_view(), name="order-detail"),
     path("orders/<uuid:purchase_order_id>/actions/", PurchaseOrderActionView.as_view(), name="order-action"),
+    path("receipts/", PurchaseReceiptListCreateView.as_view(), name="receipt-list"),
+    path("receipts/<uuid:receipt_id>/", PurchaseReceiptDetailView.as_view(), name="receipt-detail"),
+    path("receipts/<uuid:receipt_id>/actions/", PurchaseReceiptActionView.as_view(), name="receipt-action"),
 ]
