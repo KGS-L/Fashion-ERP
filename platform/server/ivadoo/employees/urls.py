@@ -12,6 +12,16 @@ from .views import (
     SkillDetailView,
     SkillListView,
 )
+from .work_views import (
+    AttendanceRecordDetailView,
+    AttendanceRecordListView,
+    EmployeeScheduleDetailView,
+    EmployeeScheduleListView,
+    EmployeeTaskDetailView,
+    EmployeeTaskListView,
+    EmployeeTimeEntryDetailView,
+    EmployeeTimeEntryListView,
+)
 
 
 app_name = "employees"
@@ -37,6 +47,26 @@ urlpatterns = [
         "assignments/<uuid:assignment_id>/",
         EmployeeAssignmentDetailView.as_view(),
         name="assignment-detail",
+    ),
+    path("schedules/", EmployeeScheduleListView.as_view(), name="schedule-list"),
+    path(
+        "schedules/<uuid:schedule_id>/",
+        EmployeeScheduleDetailView.as_view(),
+        name="schedule-detail",
+    ),
+    path("attendance/", AttendanceRecordListView.as_view(), name="attendance-list"),
+    path(
+        "attendance/<uuid:attendance_id>/",
+        AttendanceRecordDetailView.as_view(),
+        name="attendance-detail",
+    ),
+    path("tasks/", EmployeeTaskListView.as_view(), name="task-list"),
+    path("tasks/<uuid:task_id>/", EmployeeTaskDetailView.as_view(), name="task-detail"),
+    path("time-entries/", EmployeeTimeEntryListView.as_view(), name="time-entry-list"),
+    path(
+        "time-entries/<uuid:time_entry_id>/",
+        EmployeeTimeEntryDetailView.as_view(),
+        name="time-entry-detail",
     ),
     path("<uuid:employee_id>/", EmployeeDetailView.as_view(), name="detail"),
 ]
