@@ -86,6 +86,8 @@ class Migration(migrations.Migration):
                 ("actual_start", models.DateTimeField(blank=True, null=True)),
                 ("actual_end", models.DateTimeField(blank=True, null=True)),
                 ("transition_reason", models.CharField(blank=True, max_length=255)),
+                ("created_at", models.DateTimeField(auto_now_add=True)),
+                ("updated_at", models.DateTimeField(auto_now=True)),
                 ("bom", models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name="manufacturing_orders", to="manufacturing.billofmaterials")),
                 ("company", models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name="manufacturing_orders", to="organizations.company")),
                 ("created_by", models.ForeignKey(on_delete=django.db.models.deletion.PROTECT, related_name="created_manufacturing_orders", to="identity.user")),
