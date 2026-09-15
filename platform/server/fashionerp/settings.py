@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     "fashionerp.customers.apps.CustomersConfig",
     "fashionerp.measurements.apps.MeasurementsConfig",
     "fashionerp.catalog.apps.CatalogConfig",
+    "fashionerp.sales.apps.SalesConfig",
 ]
 
 MIDDLEWARE = [
