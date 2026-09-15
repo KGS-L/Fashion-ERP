@@ -1,0 +1,78 @@
+name: Ivadoo Rename Maintenance
+
+on:
+  push:
+    branches:
+      - chore/complete-ivadoo-rebrand
+
+permissions:
+  contents: write
+
+jobs:
+  migrate-identifiers:
+    if: github.actor != 'github-actions[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout maintenance branch
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.ref_name }}
+          fetch-depth: 0
+
+      - name: Migrate legacy identifiers to Ivadoo
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import subprocess
+
+          old_title = "Fashion" + "ERP"
+          old_lower = "fashion" + "erp"
+          old_upper = "FASHION" + "ERP"
+          old_slug = "Fashion" + "-ERP"
+
+          package_old = Path("platform/server") / old_lower
+          package_new = Path("platform/server/ivadoo")
+          if package_old.exists() and not package_new.exists():
+              package_old.rename(package_new)
+
+          replacements = (
+              (old_title, "Ivadoo"),
+              (old_lower, "ivadoo"),
+              (old_upper, "IVADOO"),
+              (old_slug, "Ivadoo"),
+          )
+
+          tracked = subprocess.check_output(["git", "ls-files", "-z"]).decode().split("\0")
+          for raw_path in tracked:
+              if not raw_path:
+                  continue
+              path = Path(raw_path)
+              if package_old in path.parents:
+                  path = package_new / path.relative_to(package_old)
+              if not path.exists() or not path.is_file():
+                  continue
+              try:
+                  text = path.read_text(encoding="utf-8")
+              except (UnicodeDecodeError, OSError):
+                  continue
+              updated = text
+              for old, new in replacements:
+                  updated = updated.replace(old, new)
+              if updated != text:
+                  path.write_text(updated, encoding="utf-8")
+          PY
+
+      - name: Commit rename migration
+        shell: bash
+        run: |
+          set -euo pipefail
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No rename changes remain."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "refactor(brand): complete Ivadoo technical rename"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
