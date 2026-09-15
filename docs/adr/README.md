@@ -29,7 +29,8 @@ Each ADR records context, decision, consequences, status and relevant alternativ
 - `0021-metadata-api-from-authoritative-model-registry.md` — runtime metadata derived from code manifests, Django fields, organization custom fields and RBAC;
 - `0022-customization-security-boundary.md` — deny-by-default customization with protected native invariants and layered field permissions;
 - `0023-generic-tabular-data-import-export.md` — CSV/XLSX import/export through explicitly registered, scoped domain adapters;
-- `0024-ivadoo-product-brand-and-technical-namespace.md` — Ivadoo as the definitive product identity, including the `ivadoo` Python namespace and `IVADOO_*` configuration namespace.
+- `0024-ivadoo-product-brand-and-technical-namespace.md` — Ivadoo as the definitive product identity, including the `ivadoo` Python namespace and `IVADOO_*` configuration namespace;
+- `0025-shared-owl-web-and-tauri-frontend.md` — one primary Owl/TypeScript ERP frontend shared by browser and Tauri, with explicit native adapters and separate public/client security boundaries.
 
 Decisions that remain open in the functional and technical specification must not be presented as finalized ADRs until explicitly validated.
 
