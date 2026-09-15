@@ -64,12 +64,12 @@ class ProductAttributeListCreateView(generics.ListCreateAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        if not has_permission(self.request.user, "fashion.product.view"):
+        if not authorized_company_ids(self.request.user, "fashion.product.view"):
             return ProductAttribute.objects.none()
         return ProductAttribute.objects.filter(organization_id=self.request.user.organization_id).prefetch_related("values")
 
     def perform_create(self, serializer):
-        if not has_permission(self.request.user, "fashion.product.manage"):
+        if not authorized_company_ids(self.request.user, "fashion.product.manage"):
             raise PermissionDenied("You cannot manage product attributes.")
         serializer.save(organization=self.request.user.organization)
 
