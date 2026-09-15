@@ -47,11 +47,7 @@ FOUNDATION_OPENAPI_PATHS = {
     "/api/v1/i18n/units/{unit_id}/",
 }
 
-PHASE_2_PREFIXES = (
-    "/api/v1/customers/",
-    "/api/v1/products/",
-    "/api/v1/measurements/",
-    "/api/v1/orders/",
+DEFERRED_BUSINESS_PREFIXES = (
     "/api/v1/inventory/",
     "/api/v1/purchases/",
     "/api/v1/manufacturing/",
@@ -81,16 +77,16 @@ class FoundationOpenApiContractTests(SimpleTestCase):
             msg=f"Foundation routes missing from OpenAPI: {sorted(missing)}",
         )
 
-    def test_phase_2_business_routes_are_not_exposed(self):
+    def test_deferred_business_routes_are_not_exposed(self):
         exposed = [
             path
             for path in self.paths
-            if path.startswith(PHASE_2_PREFIXES)
+            if path.startswith(DEFERRED_BUSINESS_PREFIXES)
         ]
         self.assertEqual(
             exposed,
             [],
-            msg=f"Phase 2 routes exposed during Foundation: {exposed}",
+            msg=f"Deferred business routes exposed early: {exposed}",
         )
 
     def test_enterprise_plus_api_keys_and_webhooks_are_not_exposed(self):
@@ -105,9 +101,9 @@ class FoundationOpenApiContractTests(SimpleTestCase):
             msg=f"Enterprise Plus routes exposed during Foundation: {exposed}",
         )
 
-    def test_phase_2_and_enterprise_plus_paths_are_not_routed(self):
+    def test_deferred_and_enterprise_plus_paths_are_not_routed(self):
         forbidden_paths = [
-            *PHASE_2_PREFIXES,
+            *DEFERRED_BUSINESS_PREFIXES,
             "/api/v1/api-keys/",
             "/api/v1/webhooks/",
         ]

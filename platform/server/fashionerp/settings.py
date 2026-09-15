@@ -30,6 +30,10 @@ INSTALLED_APPS = [
     "fashionerp.authorization.apps.AuthorizationConfig",
     "fashionerp.audit.apps.AuditConfig",
     "fashionerp.internationalization.apps.InternationalizationConfig",
+    "fashionerp.customers.apps.CustomersConfig",
+    "fashionerp.measurements.apps.MeasurementsConfig",
+    "fashionerp.catalog.apps.CatalogConfig",
+    "fashionerp.sales.apps.SalesConfig",
 ]
 
 MIDDLEWARE = [
@@ -160,4 +164,8 @@ SPECTACULAR_SETTINGS = {
     "DESCRIPTION": "Versioned REST API for the FashionERP platform.",
     "VERSION": "1.0.0",
     "SERVE_INCLUDE_SCHEMA": False,
+    "ENUM_NAME_OVERRIDES": {
+        "OrganizationLifecycleStatusEnum": [("active", "Active"), ("suspended", "Suspended"), ("archived", "Archived")],
+        "CustomerStatusEnum": [("active", "Active"), ("inactive", "Inactive"), ("archived", "Archived")],
+    },
 }
