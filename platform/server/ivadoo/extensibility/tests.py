@@ -52,6 +52,12 @@ class ModuleRegistryTests(APITestCase):
     def test_disabled_module_is_enforced_server_side(self):
         set_module_state(
             organization=self.organization,
+            module_code="operations.delivery",
+            enabled=False,
+            actor=self.user,
+        )
+        set_module_state(
+            organization=self.organization,
             module_code="operations.manufacturing",
             enabled=False,
             actor=self.user,
