@@ -4,7 +4,7 @@ from fashionerp.internationalization.models import UnitOfMeasure
 from fashionerp.organizations.models import Company
 
 from .models import (
-    Collection, FashionModel, FashionModelVariant, Product, ProductAttribute,
+    Collection, FashionModel, FashionModelMaterialRequirement, FashionModelVariant, Product, ProductAttribute,
     ProductAttributeValue, ProductVariant, Season,
 )
 
@@ -143,3 +143,33 @@ class FashionModelSerializer(serializers.ModelSerializer):
         model = FashionModel.objects.create(**validated_data)
         FashionModelVariant.objects.bulk_create([FashionModelVariant(fashion_model=model, **item) for item in variants])
         return model
+
+
+class FashionModelMaterialRequirementSerializer(serializers.ModelSerializer):
+    model_variant_id = serializers.PrimaryKeyRelatedField(source="model_variant", queryset=FashionModelVariant.objects.all(), allow_null=True, required=False)
+    product_id = serializers.PrimaryKeyRelatedField(source="product", queryset=Product.objects.all())
+    product_variant_id = serializers.PrimaryKeyRelatedField(source="product_variant", queryset=ProductVariant.objects.all(), allow_null=True, required=False)
+    unit_id = serializers.PrimaryKeyRelatedField(source="unit", queryset=UnitOfMeasure.objects.all())
+
+    class Meta:
+        model = FashionModelMaterialRequirement
+        fields = ("id", "model_variant_id", "product_id", "product_variant_id", "quantity", "unit_id", "waste_rate", "notes", "position")
+        read_only_fields = ("id",)
+
+    def validate(self, attrs):
+        fashion_model = self.context["fashion_model"]
+        model_variant = attrs.get("model_variant")
+        product = attrs["product"]
+        product_variant = attrs.get("product_variant")
+        unit = attrs["unit"]
+        if model_variant and model_variant.fashion_model_id != fashion_model.id:
+            raise serializers.ValidationError({"model_variant_id": "Variant is outside this fashion model."})
+        if product.organization_id != fashion_model.organization_id:
+            raise serializers.ValidationError({"product_id": "Product is outside the fashion model organization."})
+        if product_variant and product_variant.product_id != product.id:
+            raise serializers.ValidationError({"product_variant_id": "Product variant does not belong to the product."})
+        if unit.organization_id != fashion_model.organization_id:
+            raise serializers.ValidationError({"unit_id": "Unit is outside the fashion model organization."})
+        if product.unit.category != unit.category:
+            raise serializers.ValidationError({"unit_id": "Unit category must match the product unit category."})
+        return attrs
