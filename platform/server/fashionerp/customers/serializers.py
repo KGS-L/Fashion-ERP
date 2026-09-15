@@ -1,5 +1,4 @@
 from rest_framework import serializers
-from drf_spectacular.utils import extend_schema_field
 
 from fashionerp.internationalization.models import Currency
 from fashionerp.organizations.models import Company, Establishment
@@ -32,9 +31,6 @@ class CustomerConsentSerializer(serializers.ModelSerializer):
 
 
 class CustomerSerializer(serializers.ModelSerializer):
-    status = extend_schema_field(
-        {"type": "string", "enum": ["active", "inactive", "archived"]}
-    )(serializers.ChoiceField(choices=Customer.CustomerStatus.choices, required=False))
     organization_id = serializers.UUIDField(read_only=True)
     company_id = serializers.PrimaryKeyRelatedField(
         source="company", queryset=Company.objects.all()
