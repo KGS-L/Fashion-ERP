@@ -47,6 +47,8 @@ jobs:
           for raw_path in tracked:
               if not raw_path:
                   continue
+              if raw_path.startswith(".github/workflows/"):
+                  continue
               path = Path(raw_path)
               if package_old in path.parents:
                   path = package_new / path.relative_to(package_old)
