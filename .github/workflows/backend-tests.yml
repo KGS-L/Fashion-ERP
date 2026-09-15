@@ -34,13 +34,13 @@ jobs:
         # remains governed by the dedicated PostgreSQL/storage work.
         image: postgres:17-alpine
         env:
-          POSTGRES_DB: fashionerp_test
-          POSTGRES_USER: fashionerp
-          POSTGRES_PASSWORD: fashionerp_ci
+          POSTGRES_DB: ivadoo_test
+          POSTGRES_USER: ivadoo
+          POSTGRES_PASSWORD: ivadoo_ci
         ports:
           - 5432:5432
         options: >-
-          --health-cmd "pg_isready -U fashionerp -d fashionerp_test"
+          --health-cmd "pg_isready -U ivadoo -d ivadoo_test"
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
@@ -52,13 +52,13 @@ jobs:
     env:
       DJANGO_SECRET_KEY: ci-only-secret-key-not-for-production
       DJANGO_DEBUG: 'false'
-      FASHIONERP_2FA_ENCRYPTION_KEY: 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA='
-      POSTGRES_DB: fashionerp_test
-      POSTGRES_USER: fashionerp
-      POSTGRES_PASSWORD: fashionerp_ci
+      IVADOO_2FA_ENCRYPTION_KEY: 'AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA='
+      POSTGRES_DB: ivadoo_test
+      POSTGRES_USER: ivadoo
+      POSTGRES_PASSWORD: ivadoo_ci
       POSTGRES_HOST: 127.0.0.1
       POSTGRES_PORT: '5432'
-      POSTGRES_TENANT_B_DB: fashionerp_tenant_b
+      POSTGRES_TENANT_B_DB: ivadoo_tenant_b
       PIP_DISABLE_PIP_VERSION_CHECK: '1'
 
     steps:
@@ -88,10 +88,10 @@ jobs:
 
       - name: Create second isolated tenant database
         env:
-          PGPASSWORD: fashionerp_ci
+          PGPASSWORD: ivadoo_ci
         run: |
-          psql -h 127.0.0.1 -U fashionerp -d postgres \
-            -c "CREATE DATABASE fashionerp_tenant_b OWNER fashionerp;"
+          psql -h 127.0.0.1 -U ivadoo -d postgres \
+            -c "CREATE DATABASE ivadoo_tenant_b OWNER ivadoo;"
 
       - name: Apply migrations on primary PostgreSQL
         run: python manage.py migrate --noinput
@@ -105,7 +105,7 @@ jobs:
           python manage.py migrate --database=tenant_b --check
 
       - name: Validate OpenAPI schema
-        run: python manage.py spectacular --file /tmp/fashionerp-openapi.yaml --validate --fail-on-warn
+        run: python manage.py spectacular --file /tmp/ivadoo-openapi.yaml --validate --fail-on-warn
 
       - name: Run Django tests
         run: python manage.py test
