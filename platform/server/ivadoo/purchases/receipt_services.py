@@ -44,7 +44,7 @@ def control_receipt(*, receipt, decisions, actor, reason="", request=None):
 
     lines = {
         str(line.id): line
-        for line in PurchaseReceiptLine.objects.select_for_update()
+        for line in PurchaseReceiptLine.objects.select_for_update(of=("self",))
         .filter(receipt=receipt)
         .select_related("purchase_order_line", "location")
     }
@@ -176,7 +176,7 @@ def post_receipt(*, receipt, actor, reason="", request=None):
 
     before = _receipt_snapshot(receipt)
     lines = list(
-        PurchaseReceiptLine.objects.select_for_update()
+        PurchaseReceiptLine.objects.select_for_update(of=("self",))
         .filter(receipt=receipt)
         .select_related(
             "purchase_order_line",
@@ -193,7 +193,7 @@ def post_receipt(*, receipt, actor, reason="", request=None):
     for line in lines:
         if line.accepted_quantity + line.rejected_quantity != line.received_quantity:
             raise ValidationError("Every receipt line must be fully controlled before posting.")
-        po_line = PurchaseOrderLine.objects.select_for_update().select_related(
+        po_line = PurchaseOrderLine.objects.select_for_update(of=("self",)).select_related(
             "product", "product_variant", "unit"
         ).get(pk=line.purchase_order_line_id)
         outstanding = po_line.quantity - po_line.received_quantity
