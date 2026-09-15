@@ -83,3 +83,39 @@ class ProductCatalogApiTests(APITestCase):
             "code": "invalid", "name": "Invalid", "start_date": "2027-06-30", "end_date": "2027-01-01",
         }, format="json")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_model_material_requirement_is_reference_data_not_inventory(self):
+        fabric = self.client.post("/api/v1/products/", {
+            "company_id": str(self.company.id), "code": "linen", "name": "Linen",
+            "product_type": "fabric", "unit_id": str(self.meter.id),
+        }, format="json")
+        model = self.client.post("/api/v1/products/fashion-models/", {
+            "company_id": str(self.company.id), "code": "shirt-ref", "name": "Reference Shirt",
+            "variants": [{"code": "shirt-m", "size": "M"}],
+        }, format="json")
+        response = self.client.post(
+            f"/api/v1/products/fashion-models/{model.data['id']}/material-requirements/",
+            {
+                "model_variant_id": model.data["variants"][0]["id"],
+                "product_id": fabric.data["id"], "quantity": "2.2500",
+                "unit_id": str(self.meter.id), "waste_rate": "0.0500",
+                "notes": "Reference consumption before cutting.",
+            }, format="json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(Decimal(response.data["quantity"]), Decimal("2.2500"))
+
+    def test_model_material_requirement_rejects_non_positive_quantity(self):
+        fabric = self.client.post("/api/v1/products/", {
+            "company_id": str(self.company.id), "code": "cotton-zero", "name": "Cotton",
+            "product_type": "fabric", "unit_id": str(self.meter.id),
+        }, format="json")
+        model = self.client.post("/api/v1/products/fashion-models/", {
+            "company_id": str(self.company.id), "code": "model-zero", "name": "Model Zero",
+        }, format="json")
+        response = self.client.post(
+            f"/api/v1/products/fashion-models/{model.data['id']}/material-requirements/",
+            {"product_id": fabric.data["id"], "quantity": "0", "unit_id": str(self.meter.id)},
+            format="json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
