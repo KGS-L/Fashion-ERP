@@ -135,13 +135,16 @@ def order_delivery_balance(order):
                 "customer_net_quantity": max(ZERO, delivered - returned),
             }
         )
-    has_in_flight = Delivery.objects.filter(order=order, status__in=(
-        Delivery.Status.DRAFT,
-        Delivery.Status.PREPARED,
-        Delivery.Status.ASSIGNED,
-        Delivery.Status.SHIPPED,
-        Delivery.Status.READY_FOR_PICKUP,
-    )).exists()
+    has_in_flight = Delivery.objects.filter(
+        order=order,
+        status__in=(
+            Delivery.Status.DRAFT,
+            Delivery.Status.PREPARED,
+            Delivery.Status.ASSIGNED,
+            Delivery.Status.SHIPPED,
+            Delivery.Status.READY_FOR_PICKUP,
+        ),
+    ).exists()
     return {
         "order_id": str(order.id),
         "fully_allocated": all_allocated,
@@ -159,7 +162,7 @@ def _approved_output_capacity(order, order_line):
 
 
 def validate_delivery(delivery):
-    readiness = order_delivery_readiness(delivery.order)
+    readiness = order_delivery_readinessiness = order_delivery_readiness(delivery.order)
     if not readiness["deliverable"]:
         raise ValidationError("Order is not delivery-ready: " + ", ".join(readiness["blockers"]))
     delivery_lines = list(delivery.lines.select_related("order_line").all())
@@ -230,7 +233,19 @@ def _issue_delivery_stock(delivery, actor, request=None):
 
 
 @transaction.atomic
-def create_delivery(*, order, number, mode, lines, packages, actor, courier_name="", courier_reference="", destination_notes="", request=None):
+def create_delivery(
+    *,
+    order,
+    number,
+    mode,
+    lines,
+    packages,
+    actor,
+    courier_name="",
+    courier_reference="",
+    destination_notes="",
+    request=None,
+):
     order = Order.objects.select_for_update().select_related("organization", "company").get(pk=order.pk)
     if order.status != Order.Status.CONFIRMED:
         raise ValidationError("Deliveries can be created only for confirmed orders.")
@@ -348,7 +363,10 @@ def transition_delivery(*, delivery, action, actor, proof=None, failure_reason="
         delivery.completed_at = now
         fields = ("status", "completed_at", "updated_at")
     elif action == "fail":
-        if delivery.mode != Delivery.Mode.LOCAL_DELIVERY or delivery.status not in (Delivery.Status.ASSIGNED, Delivery.Status.SHIPPED):
+        if delivery.mode != Delivery.Mode.LOCAL_DELIVERY or delivery.status not in (
+            Delivery.Status.ASSIGNED,
+            Delivery.Status.SHIPPED,
+        ):
             raise ValidationError("Only an assigned or shipped local delivery can fail.")
         if not failure_reason.strip():
             raise ValidationError("Failed deliveries require an explicit reason.")
@@ -357,7 +375,13 @@ def transition_delivery(*, delivery, action, actor, proof=None, failure_reason="
         delivery.failed_at = now
         fields = ("status", "failure_reason", "failed_at", "updated_at")
     elif action == "cancel":
-        if delivery.status in (Delivery.Status.SHIPPED, Delivery.Status.PICKED_UP, Delivery.Status.DELIVERED, Delivery.Status.FAILED, Delivery.Status.CANCELLED):
+        if delivery.status in (
+            Delivery.Status.SHIPPED,
+            Delivery.Status.PICKED_UP,
+            Delivery.Status.DELIVERED,
+            Delivery.Status.FAILED,
+            Delivery.Status.CANCELLED,
+        ):
             raise ValidationError("This delivery can no longer be cancelled.")
         delivery.status = Delivery.Status.CANCELLED
         fields = ("status", "updated_at")
@@ -388,7 +412,10 @@ def _returned_against_issue(issue_movement):
 
 def _validate_return_destination(*, delivery, disposition, destination_location):
     if destination_location:
-        if destination_location.organization_id != delivery.organization_id or destination_location.company_id != delivery.company_id:
+        if (
+            destination_location.organization_id != delivery.organization_id
+            or destination_location.company_id != delivery.company_id
+        ):
             raise ValidationError("Return destination is outside the delivery company scope.")
     if disposition == DeliveryReturnLine.Disposition.QUARANTINE:
         if not destination_location:
@@ -399,12 +426,17 @@ def _validate_return_destination(*, delivery, disposition, destination_location)
 
 def _apply_return_stock(*, return_line, actor, request=None):
     delivery_line = return_line.delivery_line
-    source_issues = StockMovement.objects.select_for_update().filter(
-        organization=return_line.delivery_return.organization,
-        movement_type=StockMovement.MovementType.ISSUE,
-        reference_type="delivery.delivery_line",
-        reference_id=delivery_line.id,
-    ).select_related("source_location__warehouse", "product", "product_variant", "unit").order_by("created_at", "id")
+    source_issues = (
+        StockMovement.objects.select_for_update(of=("self",))
+        .filter(
+            organization=return_line.delivery_return.organization,
+            movement_type=StockMovement.MovementType.ISSUE,
+            reference_type="delivery.delivery_line",
+            reference_id=delivery_line.id,
+        )
+        .select_related("source_location__warehouse", "product", "product_variant", "unit")
+        .order_by("created_at", "id")
+    )
     remaining = Decimal(return_line.quantity)
     if not source_issues.exists():
         raise ValidationError("The delivery line has no traceable finished-stock issue movement.")
@@ -466,7 +498,17 @@ def _apply_return_stock(*, return_line, actor, request=None):
 
 
 @transaction.atomic
-def create_delivery_return(*, delivery, number, reason, resolution, idempotency_key, lines, actor, request=None):
+def create_delivery_return(
+    *,
+    delivery,
+    number,
+    reason,
+    resolution,
+    idempotency_key,
+    lines,
+    actor,
+    request=None,
+):
     delivery = Delivery.objects.select_for_update().select_related("organization", "company", "order").get(pk=delivery.pk)
     existing = DeliveryReturn.objects.filter(
         organization=delivery.organization,
