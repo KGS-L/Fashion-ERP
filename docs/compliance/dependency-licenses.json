@@ -50,5 +50,11 @@
     "license": "Apache-2.0 OR BSD-3-Clause",
     "reviewed": true,
     "note": "The upstream package offers a dual-license choice."
+  },
+  "openpyxl": {
+    "scope": "runtime",
+    "license": "MIT",
+    "reviewed": true,
+    "note": "Used for XLSX import/export in the extensibility data I/O foundation."
   }
 }

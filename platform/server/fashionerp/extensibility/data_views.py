@@ -81,7 +81,7 @@ class DataExportView(APIView):
     @extend_schema(
         parameters=[
             OpenApiParameter("resource", OpenApiTypes.STR, OpenApiParameter.QUERY, required=True),
-            OpenApiParameter("format", OpenApiTypes.STR, OpenApiParameter.QUERY, required=False, enum=["csv", "xlsx"]),
+            OpenApiParameter("output_format", OpenApiTypes.STR, OpenApiParameter.QUERY, required=False, enum=["csv", "xlsx"]),
             OpenApiParameter("fields", OpenApiTypes.STR, OpenApiParameter.QUERY, required=False),
         ],
         responses={200: OpenApiTypes.BINARY},
@@ -96,7 +96,7 @@ class DataExportView(APIView):
             return Response({"resource": [str(exc)]}, status=status.HTTP_400_BAD_REQUEST)
         requested = str(request.query_params.get("fields", "")).strip()
         fields = [item.strip() for item in requested.split(",") if item.strip()] if requested else list(adapter.export_fields)
-        output_format = str(request.query_params.get("format", "csv")).lower()
+        output_format = str(request.query_params.get("output_format", "csv")).lower()
         rows = export_rows(request=request, model_key=resource, fields=fields)
         filename = resource.replace(".", "-") + "-export"
         return tabular_response(headers=fields, rows=rows, output_format=output_format, filename=filename)

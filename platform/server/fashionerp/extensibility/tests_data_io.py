@@ -9,7 +9,6 @@ from rest_framework.test import APITestCase
 from fashionerp.authorization.services import grant_organization_admin
 from fashionerp.customers.models import Customer
 from fashionerp.identity.services import create_api_session
-from fashionerp.internationalization.models import UnitOfMeasure
 from fashionerp.organizations.models import Company, Organization
 
 from .models import CustomFieldDefinition, CustomObjectData
@@ -123,7 +122,7 @@ class GenericDataIoTests(APITestCase):
             display_name="Ada",
         )
         response = self.client.get(
-            "/api/v1/platform/data/export/?resource=customers.customer&format=csv&fields=code,display_name"
+            "/api/v1/platform/data/export/?resource=customers.customer&output_format=csv&fields=code,display_name"
         )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIn("C-001,Ada", response.content.decode("utf-8"))

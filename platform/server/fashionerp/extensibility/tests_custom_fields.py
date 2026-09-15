@@ -83,6 +83,7 @@ class CustomObjectDataTests(TestCase):
             password="Strong-Test-Password-42!",
             organization=self.organization,
         )
+        grant_organization_admin(user=self.user)
         self.customer = Customer.objects.create(
             organization=self.organization,
             company=self.company,
