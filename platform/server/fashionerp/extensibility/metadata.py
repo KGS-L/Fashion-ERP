@@ -3,10 +3,11 @@ import json
 
 from django.db import models
 
-from fashionerp.authorization.services import has_permission
+from fashionerp.authorization.services import has_any_scope_permission
 
 from .custom_fields import active_custom_fields
 from .registry import get_module, iter_model_manifests, resolve_django_model
+from .security import can_edit_custom_field, can_view_custom_field
 from .services import is_module_enabled
 
 
@@ -70,7 +71,7 @@ def _native_field_metadata(field, manifest) -> dict:
     return payload
 
 
-def _custom_field_metadata(definition) -> dict:
+def _custom_field_metadata(user, definition) -> dict:
     payload = {
         "key": definition.key,
         "label": definition.label,
@@ -79,10 +80,11 @@ def _custom_field_metadata(definition) -> dict:
         "custom": True,
         "protected": False,
         "required": definition.required,
-        "read_only": False,
+        "read_only": not can_edit_custom_field(user, definition),
         "choices": definition.options if definition.field_type in {"selection", "multi_selection"} else [],
         "searchable": definition.is_searchable,
         "reportable": definition.is_reportable,
+        "sensitive": definition.is_sensitive,
         "version": definition.version,
     }
     if definition.field_type == "reference":
@@ -91,7 +93,7 @@ def _custom_field_metadata(definition) -> dict:
 
 
 def can_view_model(user, manifest) -> bool:
-    return is_module_enabled(user.organization, manifest.module_code) and has_permission(
+    return is_module_enabled(user.organization, manifest.module_code) and has_any_scope_permission(
         user,
         manifest.view_permission,
     )
@@ -107,8 +109,9 @@ def model_metadata(user, manifest) -> dict:
         and not getattr(field, "many_to_many", False)
     ]
     custom_fields = [
-        _custom_field_metadata(definition)
+        _custom_field_metadata(user, definition)
         for definition in active_custom_fields(user.organization, manifest.key)
+        if can_view_custom_field(user, definition)
     ]
     module = get_module(manifest.module_code)
     return {
@@ -121,7 +124,7 @@ def model_metadata(user, manifest) -> dict:
         "permissions": {
             "view": manifest.view_permission,
             "manage": manifest.manage_permission,
-            "can_manage": has_permission(user, manifest.manage_permission),
+            "can_manage": has_any_scope_permission(user, manifest.manage_permission),
         },
         "capabilities": {
             "custom_fields": True,

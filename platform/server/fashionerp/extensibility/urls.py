@@ -3,6 +3,7 @@ from django.urls import path
 from .views import (
     CustomFieldDetailView,
     CustomFieldListCreateView,
+    CustomObjectDataView,
     MetadataModelDetailView,
     MetadataModelListView,
     ModuleActionView,
@@ -26,6 +27,11 @@ urlpatterns = [
         "custom-fields/<uuid:field_id>/",
         CustomFieldDetailView.as_view(),
         name="custom-field-detail",
+    ),
+    path(
+        "custom-data/<str:model_key>/<uuid:object_id>/",
+        CustomObjectDataView.as_view(),
+        name="custom-data-detail",
     ),
     path("metadata/models/", MetadataModelListView.as_view(), name="metadata-model-list"),
     path(

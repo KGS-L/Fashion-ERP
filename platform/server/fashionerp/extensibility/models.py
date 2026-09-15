@@ -79,6 +79,9 @@ class CustomFieldDefinition(models.Model):
     default_value = models.JSONField(null=True, blank=True)
     options = models.JSONField(default=list, blank=True)
     validation = models.JSONField(default=dict, blank=True)
+    view_permission = models.CharField(max_length=160, blank=True)
+    edit_permission = models.CharField(max_length=160, blank=True)
+    is_sensitive = models.BooleanField(default=False)
     is_searchable = models.BooleanField(default=False)
     is_reportable = models.BooleanField(default=True)
     is_active = models.BooleanField(default=True)
@@ -122,7 +125,7 @@ class CustomObjectData(models.Model):
     model_key = models.CharField(max_length=160)
     object_id = models.UUIDField()
     values = models.JSONField(default=dict, blank=True)
-    version = models.PositiveIntegerField(default=1)
+    version = models.PositiveIntegerField(default=0)
     updated_by = models.ForeignKey(
         "identity.User",
         on_delete=models.PROTECT,

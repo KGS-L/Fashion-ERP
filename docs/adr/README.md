@@ -26,7 +26,8 @@ Each ADR records context, decision, consequences, status and relevant alternativ
 - `0018-totp-two-factor-authentication.md` — TOTP 2FA, encrypted enrollment secrets, one-time recovery codes and secure administrator reset;
 - `0019-module-registry-and-runtime-capability-gates.md` — static code manifests plus organization-local activation state and server-side API capability gates;
 - `0020-hybrid-custom-fields-sidecar-storage.md` — strongly typed core fields plus versioned custom-field metadata and sidecar JSONB values;
-- `0021-metadata-api-from-authoritative-model-registry.md` — runtime metadata derived from code manifests, Django fields, organization custom fields and RBAC.
+- `0021-metadata-api-from-authoritative-model-registry.md` — runtime metadata derived from code manifests, Django fields, organization custom fields and RBAC;
+- `0022-customization-security-boundary.md` — deny-by-default customization with protected native invariants and layered field permissions.
 
 Decisions that remain open in the functional and technical specification must not be presented as finalized ADRs until explicitly validated.
 

@@ -9,6 +9,7 @@ from rest_framework.views import APIView
 from fashionerp.audit.services import record_audit_event
 from fashionerp.authorization.services import has_permission
 
+from .custom_fields import save_custom_values, visible_custom_values
 from .metadata import can_view_model, metadata_etag, model_metadata, visible_model_metadata
 from .models import CustomFieldDefinition
 from .registry import get_model_manifest
@@ -115,6 +116,9 @@ class CustomFieldListCreateView(generics.ListCreateAPIView):
                     "key": definition.key,
                     "field_type": definition.field_type,
                     "required": definition.required,
+                    "view_permission": definition.view_permission,
+                    "edit_permission": definition.edit_permission,
+                    "is_sensitive": definition.is_sensitive,
                     "is_active": definition.is_active,
                     "version": definition.version,
                 },
@@ -152,6 +156,9 @@ class CustomFieldDetailView(generics.RetrieveUpdateAPIView):
                 "required": instance.required,
                 "options": instance.options,
                 "validation": instance.validation,
+                "view_permission": instance.view_permission,
+                "edit_permission": instance.edit_permission,
+                "is_sensitive": instance.is_sensitive,
                 "is_active": instance.is_active,
                 "version": instance.version,
             }
@@ -168,11 +175,60 @@ class CustomFieldDetailView(generics.RetrieveUpdateAPIView):
                     "required": definition.required,
                     "options": definition.options,
                     "validation": definition.validation,
+                    "view_permission": definition.view_permission,
+                    "edit_permission": definition.edit_permission,
+                    "is_sensitive": definition.is_sensitive,
                     "is_active": definition.is_active,
                     "version": definition.version,
                 },
                 request=self.request,
             )
+
+
+class CustomObjectDataView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, model_key, object_id):
+        try:
+            values = visible_custom_values(
+                user=request.user,
+                model_key=model_key,
+                object_id=object_id,
+            )
+        except (LookupError, DjangoValidationError):
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        return Response({"model_key": model_key, "object_id": str(object_id), "values": values})
+
+    def patch(self, request, model_key, object_id):
+        values = request.data.get("values", request.data)
+        try:
+            record = save_custom_values(
+                organization=request.user.organization,
+                model_key=model_key,
+                object_id=object_id,
+                values=values,
+                actor=request.user,
+                request=request,
+                partial=True,
+            )
+            visible = visible_custom_values(
+                user=request.user,
+                model_key=model_key,
+                object_id=object_id,
+            )
+        except LookupError:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+        except DjangoValidationError as exc:
+            detail = exc.message_dict if hasattr(exc, "message_dict") else exc.messages
+            raise ValidationError(detail) from exc
+        return Response(
+            {
+                "model_key": model_key,
+                "object_id": str(object_id),
+                "version": record.version,
+                "values": visible,
+            }
+        )
 
 
 class MetadataModelListView(APIView):

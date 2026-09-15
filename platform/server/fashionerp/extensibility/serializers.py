@@ -2,7 +2,7 @@ from django.core.exceptions import ValidationError as DjangoValidationError
 from rest_framework import serializers
 
 from .custom_fields import validate_custom_field_definition
-from .models import CustomFieldDefinition
+from .models import CustomFieldDefinition, CustomObjectData
 
 
 class CustomFieldDefinitionSerializer(serializers.ModelSerializer):
@@ -22,6 +22,9 @@ class CustomFieldDefinitionSerializer(serializers.ModelSerializer):
             "default_value",
             "options",
             "validation",
+            "view_permission",
+            "edit_permission",
+            "is_sensitive",
             "is_searchable",
             "is_reportable",
             "is_active",
@@ -47,6 +50,9 @@ class CustomFieldDefinitionSerializer(serializers.ModelSerializer):
         field_type = attrs.get("field_type", getattr(instance, "field_type", None))
         options = attrs.get("options", getattr(instance, "options", []))
         validation = attrs.get("validation", getattr(instance, "validation", {}))
+        view_permission = attrs.get("view_permission", getattr(instance, "view_permission", ""))
+        edit_permission = attrs.get("edit_permission", getattr(instance, "edit_permission", ""))
+        is_sensitive = attrs.get("is_sensitive", getattr(instance, "is_sensitive", False))
         try:
             validate_custom_field_definition(
                 organization=request.user.organization,
@@ -55,6 +61,9 @@ class CustomFieldDefinitionSerializer(serializers.ModelSerializer):
                 field_type=field_type,
                 options=options,
                 validation=validation,
+                view_permission=view_permission,
+                edit_permission=edit_permission,
+                is_sensitive=is_sensitive,
             )
         except (DjangoValidationError, LookupError) as exc:
             if isinstance(exc, DjangoValidationError) and hasattr(exc, "message_dict"):
@@ -64,4 +73,14 @@ class CustomFieldDefinitionSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 {"key": "The model/key identity of a published custom field cannot be changed."}
             )
+        if instance and field_type != instance.field_type:
+            in_use = CustomObjectData.objects.filter(
+                organization=instance.organization,
+                model_key=instance.model_key,
+                values__has_key=instance.key,
+            ).exists()
+            if in_use:
+                raise serializers.ValidationError(
+                    {"field_type": "A custom field type cannot change after values have been stored."}
+                )
         return attrs

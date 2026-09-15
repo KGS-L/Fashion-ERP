@@ -108,6 +108,16 @@ def _role_allows(grant: AccessGrant, permission_code: str) -> bool:
     )
 
 
+def has_any_scope_permission(user, permission_code: str) -> bool:
+    """Return whether the user has this permission in at least one active scope."""
+    if not user or not user.is_authenticated or not user.is_active:
+        return False
+    return any(
+        _role_allows(grant, permission_code)
+        for grant in active_grants_for_user(user)
+    )
+
+
 def _scope_covers(
     grant: AccessGrant,
     *,

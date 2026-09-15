@@ -1,11 +1,13 @@
 from datetime import date, datetime
 from decimal import Decimal, InvalidOperation
+import re
 from uuid import UUID
 
 from django.core.exceptions import ValidationError
 from django.db import transaction
 
 from fashionerp.audit.services import record_audit_event
+from fashionerp.authorization.services import has_permission
 
 from .models import CustomFieldDefinition, CustomObjectData
 from .registry import (
@@ -13,7 +15,15 @@ from .registry import (
     native_api_field_names,
     resolve_django_model,
 )
+from .security import (
+    can_edit_custom_field_on_object,
+    can_view_custom_field_on_object,
+    validate_permission_overrides,
+)
 from .services import is_module_enabled
+
+
+CUSTOM_FIELD_KEY_RE = re.compile(r"^x_[a-z][a-z0-9_]{1,61}$")
 
 
 def validate_custom_field_definition(
@@ -24,12 +34,23 @@ def validate_custom_field_definition(
     field_type: str,
     options,
     validation,
+    view_permission: str = "",
+    edit_permission: str = "",
+    is_sensitive: bool = False,
 ) -> None:
     manifest = get_model_manifest(model_key)
     if not is_module_enabled(organization, manifest.module_code):
         raise ValidationError({"model_key": "The target module is not enabled."})
+    if not key or not CUSTOM_FIELD_KEY_RE.fullmatch(key):
+        raise ValidationError(
+            {"key": "Custom field keys must start with x_ and use lowercase letters, numbers and underscores."}
+        )
     if key in native_api_field_names(manifest):
         raise ValidationError({"key": "A custom field cannot replace a native field."})
+    if key in manifest.protected_fields:
+        raise ValidationError({"key": "This key is reserved by a protected system field."})
+    if field_type not in CustomFieldDefinition.FieldType.values:
+        raise ValidationError({"field_type": "Unsupported custom field type."})
     if field_type in {
         CustomFieldDefinition.FieldType.SELECTION,
         CustomFieldDefinition.FieldType.MULTI_SELECTION,
@@ -47,6 +68,13 @@ def validate_custom_field_definition(
         if not target_model:
             raise ValidationError({"validation": "Reference fields require validation.target_model."})
         get_model_manifest(target_model)
+
+    validate_permission_overrides(
+        manifest=manifest,
+        view_permission=view_permission,
+        edit_permission=edit_permission,
+        is_sensitive=is_sensitive,
+    )
 
 
 def active_custom_fields(organization, model_key: str):
@@ -135,7 +163,12 @@ def _normalize_value(definition: CustomFieldDefinition, value, organization):
         target_manifest = get_model_manifest(target_key)
         target_model = resolve_django_model(target_manifest)
         queryset = target_model.objects.filter(pk=target_id)
-        if hasattr(target_model, "organization_id"):
+        has_org_field = any(
+            field.name == "organization"
+            for field in target_model._meta.get_fields()
+            if getattr(field, "concrete", False)
+        )
+        if has_org_field:
             queryset = queryset.filter(organization_id=organization.id)
         if not queryset.exists():
             raise ValidationError({definition.key: "Referenced object is unavailable in this organization."})
@@ -143,7 +176,7 @@ def _normalize_value(definition: CustomFieldDefinition, value, organization):
     raise ValidationError({definition.key: "Unsupported custom field type."})
 
 
-def normalize_custom_values(*, organization, model_key: str, values: dict, partial: bool = True) -> dict:
+def normalize_custom_values(*, organization, model_key: str, values: dict, partial: bool = True, actor=None, target=None) -> dict:
     if not isinstance(values, dict):
         raise ValidationError({"custom": "Custom values must be an object."})
     definitions = {
@@ -153,6 +186,13 @@ def normalize_custom_values(*, organization, model_key: str, values: dict, parti
     unknown = sorted(set(values) - set(definitions))
     if unknown:
         raise ValidationError({"custom": f"Unknown or inactive custom fields: {', '.join(unknown)}."})
+    if actor is not None and target is not None:
+        forbidden = [
+            key for key in values
+            if not can_edit_custom_field_on_object(actor, definitions[key], target)
+        ]
+        if forbidden:
+            raise ValidationError({"custom": f"Not allowed to edit fields: {', '.join(sorted(forbidden))}."})
     normalized = {
         key: _normalize_value(definitions[key], value, organization)
         for key, value in values.items()
@@ -169,12 +209,46 @@ def resolve_customizable_object(*, organization, model_key: str, object_id):
     manifest = get_model_manifest(model_key)
     model = resolve_django_model(manifest)
     queryset = model.objects.filter(pk=object_id)
-    if any(field.name == "organization" for field in model._meta.get_fields() if getattr(field, "concrete", False)):
+    has_org_field = any(
+        field.name == "organization"
+        for field in model._meta.get_fields()
+        if getattr(field, "concrete", False)
+    )
+    if has_org_field:
         queryset = queryset.filter(organization_id=organization.id)
     obj = queryset.first()
     if obj is None:
         raise ValidationError({"object_id": "Target object is unavailable in this organization."})
     return obj
+
+
+def visible_custom_values(*, user, model_key: str, object_id) -> dict:
+    target = resolve_customizable_object(
+        organization=user.organization,
+        model_key=model_key,
+        object_id=object_id,
+    )
+    manifest = get_model_manifest(model_key)
+    company = getattr(target, "company", None)
+    establishment = getattr(target, "establishment", None)
+    if not has_permission(
+        user,
+        manifest.view_permission,
+        company=company,
+        establishment=establishment,
+    ):
+        raise ValidationError({"object_id": "Target object is unavailable in this scope."})
+    record = CustomObjectData.objects.filter(
+        organization=user.organization,
+        model_key=model_key,
+        object_id=object_id,
+    ).first()
+    stored = record.values if record else {}
+    return {
+        definition.key: stored.get(definition.key, definition.default_value)
+        for definition in active_custom_fields(user.organization, model_key)
+        if can_view_custom_field_on_object(user, definition, target)
+    }
 
 
 def save_custom_values(
@@ -187,7 +261,7 @@ def save_custom_values(
     request=None,
     partial: bool = True,
 ) -> CustomObjectData:
-    resolve_customizable_object(
+    target = resolve_customizable_object(
         organization=organization,
         model_key=model_key,
         object_id=object_id,
@@ -197,13 +271,15 @@ def save_custom_values(
         model_key=model_key,
         values=values,
         partial=partial,
+        actor=actor,
+        target=target,
     )
     with transaction.atomic():
         record, _ = CustomObjectData.objects.select_for_update().get_or_create(
             organization=organization,
             model_key=model_key,
             object_id=object_id,
-            defaults={"values": {}, "updated_by": actor},
+            defaults={"values": {}, "updated_by": actor, "version": 0},
         )
         before = dict(record.values)
         merged = dict(record.values) if partial else {}
