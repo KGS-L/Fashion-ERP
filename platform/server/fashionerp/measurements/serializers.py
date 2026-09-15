@@ -19,7 +19,7 @@ class MeasurementValueSerializer(serializers.ModelSerializer):
 class MeasurementSetSerializer(serializers.ModelSerializer):
     values = MeasurementValueSerializer(many=True)
     version = serializers.IntegerField(read_only=True)
-    created_by_id = serializers.UUIDField(source="created_by_id", read_only=True)
+    created_by_id = serializers.UUIDField(read_only=True)
 
     class Meta:
         model = MeasurementSet
