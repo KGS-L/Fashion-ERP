@@ -98,3 +98,91 @@ class ProductVariantAttributeValue(models.Model):
         if self.variant_id and self.attribute_value_id:
             if self.variant.product.organization_id != self.attribute_value.attribute.organization_id:
                 raise ValidationError({"attribute_value": "Attribute value must belong to the product organization."})
+
+
+class Season(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    organization = models.ForeignKey("organizations.Organization", on_delete=models.PROTECT, related_name="fashion_seasons")
+    code = models.SlugField(max_length=80)
+    name = models.CharField(max_length=160)
+    year = models.PositiveSmallIntegerField(null=True, blank=True)
+    start_date = models.DateField(null=True, blank=True)
+    end_date = models.DateField(null=True, blank=True)
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=("organization", "code"), name="fashion_season_unique_code_per_org")]
+        ordering = ("-year", "name")
+
+    def clean(self):
+        super().clean()
+        if self.start_date and self.end_date and self.end_date < self.start_date:
+            raise ValidationError({"end_date": "End date cannot precede start date."})
+
+
+class Collection(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    organization = models.ForeignKey("organizations.Organization", on_delete=models.PROTECT, related_name="fashion_collections")
+    company = models.ForeignKey("organizations.Company", on_delete=models.PROTECT, related_name="fashion_collections", null=True, blank=True)
+    season = models.ForeignKey(Season, on_delete=models.PROTECT, related_name="collections", null=True, blank=True)
+    code = models.SlugField(max_length=80)
+    name = models.CharField(max_length=200)
+    description = models.TextField(blank=True)
+    media_references = models.JSONField(default=list, blank=True)
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=("organization", "code"), name="fashion_collection_unique_code_per_org")]
+        ordering = ("name",)
+
+    def clean(self):
+        super().clean()
+        if self.company_id and self.company.organization_id != self.organization_id:
+            raise ValidationError({"company": "Company must belong to the organization."})
+        if self.season_id and self.season.organization_id != self.organization_id:
+            raise ValidationError({"season": "Season must belong to the organization."})
+
+
+class FashionModel(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    organization = models.ForeignKey("organizations.Organization", on_delete=models.PROTECT, related_name="fashion_models")
+    company = models.ForeignKey("organizations.Company", on_delete=models.PROTECT, related_name="fashion_models", null=True, blank=True)
+    collection = models.ForeignKey(Collection, on_delete=models.PROTECT, related_name="models", null=True, blank=True)
+    code = models.CharField(max_length=80)
+    name = models.CharField(max_length=255)
+    description = models.TextField(blank=True)
+    instructions = models.TextField(blank=True)
+    media_references = models.JSONField(default=list, blank=True)
+    metadata = models.JSONField(default=dict, blank=True)
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=("organization", "code"), name="fashion_model_unique_code_per_org")]
+        ordering = ("name",)
+
+    def clean(self):
+        super().clean()
+        if self.company_id and self.company.organization_id != self.organization_id:
+            raise ValidationError({"company": "Company must belong to the organization."})
+        if self.collection_id and self.collection.organization_id != self.organization_id:
+            raise ValidationError({"collection": "Collection must belong to the organization."})
+
+
+class FashionModelVariant(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    fashion_model = models.ForeignKey(FashionModel, on_delete=models.CASCADE, related_name="variants")
+    code = models.CharField(max_length=96)
+    color = models.CharField(max_length=120, blank=True)
+    size = models.CharField(max_length=80, blank=True)
+    instructions = models.TextField(blank=True)
+    media_references = models.JSONField(default=list, blank=True)
+    metadata = models.JSONField(default=dict, blank=True)
+    is_active = models.BooleanField(default=True)
+
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=("fashion_model", "code"), name="fashion_model_variant_unique_code")]
+        ordering = ("code",)
