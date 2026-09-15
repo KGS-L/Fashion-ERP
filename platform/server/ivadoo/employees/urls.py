@@ -1,5 +1,13 @@
 from django.urls import path
 
+from .performance_views import (
+    CommissionCalculateView,
+    CommissionCalculationListView,
+    CommissionRuleDetailView,
+    CommissionRuleListView,
+    ProductivityGenerateView,
+    ProductivitySnapshotListView,
+)
 from .views import (
     EmployeeAssignmentDetailView,
     EmployeeAssignmentListView,
@@ -67,6 +75,36 @@ urlpatterns = [
         "time-entries/<uuid:time_entry_id>/",
         EmployeeTimeEntryDetailView.as_view(),
         name="time-entry-detail",
+    ),
+    path(
+        "productivity/",
+        ProductivitySnapshotListView.as_view(),
+        name="productivity-list",
+    ),
+    path(
+        "productivity/actions/generate/",
+        ProductivityGenerateView.as_view(),
+        name="productivity-generate",
+    ),
+    path(
+        "commission-rules/",
+        CommissionRuleListView.as_view(),
+        name="commission-rule-list",
+    ),
+    path(
+        "commission-rules/<uuid:rule_id>/",
+        CommissionRuleDetailView.as_view(),
+        name="commission-rule-detail",
+    ),
+    path(
+        "commissions/",
+        CommissionCalculationListView.as_view(),
+        name="commission-list",
+    ),
+    path(
+        "commissions/actions/calculate/",
+        CommissionCalculateView.as_view(),
+        name="commission-calculate",
     ),
     path("<uuid:employee_id>/", EmployeeDetailView.as_view(), name="detail"),
 ]
