@@ -162,6 +162,7 @@ SPECTACULAR_SETTINGS = {
     "VERSION": "1.0.0",
     "SERVE_INCLUDE_SCHEMA": False,
     "ENUM_NAME_OVERRIDES": {
+        "OrganizationLifecycleStatusEnum": [("active", "Active"), ("suspended", "Suspended"), ("archived", "Archived")],
         "CustomerStatusEnum": [("active", "Active"), ("inactive", "Inactive"), ("archived", "Archived")],
     },
 }
