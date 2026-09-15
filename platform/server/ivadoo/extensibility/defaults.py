@@ -9,7 +9,7 @@ register_module(ModuleManifest(code="fashion.sales", name="Sales", version="1.0.
 register_module(ModuleManifest(code="operations.inventory", name="Inventory", version="1.0.0", dependencies=("foundation", "fashion.catalog"), default_enabled=True, edition="business", api_prefixes=("/api/v1/inventory/",)))
 register_module(ModuleManifest(code="operations.purchases", name="Purchases", version="1.0.0", dependencies=("foundation", "fashion.catalog", "operations.inventory"), default_enabled=True, edition="business", api_prefixes=("/api/v1/purchases/",)))
 register_module(ModuleManifest(code="operations.manufacturing", name="Manufacturing", version="1.0.0", dependencies=("foundation", "fashion.catalog", "fashion.sales", "operations.inventory"), default_enabled=True, edition="business", api_prefixes=("/api/v1/manufacturing/",)))
-register_module(ModuleManifest(code="operations.quality", name="Quality", version="1.0.0", dependencies=("foundation", "operations.purchases", "operations.manufacturing"), default_enabled=True, edition="business", api_prefixes=("/api/v1/quality/",)))
+register_module(ModuleManifest(code="operations.quality", name="Quality", version="1.0.0", dependencies=("foundation",), default_enabled=True, edition="business", api_prefixes=("/api/v1/quality/",)))
 
 BASE_PROTECTED = frozenset({"id", "organization", "organization_id", "company", "company_id", "establishment", "establishment_id", "created_at", "updated_at", "archived_at", "created_by", "created_by_id", "updated_by", "updated_by_id"})
 
