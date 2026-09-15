@@ -148,6 +148,7 @@ SPECTACULAR_SETTINGS = {
     "ENUM_NAME_OVERRIDES": {
         "OrganizationLifecycleStatusEnum": [("active", "Active"), ("suspended", "Suspended"), ("archived", "Archived")],
         "CustomerStatusEnum": [("active", "Active"), ("inactive", "Inactive"), ("archived", "Archived")],
+        "CustomerTypeEnum": [("individual", "Individual"), ("company", "Company")],
         "DeliveryReturnDispositionEnum": "ivadoo.delivery.models.DeliveryReturnLine.Disposition",
     },
 }
