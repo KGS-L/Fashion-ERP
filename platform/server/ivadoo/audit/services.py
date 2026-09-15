@@ -14,6 +14,32 @@ SAFE_FIELDS = {
         "email", "phone", "language_code", "preferred_currency_id",
         "preferences", "notes", "status", "archived_at",
     ),
+    "crm.crmsource": (
+        "organization_id", "company_id", "code", "name", "source_type",
+        "description", "is_active",
+    ),
+    "crm.crmpipelinestage": (
+        "organization_id", "company_id", "code", "name", "position",
+        "stage_type", "probability", "is_active",
+    ),
+    "crm.crmlead": (
+        "organization_id", "company_id", "establishment_id", "source_id", "owner_id",
+        "code", "prospect_type", "display_name", "first_name", "last_name",
+        "legal_name", "email", "phone", "language_code", "status", "notes",
+        "converted_customer_id", "converted_at", "converted_by_id", "created_by_id",
+    ),
+    "crm.crmopportunity": (
+        "organization_id", "company_id", "establishment_id", "lead_id", "customer_id",
+        "source_id", "stage_id", "owner_id", "code", "title", "description",
+        "prospect_type", "contact_name", "legal_name", "email", "phone",
+        "language_code", "expected_revenue", "currency_id", "probability",
+        "expected_close_date", "converted_at", "converted_by_id", "created_by_id",
+    ),
+    "crm.crmconversionevent": (
+        "organization_id", "company_id", "establishment_id", "source_kind", "lead_id",
+        "opportunity_id", "customer_id", "created_customer", "source_snapshot",
+        "actor_id", "occurred_at",
+    ),
     "identity.user": (
         "username", "first_name", "last_name", "email", "language_code", "is_active",
     ),
@@ -127,6 +153,15 @@ def _scope_from_object(instance):
     elif model_label == "authorization.accessgrant":
         company_id = instance.company_id
         establishment_id = instance.establishment_id
+    elif model_label in {
+        "crm.crmsource",
+        "crm.crmpipelinestage",
+        "crm.crmlead",
+        "crm.crmopportunity",
+        "crm.crmconversionevent",
+    }:
+        company_id = instance.company_id
+        establishment_id = getattr(instance, "establishment_id", None)
     elif model_label in {"purchases.supplier", "purchases.purchaserequest", "purchases.requestforquotation", "purchases.purchaseorder"}:
         company_id = instance.company_id
         establishment_id = getattr(instance, "establishment_id", None)
