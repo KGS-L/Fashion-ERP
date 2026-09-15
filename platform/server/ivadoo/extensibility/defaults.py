@@ -70,7 +70,7 @@ register_module(
         code="operations.inventory",
         name="Inventory",
         version="1.0.0",
-        dependencies=("foundation", "fashion.catalog", "fashion.sales"),
+        dependencies=("foundation", "fashion.catalog"),
         default_enabled=True,
         edition="business",
         api_prefixes=("/api/v1/inventory/",),
