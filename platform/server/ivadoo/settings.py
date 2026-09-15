@@ -145,5 +145,6 @@ SPECTACULAR_SETTINGS = {
     "ENUM_NAME_OVERRIDES": {
         "OrganizationLifecycleStatusEnum": [("active", "Active"), ("suspended", "Suspended"), ("archived", "Archived")],
         "CustomerStatusEnum": [("active", "Active"), ("inactive", "Inactive"), ("archived", "Archived")],
+        "DeliveryReturnDispositionEnum": [("restock", "Restock"), ("quarantine", "Quarantine"), ("damaged", "Damaged")],
     },
 }
