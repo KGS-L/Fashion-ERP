@@ -17,6 +17,8 @@ Ivadoo follows an open-core model.
 - Interaction with Community components does not automatically place commercial components under the LGPL.
 - Third-party dependencies remain governed by their own licenses.
 
+The repository implements this decision through `LICENSE`, `LICENSE-COMMERCIAL`, `docs/product/component-license-map.json` and local component licensing markers. `docs/product/licensing-boundaries.md` documents the technical rule used when Community and commercial code coexist in the same repository or package.
+
 ## Edition boundaries
 
 The functional scope remains the one defined by the project specification.
@@ -43,7 +45,7 @@ Initial limits:
 - **1 legal company**;
 - multiple establishments/sites within that company.
 
-The edition extends Community with the Business functional scope defined in the specification, including inventory, purchasing, production, delivery, employees, CRM, expenses, multi-site operation, multilingual operation and the workshop mobile application.
+The edition extends Community with the Business functional scope defined in the specification, including inventory, purchasing, production, basic operational quality, delivery, employees, CRM, expenses, multi-site operation, multilingual operation and the workshop mobile application.
 
 ### Enterprise Plus
 
@@ -84,7 +86,11 @@ Basic model/design capabilities needed by the fashion workflow remain available 
 
 ### Quality
 
-Basic quality-control workflow belongs to the operational roadmap. Enterprise Plus adds advanced quality capabilities rather than making all quality control Enterprise-only.
+Basic quality-control workflow belongs to the operational Business roadmap. Enterprise Plus adds advanced quality capabilities rather than making all quality control Enterprise-only.
+
+## Repository classification rule
+
+Every new runtime component must have an edition/license classification before merge. Paths omitted from the component map inherit the Community `LGPL-3.0-only` default. Business or Enterprise Plus paths must be listed in `component-license-map.json` and carry a local/package licensing marker pointing to `LICENSE-COMMERCIAL`.
 
 ## Review rule
 

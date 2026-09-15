@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "default_license": "LGPL-3.0-only",
+  "commercial_license": "LicenseRef-Ivadoo-Commercial",
+  "commercial_license_file": "LICENSE-COMMERCIAL",
+  "commercial_directories": [
+    {"path": "platform/server/ivadoo/inventory", "edition": "Business"},
+    {"path": "platform/server/ivadoo/purchases", "edition": "Business"},
+    {"path": "platform/server/ivadoo/manufacturing", "edition": "Business"},
+    {"path": "platform/server/ivadoo/quality", "edition": "Business"},
+    {"path": "platform/server/ivadoo/delivery", "edition": "Business"},
+    {"path": "platform/server/ivadoo/operations", "edition": "Business"}
+  ],
+  "commercial_files": [
+    {"path": "platform/server/ivadoo/sales/fitting_models.py", "edition": "Business"},
+    {"path": "platform/server/ivadoo/sales/fitting_serializers.py", "edition": "Business"},
+    {"path": "platform/server/ivadoo/sales/fitting_services.py", "edition": "Business"},
+    {"path": "platform/server/ivadoo/sales/fitting_views.py", "edition": "Business"},
+    {"path": "platform/server/ivadoo/sales/tests_fittings.py", "edition": "Business"},
+    {"path": "platform/server/ivadoo/sales/migrations/0002_fittings_alterations_customer_validation.py", "edition": "Business"}
+  ]
+}

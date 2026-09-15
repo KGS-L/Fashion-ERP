@@ -6,7 +6,7 @@ Ivadoo follows an open-core licensing model.
 
 Community components
 --------------------
-Unless a source file or directory states otherwise, the Ivadoo Community core is licensed under the GNU Lesser General Public License, version 3.0 (LGPL-3.0-only).
+Unless a source file, directory or the authoritative component license map states otherwise, the Ivadoo Community core is licensed under the GNU Lesser General Public License, version 3.0 (LGPL-3.0-only).
 
 You may use, modify and redistribute the Community core under the terms of the GNU LGPL v3. The official license text is available from the Free Software Foundation:
 https://www.gnu.org/licenses/lgpl-3.0.html
@@ -15,7 +15,10 @@ Commercial components
 ---------------------
 Business, Enterprise Plus, premium modules, proprietary connectors and other components explicitly identified as commercial are NOT licensed under the LGPL merely because they interact with or are distributed alongside the Community core.
 
-Those components may be distributed under separate commercial license terms.
+The machine-readable licensing boundary is maintained in:
+`docs/product/component-license-map.json`
+
+Commercial directories and mixed packages also carry local licensing markers. The applicable commercial notice is `LICENSE-COMMERCIAL`.
 
 Third-party software
 --------------------
