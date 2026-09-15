@@ -48,7 +48,6 @@ FOUNDATION_OPENAPI_PATHS = {
 }
 
 DEFERRED_BUSINESS_PREFIXES = (
-    "/api/v1/inventory/",
     "/api/v1/purchases/",
     "/api/v1/manufacturing/",
     "/api/v1/deliveries/",
