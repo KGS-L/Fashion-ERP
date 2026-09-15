@@ -92,6 +92,7 @@ class ProductivitySnapshotListView(generics.ListAPIView):
 
 class ProductivityGenerateView(APIView):
     permission_classes = [IsAuthenticated]
+    serializer_class = ProductivityGenerateSerializer
 
     def post(self, request):
         serializer = ProductivityGenerateSerializer(
@@ -266,6 +267,7 @@ class CommissionCalculationListView(generics.ListAPIView):
 
 class CommissionCalculateView(APIView):
     permission_classes = [IsAuthenticated]
+    serializer_class = CommissionCalculateSerializer
 
     def post(self, request):
         serializer = CommissionCalculateSerializer(
