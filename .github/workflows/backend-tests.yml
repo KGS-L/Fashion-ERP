@@ -116,4 +116,6 @@ jobs:
         run: python manage.py spectacular --file /tmp/ivadoo-openapi.yaml --validate --fail-on-warn
 
       - name: Run Django tests
-        run: python manage.py test
+        # The runner/service are ephemeral. --keepdb avoids a PostgreSQL DROP DATABASE
+        # race with the intentional parallel-connection concurrency tests at process teardown.
+        run: python manage.py test --keepdb
