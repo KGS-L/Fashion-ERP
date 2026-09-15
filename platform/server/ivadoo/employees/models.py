@@ -332,3 +332,8 @@ from .work_models import (  # noqa: E402,F401
     EmployeeTaskTransition,
     EmployeeTimeEntry,
 )
+from .performance_models import (  # noqa: E402,F401
+    CommissionCalculation,
+    CommissionRule,
+    ProductivitySnapshot,
+)
