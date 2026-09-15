@@ -2,7 +2,7 @@
 
 This directory contains the Django server runtime for the Ivadoo platform.
 
-The Python/Django package namespace remains `ivadoo` for compatibility with existing imports, Django app labels, migrations and deployment configuration. The Ivadoo rebrand does not rewrite migration history or persisted technical identifiers.
+The Python/Django package namespace is `ivadoo`. Django business application labels remain stable independently from the project package name so the migration graph and database table naming stay coherent.
 
 Validated baseline:
 
@@ -22,7 +22,7 @@ The business API is versioned under `/api/v1/`. OpenAPI is generated from the im
 
 The Phase 1 authentication lifecycle is exposed under `/api/v1/auth/`.
 
-Session/security policy is environment-configurable. Existing `IVADOO_*` variable names are retained as stable technical configuration keys during the product rebrand:
+Session/security policy is environment-configurable through Ivadoo configuration keys:
 
 - `IVADOO_SESSION_ABSOLUTE_TTL_SECONDS`: 30 days by default;
 - `IVADOO_SESSION_IDLE_TTL_SECONDS`: 12 hours by default;
