@@ -1,7 +1,8 @@
+from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import transaction
 from drf_spectacular.utils import extend_schema
 from rest_framework import generics, status
-from rest_framework.exceptions import NotFound, PermissionDenied
+from rest_framework.exceptions import NotFound, PermissionDenied, ValidationError
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -12,6 +13,12 @@ from ivadoo.authorization.services import authorized_company_ids, has_permission
 from .models import ApprovalRule, StockMovementApproval
 from .serializers import ApprovalDecisionSerializer, ApprovalRuleSerializer, StockApprovalCreateSerializer, StockApprovalSerializer
 from .services import decide_stock_movement_approval
+
+
+def _raise_service_validation(exc):
+    if hasattr(exc, "message_dict"):
+        raise ValidationError(exc.message_dict) from exc
+    raise ValidationError(getattr(exc, "messages", [str(exc)])) from exc
 
 
 def scoped_approval_rules(user, permission_code):
@@ -40,19 +47,22 @@ class ApprovalRuleListCreateView(generics.ListCreateAPIView):
         establishment = serializer.validated_data.get("establishment")
         if not has_permission(self.request.user, "operations.approval.manage", company=company, establishment=establishment):
             raise PermissionDenied("You cannot manage approval rules in this scope.")
-        with transaction.atomic():
-            rule = serializer.save(organization=self.request.user.organization)
-            rule.full_clean()
-            rule.save()
-            record_audit_event(
-                organization=self.request.user.organization,
-                actor=self.request.user,
-                action="operations.approval_rule.create",
-                object_instance=rule,
-                after=audit_snapshot(rule),
-                company_id=rule.company_id,
-                request=self.request,
-            )
+        try:
+            with transaction.atomic():
+                rule = serializer.save(organization=self.request.user.organization)
+                rule.full_clean()
+                rule.save()
+                record_audit_event(
+                    organization=self.request.user.organization,
+                    actor=self.request.user,
+                    action="operations.approval_rule.create",
+                    object_instance=rule,
+                    after=audit_snapshot(rule),
+                    company_id=rule.company_id,
+                    request=self.request,
+                )
+        except DjangoValidationError as exc:
+            _raise_service_validation(exc)
 
 
 class ApprovalRuleDetailView(generics.RetrieveUpdateAPIView):
@@ -73,20 +83,23 @@ class ApprovalRuleDetailView(generics.RetrieveUpdateAPIView):
         if not has_permission(self.request.user, "operations.approval.manage", company=company, establishment=establishment):
             raise PermissionDenied("You cannot manage this approval rule.")
         before = audit_snapshot(instance)
-        with transaction.atomic():
-            rule = serializer.save()
-            rule.full_clean()
-            rule.save()
-            record_audit_event(
-                organization=self.request.user.organization,
-                actor=self.request.user,
-                action="operations.approval_rule.update",
-                object_instance=rule,
-                before=before,
-                after=audit_snapshot(rule),
-                company_id=rule.company_id,
-                request=self.request,
-            )
+        try:
+            with transaction.atomic():
+                rule = serializer.save()
+                rule.full_clean()
+                rule.save()
+                record_audit_event(
+                    organization=self.request.user.organization,
+                    actor=self.request.user,
+                    action="operations.approval_rule.update",
+                    object_instance=rule,
+                    before=before,
+                    after=audit_snapshot(rule),
+                    company_id=rule.company_id,
+                    request=self.request,
+                )
+        except DjangoValidationError as exc:
+            _raise_service_validation(exc)
 
 
 class StockApprovalListCreateView(generics.ListCreateAPIView):
@@ -115,7 +128,10 @@ class StockApprovalListCreateView(generics.ListCreateAPIView):
             establishment=location.warehouse.establishment,
         ):
             raise PermissionDenied("You cannot request stock approval in this scope.")
-        serializer.save()
+        try:
+            serializer.save()
+        except DjangoValidationError as exc:
+            _raise_service_validation(exc)
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
@@ -147,11 +163,14 @@ class StockApprovalDecisionView(APIView):
             establishment=approval.establishment,
         ):
             raise PermissionDenied("You cannot decide this approval.")
-        approval = decide_stock_movement_approval(
-            approval=approval,
-            actor=request.user,
-            decision=serializer.validated_data["decision"],
-            reason=serializer.validated_data.get("reason", ""),
-            request=request,
-        )
+        try:
+            approval = decide_stock_movement_approval(
+                approval=approval,
+                actor=request.user,
+                decision=serializer.validated_data["decision"],
+                reason=serializer.validated_data.get("reason", ""),
+                request=request,
+            )
+        except DjangoValidationError as exc:
+            _raise_service_validation(exc)
         return Response(StockApprovalSerializer(approval).data)
