@@ -163,5 +163,8 @@ SPECTACULAR_SETTINGS = {
     "SERVE_INCLUDE_SCHEMA": False,
     "ENUM_NAME_OVERRIDES": {
         "CustomerStatusEnum": "fashionerp.customers.models.Customer.Status",
+        "OrganizationStatusEnum": "fashionerp.organizations.models.Organization.Status",
+        "CompanyStatusEnum": "fashionerp.organizations.models.Company.Status",
+        "EstablishmentStatusEnum": "fashionerp.organizations.models.Establishment.Status",
     },
 }
