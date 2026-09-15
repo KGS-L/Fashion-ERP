@@ -2,7 +2,10 @@ from django.db import transaction
 from django.db.models import Max
 from rest_framework import serializers
 
-from .models import MeasurementDefinition, MeasurementSet, MeasurementValue
+from fashionerp.customers.models import Customer
+from fashionerp.organizations.models import Company, Establishment
+
+from .models import MeasurementDefinition, MeasurementProfile, MeasurementSet, MeasurementValue
 
 
 class MeasurementValueSerializer(serializers.ModelSerializer):
@@ -17,6 +20,20 @@ class MeasurementValueSerializer(serializers.ModelSerializer):
 
 
 class MeasurementSetSerializer(serializers.ModelSerializer):
+    company_id = serializers.PrimaryKeyRelatedField(
+        source="company", queryset=Company.objects.all()
+    )
+    establishment_id = serializers.PrimaryKeyRelatedField(
+        source="establishment", queryset=Establishment.objects.all(),
+        required=False, allow_null=True,
+    )
+    customer_id = serializers.PrimaryKeyRelatedField(
+        source="customer", queryset=Customer.objects.all()
+    )
+    profile_id = serializers.PrimaryKeyRelatedField(
+        source="profile", queryset=MeasurementProfile.objects.all(),
+        required=False, allow_null=True,
+    )
     values = MeasurementValueSerializer(many=True)
     version = serializers.IntegerField(read_only=True)
     created_by_id = serializers.UUIDField(read_only=True)
