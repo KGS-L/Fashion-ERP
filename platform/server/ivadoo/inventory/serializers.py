@@ -93,6 +93,11 @@ class StockLotSerializer(serializers.ModelSerializer):
             "id", "remaining_length", "initial_quantity", "remaining_quantity", "status", "created_at", "updated_at"
         )
 
+    def to_representation(self, instance):
+        if instance.pk:
+            instance.refresh_from_db()
+        return super().to_representation(instance)
+
     def validate(self, attrs):
         request = self.context.get("request")
         warehouse = attrs.get("warehouse", getattr(self.instance, "warehouse", None))
