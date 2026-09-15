@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     "ivadoo.catalog.apps.CatalogConfig",
     "ivadoo.sales.apps.SalesConfig",
     "ivadoo.inventory.apps.InventoryConfig",
+    "ivadoo.purchases.apps.PurchasesConfig",
 ]
 
 MIDDLEWARE = [
