@@ -103,6 +103,7 @@ class DeliveryActionSerializer(serializers.Serializer):
 
 class DeliveryReturnLineSerializer(serializers.ModelSerializer):
     delivery_line_id = serializers.PrimaryKeyRelatedField(source="delivery_line", queryset=DeliveryLine.objects.all())
+    disposition = serializers.CharField(max_length=24)
     destination_location_id = serializers.PrimaryKeyRelatedField(
         source="destination_location",
         queryset=StockLocation.objects.all(),
@@ -123,6 +124,12 @@ class DeliveryReturnLineSerializer(serializers.ModelSerializer):
             "created_at",
         )
         read_only_fields = ("id", "stock_movements", "created_at")
+
+    def validate_disposition(self, value):
+        allowed = {choice for choice, _label in DeliveryReturnLine.Disposition.choices}
+        if value not in allowed:
+            raise serializers.ValidationError("Unsupported return disposition.")
+        return value
 
     @extend_schema_field(serializers.ListField(child=serializers.DictField()))
     def get_stock_movements(self, obj):
