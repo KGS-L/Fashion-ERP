@@ -157,6 +157,10 @@ class FashionModelMaterialRequirementSerializer(serializers.ModelSerializer):
         read_only_fields = ("id",)
 
     def validate(self, attrs):
+        if attrs["quantity"] <= 0:
+            raise serializers.ValidationError({"quantity": "Quantity must be greater than zero."})
+        if attrs.get("waste_rate", 0) < 0:
+            raise serializers.ValidationError({"waste_rate": "Waste rate cannot be negative."})
         fashion_model = self.context["fashion_model"]
         model_variant = attrs.get("model_variant")
         product = attrs["product"]
