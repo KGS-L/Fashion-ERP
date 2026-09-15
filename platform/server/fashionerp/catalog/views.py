@@ -7,9 +7,9 @@ from rest_framework.permissions import IsAuthenticated
 from fashionerp.audit.services import audit_snapshot, record_audit_event
 from fashionerp.authorization.services import authorized_company_ids, has_permission
 
-from .models import Collection, FashionModel, Product, ProductAttribute, ProductVariant, Season
+from .models import Collection, FashionModel, FashionModelMaterialRequirement, Product, ProductAttribute, ProductVariant, Season
 from .serializers import (
-    CollectionSerializer, FashionModelSerializer, ProductAttributeSerializer,
+    CollectionSerializer, FashionModelMaterialRequirementSerializer, FashionModelSerializer, ProductAttributeSerializer,
     ProductSerializer, ProductVariantSerializer, SeasonSerializer,
 )
 
@@ -169,3 +169,41 @@ class FashionModelListCreateView(generics.ListCreateAPIView):
         with transaction.atomic():
             model = serializer.save(organization=self.request.user.organization)
             record_audit_event(organization=self.request.user.organization, actor=self.request.user, action="fashion.model.create", object_instance=model, after=audit_snapshot(model), request=self.request)
+
+
+class FashionModelMaterialRequirementListCreateView(generics.ListCreateAPIView):
+    queryset = FashionModelMaterialRequirement.objects.none()
+    serializer_class = FashionModelMaterialRequirementSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_fashion_model(self, permission_code):
+        company_ids = authorized_company_ids(self.request.user, permission_code)
+        return FashionModel.objects.filter(
+            organization_id=self.request.user.organization_id
+        ).filter(
+            models.Q(company__isnull=True) | models.Q(company_id__in=company_ids)
+        ).get(id=self.kwargs["fashion_model_id"])
+
+    def get_queryset(self):
+        fashion_model = self.get_fashion_model("fashion.product.view")
+        return FashionModelMaterialRequirement.objects.filter(
+            fashion_model=fashion_model
+        ).select_related("model_variant", "product", "product_variant", "unit")
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context["fashion_model"] = self.get_fashion_model(
+            "fashion.product.manage" if self.request.method == "POST" else "fashion.product.view"
+        )
+        return context
+
+    def perform_create(self, serializer):
+        fashion_model = self.get_fashion_model("fashion.product.manage")
+        if not has_permission(self.request.user, "fashion.product.manage", company=fashion_model.company):
+            raise PermissionDenied("You cannot manage material requirements for this model.")
+        requirement = serializer.save(fashion_model=fashion_model)
+        record_audit_event(
+            organization=self.request.user.organization, actor=self.request.user,
+            action="fashion.model.material_requirement.create",
+            object_instance=requirement, after=audit_snapshot(requirement), request=self.request,
+        )
