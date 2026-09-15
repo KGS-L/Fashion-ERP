@@ -151,7 +151,11 @@ def create_stock_movement_approval(*, organization, actor, data, request=None):
 
 @transaction.atomic
 def decide_stock_movement_approval(*, approval, actor, decision, reason="", request=None):
-    approval = StockMovementApproval.objects.select_for_update().select_related("organization", "company", "establishment", "warehouse", "requested_by").get(pk=approval.pk)
+    approval = (
+        StockMovementApproval.objects.select_for_update(of=("self",))
+        .select_related("organization", "company", "establishment", "warehouse", "requested_by")
+        .get(pk=approval.pk)
+    )
     target = {
         "approve": StockMovementApproval.Status.APPROVED,
         "reject": StockMovementApproval.Status.REJECTED,
