@@ -17,7 +17,7 @@ from .serializers import (
 def scoped_products(user, permission_code):
     company_ids = authorized_company_ids(user, permission_code)
     if not company_ids:
-        return Product.objects.filter(organization_id=user.organization_id, company__isnull=True)
+        return Product.objects.none()
     return Product.objects.filter(organization_id=user.organization_id).filter(
         models.Q(company__isnull=True) | models.Q(company_id__in=company_ids)
     ).select_related("company", "unit").prefetch_related("variants", "variants__attribute_values")
