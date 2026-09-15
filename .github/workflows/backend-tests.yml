@@ -7,6 +7,8 @@ on:
       - 'docs/api/**'
       - 'docs/adr/**'
       - 'docs/migrations/**'
+      - 'docs/operations/**'
+      - 'docs/security/**'
       - '.github/workflows/backend-tests.yml'
   push:
     branches:
@@ -17,6 +19,8 @@ on:
       - 'docs/api/**'
       - 'docs/adr/**'
       - 'docs/migrations/**'
+      - 'docs/operations/**'
+      - 'docs/security/**'
       - '.github/workflows/backend-tests.yml'
   workflow_dispatch:
 
@@ -75,15 +79,19 @@ jobs:
       - name: Install backend
         run: python -m pip install --upgrade pip && python -m pip install .
 
+      - name: Static Python validation
+        run: python -m compileall -q ivadoo
+
       - name: Django system checks
         run: python manage.py check
 
       - name: Check migrations
         run: python manage.py makemigrations --check --dry-run
 
-      - name: Inspect Foundation migration plan
+      - name: Inspect migration plans
         run: |
           python manage.py showmigrations identity organizations authorization audit internationalization --plan
+          python manage.py showmigrations inventory purchases manufacturing quality delivery operations --plan
           python manage.py migrate --plan
 
       - name: Create second isolated tenant database

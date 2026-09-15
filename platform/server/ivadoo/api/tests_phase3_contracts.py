@@ -10,7 +10,7 @@ class Phase3RouteContractTests(SimpleTestCase):
     def test_phase3_resource_roots_are_registered_under_api_v1(self):
         paths = (
             "/api/v1/inventory/warehouses/",
-            "/api/v1/purchases/purchase-orders/",
+            "/api/v1/purchases/orders/",
             "/api/v1/manufacturing/orders/",
             "/api/v1/quality/inspections/",
             "/api/v1/delivery/deliveries/",
@@ -42,7 +42,7 @@ class Phase3AuthenticationContractTests(APITestCase):
     def test_operational_resource_roots_require_authentication(self):
         for path in (
             "/api/v1/inventory/warehouses/",
-            "/api/v1/purchases/purchase-orders/",
+            "/api/v1/purchases/orders/",
             "/api/v1/manufacturing/orders/",
             "/api/v1/quality/inspections/",
             "/api/v1/delivery/deliveries/",
