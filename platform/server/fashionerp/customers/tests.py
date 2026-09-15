@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from fashionerp.authorization.models import Permission, Role
+from fashionerp.authorization.models import AccessGrant, Permission, Role
 from fashionerp.authorization.services import grant_organization_admin
 from fashionerp.identity.services import create_api_session
 from fashionerp.internationalization.models import Currency
@@ -97,3 +97,110 @@ class CustomerMasterDataTests(APITestCase):
             format="json",
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+
+class CustomerScopeTests(APITestCase):
+    def setUp(self):
+        self.organization = Organization.objects.create(name="Scoped Tenant", slug="scoped-tenant")
+        self.company_a = Company.objects.create(
+            organization=self.organization, name="Company A", code="company-a"
+        )
+        self.company_b = Company.objects.create(
+            organization=self.organization, name="Company B", code="company-b"
+        )
+        self.site_a1 = Establishment.objects.create(
+            company=self.company_a, name="A1", code="a1"
+        )
+        self.site_a2 = Establishment.objects.create(
+            company=self.company_a, name="A2", code="a2"
+        )
+        self.customer_a1 = Customer.objects.create(
+            organization=self.organization, company=self.company_a,
+            establishment=self.site_a1, code="A1-C", display_name="A1 Customer"
+        )
+        self.customer_a2 = Customer.objects.create(
+            organization=self.organization, company=self.company_a,
+            establishment=self.site_a2, code="A2-C", display_name="A2 Customer"
+        )
+        self.customer_b = Customer.objects.create(
+            organization=self.organization, company=self.company_b,
+            code="B-C", display_name="B Customer"
+        )
+        self.user = get_user_model().objects.create_user(
+            username="scoped.customer.user",
+            password="Strong-Test-Password-42!",
+            organization=self.organization,
+        )
+        self.view_permission = Permission.objects.get(code="fashion.customer.view")
+        self.manage_permission = Permission.objects.get(code="fashion.customer.manage")
+
+    def authenticate(self):
+        _, token = create_api_session(user=self.user)
+        self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {token}")
+
+    def role(self, code, *permissions):
+        role = Role.objects.create(
+            organization=self.organization, code=code, name=code, is_active=True
+        )
+        role.permissions.set(permissions)
+        return role
+
+    def test_establishment_scope_only_lists_its_customers(self):
+        role = self.role("site-customer-viewer", self.view_permission)
+        grant = AccessGrant.objects.create(
+            user=self.user, role=role, establishment=self.site_a1
+        )
+        self.authenticate()
+        response = self.client.get("/api/v1/customers/")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        ids = {item["id"] for item in response.data["results"]}
+        self.assertEqual(ids, {str(self.customer_a1.id)})
+
+        detail = self.client.get(f"/api/v1/customers/{self.customer_a2.id}/")
+        self.assertEqual(detail.status_code, status.HTTP_404_NOT_FOUND)
+
+    def test_company_scope_lists_all_company_customers_only(self):
+        role = self.role("company-customer-viewer", self.view_permission)
+        AccessGrant.objects.create(user=self.user, role=role, company=self.company_a)
+        self.authenticate()
+        response = self.client.get("/api/v1/customers/")
+        ids = {item["id"] for item in response.data["results"]}
+        self.assertEqual(ids, {str(self.customer_a1.id), str(self.customer_a2.id)})
+
+    def test_manage_scope_does_not_imply_view_scope(self):
+        role = self.role("customer-manager", self.manage_permission)
+        AccessGrant.objects.create(user=self.user, role=role, company=self.company_a)
+        self.authenticate()
+        response = self.client.get("/api/v1/customers/")
+        self.assertEqual(response.data["count"], 0)
+
+    def test_revocation_is_effective_on_next_request(self):
+        role = self.role("revocable-customer-viewer", self.view_permission)
+        grant = AccessGrant.objects.create(user=self.user, role=role, company=self.company_a)
+        self.authenticate()
+        self.assertEqual(self.client.get("/api/v1/customers/").data["count"], 2)
+
+        from django.utils import timezone
+        grant.revoked_at = timezone.now()
+        grant.save(update_fields=["revoked_at"])
+
+        response = self.client.get("/api/v1/customers/")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["count"], 0)
+
+    def test_manage_cannot_create_outside_grant_scope(self):
+        role = self.role("site-customer-manager", self.manage_permission)
+        AccessGrant.objects.create(user=self.user, role=role, establishment=self.site_a1)
+        self.authenticate()
+        response = self.client.post(
+            "/api/v1/customers/",
+            {
+                "company_id": str(self.company_a.id),
+                "establishment_id": str(self.site_a2.id),
+                "customer_type": "individual",
+                "code": "DENIED",
+                "display_name": "Denied Customer",
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
