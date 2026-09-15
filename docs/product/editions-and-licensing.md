@@ -1,14 +1,18 @@
-# FashionERP editions and licensing decisions
+# Ivadoo editions and licensing decisions
 
-Status: accepted during Phase 0 — Framing
+Status: accepted during Phase 0 — Framing, with product-brand decision updated on 2026-09-15.
 
 ## Product name
 
-The definitive product name is **FashionERP**.
+The definitive product name is **Ivadoo**.
+
+The canonical product domain selected by the project owner is **ivadoo.com**.
+
+The project was originally framed under the working name **FashionERP**. Historical specifications, issues, commits and stable internal technical identifiers may continue to use that legacy name where changing them would create unnecessary compatibility or migration risk. Those references do not change the accepted public product brand.
 
 ## Open-core licensing
 
-FashionERP follows an open-core model.
+Ivadoo follows an open-core model.
 
 - The Community core is licensed under **LGPL-3.0-only**.
 - Business, Enterprise Plus, premium modules and explicitly proprietary connectors are distributed under separate commercial/proprietary license terms.
@@ -17,11 +21,11 @@ FashionERP follows an open-core model.
 
 ## Edition boundaries
 
-The functional scope remains the one defined by the FashionERP specification.
+The functional scope remains the one defined by the project specification.
 
 ### Community
 
-Target: small workshop or small fashion business starting with FashionERP.
+Target: small workshop or small fashion business starting with Ivadoo.
 
 Initial limits:
 
@@ -64,7 +68,7 @@ The following are not counted against the internal-user limit by default:
 
 - final customers using the public/client portal;
 - supplier portal identities when such a portal is enabled;
-- FashionERP platform administrators operating only in the Control Plane.
+- Ivadoo platform administrators operating only in the Control Plane.
 
 This distinction prevents public or external portal identities from consuming internal ERP seats.
 

@@ -1,8 +1,10 @@
-# Contributing to FashionERP
+# Contributing to Ivadoo
 
-Thank you for your interest in contributing to FashionERP.
+Thank you for your interest in contributing to Ivadoo.
 
-FashionERP is being developed as a modular open-core ERP for fashion, textile and garment businesses.
+Ivadoo is being developed as a modular open-core ERP for fashion, textile and garment businesses.
+
+The project was originally developed under the working name **FashionERP**. Some stable internal namespaces and historical material still use that legacy name while the public product brand is Ivadoo.
 
 ## Before contributing
 
@@ -36,7 +38,7 @@ Before opening a pull request:
 
 Contributions to Community components are accepted under the license applicable to those components, currently LGPL-3.0-only unless otherwise stated.
 
-Commercial or proprietary FashionERP components may be governed by separate contribution and licensing rules.
+Commercial or proprietary Ivadoo components may be governed by separate contribution and licensing rules.
 
 ## Code of conduct
 

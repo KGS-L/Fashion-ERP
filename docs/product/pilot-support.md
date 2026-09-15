@@ -4,7 +4,7 @@ Status: `accepted` during Phase 0.
 
 ## Official channels
 
-The first FashionERP pilot uses the following official support channels:
+The first Ivadoo pilot uses the following official support channels:
 
 - a dedicated support email address;
 - a private ticketing system.
@@ -15,7 +15,7 @@ WhatsApp may be used only as a complementary coordination or urgency channel. It
 
 The Control Plane must not copy customer business data by default. Support diagnostics should therefore use only the minimum technical information necessary, such as:
 
-- FashionERP version;
+- Ivadoo version;
 - deployment/environment identifier;
 - error or correlation identifier;
 - relevant technical logs after minimization of sensitive data;

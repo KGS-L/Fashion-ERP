@@ -2,13 +2,13 @@
 
 Status: `accepted` during Phase 0.
 
-This document records the architecture and deployment decisions already defined by the FashionERP functional and technical specification, together with the minimum desktop operating-system policy accepted during Phase 0. It does not introduce an application framework or infrastructure technology that is not explicitly validated.
+This document records the architecture and deployment decisions already defined by the project functional and technical specification, together with the minimum desktop operating-system policy accepted during Phase 0. The original specification was written under the legacy working name **FashionERP**; the accepted product brand is now **Ivadoo**. This document does not introduce an application framework or infrastructure technology that is not explicitly validated.
 
 ## Platform separation
 
 Accepted:
 
-- FashionERP is split between a **Control Plane** and customer ERP **Data Plane** environments.
+- Ivadoo is split between a **Control Plane** and customer ERP **Data Plane** environments.
 - The Control Plane manages platform concerns such as organizations, licenses, subscriptions, modules, installations, versions and support.
 - Customer business data belongs to the Data Plane.
 - The Control Plane must not copy sensitive customer business data by default.
@@ -47,7 +47,7 @@ Accepted:
 Accepted:
 
 - the installable PC application uses **Tauri + Owl/TypeScript**;
-- the desktop application connects to the FashionERP API;
+- the desktop application connects to the Ivadoo API;
 - it must support cloud, local and private-server usage modes as defined by the specification.
 
 No alternative desktop framework is part of the current baseline.
@@ -72,23 +72,23 @@ Accepted:
 
 ### Managed cloud
 
-- private customer ERP database hosted by FashionERP;
-- FashionERP is responsible for infrastructure, backups and updates;
+- private customer ERP database hosted by Ivadoo;
+- Ivadoo is responsible for infrastructure, backups and updates;
 - **OVHcloud VPS-2** is the accepted initial managed-cloud baseline for the pilot and early small managed-cloud environments;
 - PostgreSQL remains self-managed initially inside the isolated customer environment;
 - S3-compatible object storage is used for business files and backup artifacts;
-- the OVH choice must remain replaceable without changing FashionERP business logic.
+- the OVH choice must remain replaceable without changing Ivadoo business logic.
 
 ### Customizable cloud
 
 - development/test or test/staging/production-style environments may be provided according to the customer setup;
-- responsibility is shared between FashionERP and the customer for extensions.
+- responsibility is shared between Ivadoo and the customer for extensions.
 
 ### On-premise
 
 - the ERP database is hosted by the customer;
 - mobile access may use a local API or controlled tunnel;
-- the customer is responsible for its server while FashionERP retains responsibility for licensing/support within the agreed contract.
+- the customer is responsible for its server while Ivadoo retains responsibility for licensing/support within the agreed contract.
 
 ### Private server
 

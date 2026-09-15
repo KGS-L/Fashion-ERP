@@ -3,9 +3,9 @@ requires = ["setuptools>=80"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "fashionerp-server"
+name = "ivadoo-server"
 version = "0.1.0"
-description = "FashionERP Django server"
+description = "Ivadoo Django server"
 requires-python = ">=3.14,<3.15"
 license = "LGPL-3.0-only"
 dependencies = [
@@ -23,7 +23,6 @@ dependencies = [
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["fashionerp*"]
-
 
 [tool.setuptools.package-data]
 "fashionerp.internationalization" = ["catalogs/*.json"]

@@ -138,7 +138,7 @@ FASHIONERP_SESSION_IDLE_TTL_SECONDS = int(
     os.getenv("FASHIONERP_SESSION_IDLE_TTL_SECONDS", str(12 * 60 * 60))
 )
 FASHIONERP_2FA_ENCRYPTION_KEY = os.environ["FASHIONERP_2FA_ENCRYPTION_KEY"]
-FASHIONERP_TOTP_ISSUER = os.getenv("FASHIONERP_TOTP_ISSUER", "FashionERP")
+FASHIONERP_TOTP_ISSUER = os.getenv("FASHIONERP_TOTP_ISSUER", "Ivadoo")
 
 REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
@@ -161,8 +161,8 @@ REST_FRAMEWORK = {
 }
 
 SPECTACULAR_SETTINGS = {
-    "TITLE": "FashionERP API",
-    "DESCRIPTION": "Versioned REST API for the FashionERP platform.",
+    "TITLE": "Ivadoo API",
+    "DESCRIPTION": "Versioned REST API for the Ivadoo platform.",
     "VERSION": "1.0.0",
     "SERVE_INCLUDE_SCHEMA": False,
     "ENUM_NAME_OVERRIDES": {
