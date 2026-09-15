@@ -23,6 +23,9 @@ class Product(models.Model):
     unit = models.ForeignKey("internationalization.UnitOfMeasure", on_delete=models.PROTECT, related_name="products")
     fashion_metadata = models.JSONField(default=dict, blank=True)
     is_active = models.BooleanField(default=True)
+    is_internal_published = models.BooleanField(default=False)
+    commercial_status = models.CharField(max_length=24, default="available")
+    list_price = models.DecimalField(max_digits=14, decimal_places=4, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
