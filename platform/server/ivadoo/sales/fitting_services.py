@@ -61,7 +61,7 @@ def transition_fitting(*, fitting, action, actor, result=None, notes=None, reque
 def transition_alteration(
     *, alteration, action, actor, reopen_operation=False, allow_operation_rework=False, request=None
 ):
-    alteration = AlterationRequest.objects.select_for_update().select_related("manufacturing_operation").get(pk=alteration.pk)
+    alteration = AlterationRequest.objects.select_for_update().get(pk=alteration.pk)
     if action == "start":
         if alteration.status != AlterationRequest.Status.OPEN:
             raise ValidationError("Only an open alteration can be started.")
