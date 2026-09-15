@@ -13,6 +13,7 @@ urlpatterns = [
     path("customers/", include("fashionerp.customers.urls")),
     path("measurements/", include("fashionerp.measurements.urls")),
     path("products/", include("fashionerp.catalog.urls")),
+    path("sales/", include("fashionerp.sales.urls")),
     path(
         "establishments/",
         include("fashionerp.organizations.establishment_urls"),
