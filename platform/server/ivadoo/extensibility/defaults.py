@@ -76,6 +76,17 @@ register_module(
         api_prefixes=("/api/v1/inventory/",),
     )
 )
+register_module(
+    ModuleManifest(
+        code="operations.purchases",
+        name="Purchases",
+        version="1.0.0",
+        dependencies=("foundation", "fashion.catalog", "operations.inventory"),
+        default_enabled=True,
+        edition="business",
+        api_prefixes=("/api/v1/purchases/",),
+    )
+)
 
 
 BASE_PROTECTED = frozenset(
@@ -240,5 +251,27 @@ register_model(
             "quantity_damaged",
             "quantity_subcontractor",
         },
+    )
+)
+register_model(
+    ModelManifest(
+        key="purchases.supplier",
+        label="Supplier",
+        django_model="purchases.Supplier",
+        module_code="operations.purchases",
+        view_permission="purchase.supplier.view",
+        manage_permission="purchase.supplier.manage",
+        protected_fields=BASE_PROTECTED,
+    )
+)
+register_model(
+    ModelManifest(
+        key="purchases.supplierproduct",
+        label="Supplier product",
+        django_model="purchases.SupplierProduct",
+        module_code="operations.purchases",
+        view_permission="purchase.supplier.view",
+        manage_permission="purchase.supplier.manage",
+        protected_fields=BASE_PROTECTED | {"supplier", "supplier_id"},
     )
 )
