@@ -7,10 +7,16 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from ivadoo.authorization.services import authorized_company_ids, has_permission
+from ivadoo.sales.models import Order
 
-from .models import Delivery
-from .serializers import DeliveryActionSerializer, DeliverySerializer
-from .services import transition_delivery
+from .models import Delivery, DeliveryReturn
+from .serializers import (
+    DeliveryActionSerializer,
+    DeliveryBalanceSerializer,
+    DeliveryReturnSerializer,
+    DeliverySerializer,
+)
+from .services import order_delivery_balance, transition_delivery
 
 
 def _raise_service_validation(exc):
@@ -27,6 +33,21 @@ def scoped_deliveries(user, permission_code):
         Delivery.objects.filter(organization_id=user.organization_id, company_id__in=company_ids)
         .select_related("order", "company", "created_by")
         .prefetch_related("lines", "packages")
+    )
+
+
+def scoped_returns(user, permission_code):
+    company_ids = authorized_company_ids(user, permission_code)
+    if not company_ids:
+        return DeliveryReturn.objects.none()
+    return (
+        DeliveryReturn.objects.filter(organization_id=user.organization_id, company_id__in=company_ids)
+        .select_related("delivery", "company", "created_by")
+        .prefetch_related(
+            "lines__delivery_line",
+            "lines__destination_location",
+            "lines__stock_allocations",
+        )
     )
 
 
@@ -88,3 +109,52 @@ class DeliveryActionView(APIView):
             _raise_service_validation(exc)
         delivery.refresh_from_db()
         return Response(DeliverySerializer(delivery, context={"request": request}).data)
+
+
+class DeliveryReturnListCreateView(generics.ListCreateAPIView):
+    queryset = DeliveryReturn.objects.none()
+    serializer_class = DeliveryReturnSerializer
+    permission_classes = [IsAuthenticated]
+    filterset_fields = ("company_id", "delivery_id", "resolution")
+    ordering_fields = ("created_at", "number")
+    ordering = ("-created_at",)
+
+    def get_queryset(self):
+        return scoped_returns(self.request.user, "delivery.return.view")
+
+    def perform_create(self, serializer):
+        delivery = serializer.validated_data["delivery"]
+        if not has_permission(self.request.user, "delivery.return.manage", company=delivery.company):
+            raise PermissionDenied("You cannot record returns in this scope.")
+        try:
+            serializer.save()
+        except DjangoValidationError as exc:
+            _raise_service_validation(exc)
+
+
+class DeliveryReturnDetailView(generics.RetrieveAPIView):
+    queryset = DeliveryReturn.objects.none()
+    serializer_class = DeliveryReturnSerializer
+    permission_classes = [IsAuthenticated]
+    lookup_field = "id"
+    lookup_url_kwarg = "return_id"
+
+    def get_queryset(self):
+        return scoped_returns(self.request.user, "delivery.return.view")
+
+
+class DeliveryBalanceView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    @extend_schema(responses=DeliveryBalanceSerializer)
+    def get(self, request, order_id):
+        company_ids = authorized_company_ids(request.user, "delivery.delivery.view")
+        try:
+            order = Order.objects.prefetch_related("lines").get(
+                id=order_id,
+                organization_id=request.user.organization_id,
+                company_id__in=company_ids,
+            )
+        except Order.DoesNotExist as exc:
+            raise NotFound() from exc
+        return Response(DeliveryBalanceSerializer(order_delivery_balance(order)).data)
