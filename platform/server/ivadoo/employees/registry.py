@@ -98,3 +98,106 @@ register_model(
         },
     )
 )
+register_model(
+    ModelManifest(
+        key="employees.employeeschedule",
+        label="Employee schedule",
+        django_model="employees.EmployeeSchedule",
+        module_code="enterprise.employees",
+        view_permission="enterprise.employee.work.view",
+        manage_permission="enterprise.employee.work.manage",
+        protected_fields=BASE_PROTECTED
+        | {
+            "employee",
+            "employee_id",
+            "company",
+            "company_id",
+            "establishment",
+            "establishment_id",
+            "workshop",
+            "workshop_id",
+            "status",
+            "starts_at",
+            "ends_at",
+        },
+    )
+)
+register_model(
+    ModelManifest(
+        key="employees.attendancerecord",
+        label="Attendance record",
+        django_model="employees.AttendanceRecord",
+        module_code="enterprise.employees",
+        view_permission="enterprise.employee.work.view",
+        manage_permission="enterprise.employee.work.manage",
+        protected_fields=BASE_PROTECTED
+        | {
+            "employee",
+            "employee_id",
+            "company",
+            "company_id",
+            "establishment",
+            "establishment_id",
+            "workshop",
+            "workshop_id",
+            "schedule",
+            "schedule_id",
+            "attendance_date",
+            "status",
+            "check_in_at",
+            "check_out_at",
+        },
+    )
+)
+register_model(
+    ModelManifest(
+        key="employees.employeetask",
+        label="Employee task",
+        django_model="employees.EmployeeTask",
+        module_code="enterprise.employees",
+        view_permission="enterprise.employee.work.view",
+        manage_permission="enterprise.employee.work.manage",
+        protected_fields=BASE_PROTECTED
+        | {
+            "employee",
+            "employee_id",
+            "company",
+            "company_id",
+            "establishment",
+            "establishment_id",
+            "workshop",
+            "workshop_id",
+            "order",
+            "order_id",
+            "manufacturing_operation",
+            "manufacturing_operation_id",
+            "status",
+        },
+    )
+)
+register_model(
+    ModelManifest(
+        key="employees.employeetimeentry",
+        label="Employee time entry",
+        django_model="employees.EmployeeTimeEntry",
+        module_code="enterprise.employees",
+        view_permission="enterprise.employee.work.view",
+        manage_permission="enterprise.employee.work.manage",
+        protected_fields=BASE_PROTECTED
+        | {
+            "employee",
+            "employee_id",
+            "task",
+            "task_id",
+            "company",
+            "company_id",
+            "establishment",
+            "establishment_id",
+            "workshop",
+            "workshop_id",
+            "started_at",
+            "ended_at",
+            "duration_minutes",
+        },
+    )
+)
