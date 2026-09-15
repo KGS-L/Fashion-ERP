@@ -1,4 +1,4 @@
-# ADR 0024 — Ivadoo product brand and stable technical namespace
+# ADR 0024 — Ivadoo product identity and complete technical namespace
 
 Status: `accepted`
 
@@ -8,66 +8,63 @@ Decision owner: project owner / product naming decision.
 
 ## Context
 
-The functional and technical specification originally framed the project under the working name **Ivadoo** and explicitly left the definitive product name and brand as a decision to confirm.
+The functional and technical specification was created before the definitive product brand was selected. It explicitly left the final product name and brand as a decision to confirm.
 
-The project owner has selected **Ivadoo** as the definitive public product name and **ivadoo.com** as the canonical product domain.
+The project owner selected **Ivadoo** as the definitive product name and **ivadoo.com** as the canonical product domain. Because the product is still in active development and has not reached its first production release, the owner subsequently requested that the rename be completed across both public surfaces and current technical identifiers before Phase 3 continues.
 
-The implementation already contains a mature Django package namespace (`ivadoo`), migration history, environment-variable names and other technical identifiers created before the final brand decision. Renaming these identifiers only for branding would create avoidable compatibility and migration risk without changing product behavior.
+A partial rebrand would leave two identities in source code, configuration, database helper identifiers, documentation and developer tooling. That would create needless long-term compatibility debt before the product is released.
 
 ## Decision
 
+Ivadoo is the single current product and technical identity for the project.
+
 ### Public product identity
 
-The public product brand is **Ivadoo**.
+New and current user-facing surfaces use **Ivadoo**, including:
 
-New user-facing and product-facing surfaces use Ivadoo, including:
-
-- product documentation and current project README files;
+- product documentation and project README files;
 - API title and descriptive metadata;
 - desktop and future client application labels;
 - support and security documentation;
 - authenticator issuer defaults;
-- future commercial and deployment-facing product references.
+- commercial and deployment-facing product references.
 
 The canonical product domain is **ivadoo.com**.
 
-### Legacy source references
+### Python and Django namespace
 
-The original functional and technical specification remains an authoritative requirements source even where it still uses the Ivadoo name. In historical specifications, issues, commits and accepted records, Ivadoo is treated as the legacy working name for the product now branded Ivadoo.
+The server package namespace is **`ivadoo`**.
 
-Historical records are not rewritten solely to erase the former name.
+Current Django imports, application configuration, root URL configuration, ASGI/WSGI entrypoints, authentication paths and package metadata use that namespace. Django application labels such as `identity`, `organizations`, `audit`, `catalog` and `sales` remain unchanged so the logical migration graph and database table naming stay stable.
 
-### Stable technical namespace
+### Configuration namespace
 
-The rebrand does **not** rename existing compatibility-sensitive technical identifiers by itself.
+Project-owned environment variables use the **`IVADOO_*`** prefix. Current database defaults, CI fixtures, OpenAPI artifact names and operational examples use Ivadoo naming as well.
 
-The following remain unchanged for now:
+This is a pre-release configuration rename. Environments created during development must update their local configuration to the new keys before running the renamed server.
 
-- the Python/Django package namespace `ivadoo`;
-- existing Django application labels and migration history;
-- stable database/application identifiers already encoded in migrations or operational configuration;
-- existing `IVADOO_*` environment-variable keys;
-- other persisted identifiers whose rename would require a compatibility migration.
+### Database identifiers
 
-These identifiers are implementation details and do not define the current public product name.
+Brand-specific PostgreSQL helper identifiers owned by the application use the `ivadoo_` prefix. A forward compatibility migration renames previously created audit trigger/function identifiers when upgrading an existing development database, while a fresh database creates only the Ivadoo identifiers.
 
-### New user-facing defaults
+Business table names and Django app labels are not renamed because they do not contain the product brand.
 
-Where a value is presentation-facing rather than a compatibility key, the Ivadoo name is used. In particular:
+### Historical records
 
-- the default TOTP authenticator issuer becomes `Ivadoo` while the environment key remains `IVADOO_TOTP_ISSUER`;
-- OpenAPI title and description use Ivadoo;
-- Python distribution metadata may use the Ivadoo product name while continuing to package the `ivadoo` module namespace.
+Published Git history, already-closed GitHub discussions and the original source specification are historical records and are not rewritten. Their terminology does not define the current codebase identity.
 
-### Repository name
+Current tracked source files, current documentation and active configuration must use Ivadoo naming. CI contains a repository-level guard that rejects reintroduction of the superseded product identifier in tracked paths or text.
 
-This ADR does not rename the GitHub repository slug `KGS-L/Ivadoo`. A repository rename is a separate operational decision because it changes clone/remotes and external references.
+### Repository metadata
+
+The GitHub repository itself is expected to use the Ivadoo name and description. Renaming the repository slug is an operational GitHub setting rather than an application-code migration; after the repository is renamed, developer remotes should point to the new canonical repository URL.
 
 ## Consequences
 
-- users and new documentation see one definitive brand: Ivadoo;
-- the rebrand does not require database migrations or changes to Django migration history;
-- deployed environments can keep existing configuration keys during the transition;
-- internal `ivadoo` references may remain visible to developers without implying that Ivadoo is still the product brand;
-- historical source documents remain traceable and continue to support requirement decisions;
-- any future internal namespace migration must have its own compatibility plan and explicit decision before implementation.
+- Ivadoo has one product identity across user-facing and developer-facing surfaces;
+- the Python package becomes `ivadoo` and project environment variables become `IVADOO_*`;
+- existing development environments must update configuration keys;
+- existing development databases receive a compatibility migration for brand-specific audit identifiers;
+- Django business app labels and migration numbering remain stable;
+- the repository naming guard prevents accidental reintroduction of the superseded identifier;
+- Phase 3 implementation resumes only after this rename gate and its backend/repository CI checks pass.
