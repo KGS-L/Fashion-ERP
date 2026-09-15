@@ -1,4 +1,4 @@
-from django.db import transaction
+from django.db import models, transaction
 from rest_framework import generics
 from rest_framework.exceptions import PermissionDenied
 from rest_framework.filters import OrderingFilter, SearchFilter
