@@ -50,3 +50,36 @@ class ProductCatalogApiTests(APITestCase):
         types = {choice for choice, _ in Product.ProductType.choices}
         self.assertEqual(types, {"finished_good", "fabric", "accessory", "service", "packaging", "waste"})
 
+
+    def test_create_season_collection_and_fashion_model(self):
+        season = self.client.post("/api/v1/products/seasons/", {
+            "code": "ss27", "name": "Spring Summer 2027", "year": 2027,
+            "start_date": "2027-01-01", "end_date": "2027-06-30",
+        }, format="json")
+        self.assertEqual(season.status_code, status.HTTP_201_CREATED)
+
+        collection = self.client.post("/api/v1/products/collections/", {
+            "company_id": str(self.company.id), "season_id": season.data["id"],
+            "code": "heritage-27", "name": "Heritage 27",
+            "media_references": [{"kind": "lookbook", "ref": "media://heritage-cover"}],
+        }, format="json")
+        self.assertEqual(collection.status_code, status.HTTP_201_CREATED)
+
+        model = self.client.post("/api/v1/products/fashion-models/", {
+            "company_id": str(self.company.id), "collection_id": collection.data["id"],
+            "code": "robe-aya", "name": "Robe Aya",
+            "instructions": "Preserve the asymmetric neckline.",
+            "media_references": [{"kind": "sketch", "ref": "media://robe-aya-sketch"}],
+            "variants": [
+                {"code": "aya-indigo-m", "color": "Indigo", "size": "M"},
+                {"code": "aya-gold-l", "color": "Gold", "size": "L"},
+            ],
+        }, format="json")
+        self.assertEqual(model.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(len(model.data["variants"]), 2)
+
+    def test_rejects_invalid_season_date_range(self):
+        response = self.client.post("/api/v1/products/seasons/", {
+            "code": "invalid", "name": "Invalid", "start_date": "2027-06-30", "end_date": "2027-01-01",
+        }, format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
