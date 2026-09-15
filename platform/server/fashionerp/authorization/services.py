@@ -8,6 +8,12 @@ from .models import AccessGrant, Permission, Role
 FOUNDATION_PERMISSIONS = (
     ("fashion.customer.view", "fashion", "customer.view", "View customers"),
     ("fashion.customer.manage", "fashion", "customer.manage", "Manage customers"),
+    ("platform.module.view", "platform", "module.view", "View module registry"),
+    ("platform.module.manage", "platform", "module.manage", "Manage module registry"),
+    ("platform.customization.view", "platform", "customization.view", "View customization metadata"),
+    ("platform.customization.manage", "platform", "customization.manage", "Manage customizations"),
+    ("platform.data.import", "platform", "data.import", "Import authorized business data"),
+    ("platform.data.export", "platform", "data.export", "Export authorized business data"),
     ("foundation.organization.view", "foundation", "organization.view", "View organization"),
     ("foundation.company.view", "foundation", "company.view", "View companies"),
     ("foundation.company.manage", "foundation", "company.manage", "Manage companies"),

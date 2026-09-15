@@ -1,0 +1,67 @@
+from .registry import ModuleManifest, register_module
+
+
+register_module(
+    ModuleManifest(
+        code="foundation",
+        name="Foundation",
+        version="1.0.0",
+        required=True,
+        default_enabled=True,
+        api_prefixes=(
+            "/api/v1/auth/",
+            "/api/v1/organizations/",
+            "/api/v1/companies/",
+            "/api/v1/establishments/",
+            "/api/v1/access/",
+            "/api/v1/audit/",
+            "/api/v1/i18n/",
+            "/api/v1/platform/",
+        ),
+    )
+)
+register_module(
+    ModuleManifest(
+        code="fashion.customers",
+        name="Customers",
+        version="1.0.0",
+        dependencies=("foundation",),
+        default_enabled=True,
+        api_prefixes=("/api/v1/customers/",),
+    )
+)
+register_module(
+    ModuleManifest(
+        code="fashion.measurements",
+        name="Measurements",
+        version="1.0.0",
+        dependencies=("foundation", "fashion.customers"),
+        default_enabled=True,
+        api_prefixes=("/api/v1/measurements/",),
+    )
+)
+register_module(
+    ModuleManifest(
+        code="fashion.catalog",
+        name="Catalog",
+        version="1.0.0",
+        dependencies=("foundation",),
+        default_enabled=True,
+        api_prefixes=("/api/v1/products/",),
+    )
+)
+register_module(
+    ModuleManifest(
+        code="fashion.sales",
+        name="Sales",
+        version="1.0.0",
+        dependencies=(
+            "foundation",
+            "fashion.customers",
+            "fashion.measurements",
+            "fashion.catalog",
+        ),
+        default_enabled=True,
+        api_prefixes=("/api/v1/sales/",),
+    )
+)
