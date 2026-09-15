@@ -1,6 +1,6 @@
 # Platform
 
-Platform-level components of FashionERP.
+Platform-level components of Ivadoo.
 
 The architecture separates two major concerns:
 
@@ -10,7 +10,6 @@ The architecture separates two major concerns:
 The `core/` directory contains the shared ERP foundation defined by the platform core specification: organizations, companies and establishments, users and access control, audit, internationalization, documents and notifications. It is a foundation of the ERP architecture, not a third deployment plane.
 
 Business data must remain isolated according to the deployment and organization boundaries defined in the project specifications.
-
 
 ## Server runtime
 

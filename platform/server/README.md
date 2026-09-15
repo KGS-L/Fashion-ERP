@@ -1,6 +1,8 @@
-# FashionERP server
+# Ivadoo server
 
-This directory contains the Django server runtime for the FashionERP platform.
+This directory contains the Django server runtime for the Ivadoo platform.
+
+The Python/Django package namespace remains `fashionerp` for compatibility with existing imports, Django app labels, migrations and deployment configuration. The Ivadoo rebrand does not rewrite migration history or persisted technical identifiers.
 
 Validated baseline:
 
@@ -20,20 +22,19 @@ The business API is versioned under `/api/v1/`. OpenAPI is generated from the im
 
 The Phase 1 authentication lifecycle is exposed under `/api/v1/auth/`.
 
-Session/security policy is environment-configurable:
+Session/security policy is environment-configurable. Existing `FASHIONERP_*` variable names are retained as stable technical configuration keys during the product rebrand:
 
 - `FASHIONERP_SESSION_ABSOLUTE_TTL_SECONDS`: 30 days by default;
 - `FASHIONERP_SESSION_IDLE_TTL_SECONDS`: 12 hours by default;
 - `FASHIONERP_LOGIN_THROTTLE_RATE`: `10/min` by default;
 - `FASHIONERP_2FA_ENCRYPTION_KEY`: required Fernet key used only to encrypt TOTP secrets;
-- `FASHIONERP_TOTP_ISSUER`: authenticator issuer label, `FashionERP` by default.
+- `FASHIONERP_TOTP_ISSUER`: authenticator issuer label, `Ivadoo` by default.
 
 These are implementation defaults, not immutable product rules. Production deployments must use HTTPS and must keep bearer tokens and secrets out of logs.
 
 2FA, scoped RBAC and persistent security audit are implemented by their dedicated Phase 1 issues.
 
 Configuration is environment-driven. Production secrets must never be committed to the repository.
-
 
 ## Phase 1 review
 
@@ -45,4 +46,4 @@ The implemented Foundation behavior and final review checklist are documented in
 - `docs/compliance/THIRD_PARTY_NOTICES.md`;
 - `docs/migrations/README.md`.
 
-The server Foundation is intentionally limited to platform primitives. Phase 2 business modules and production deployment automation are not part of this implementation.
+The Foundation established the platform primitives later phases build on. Production deployment automation remains outside the current test-only CI scope.

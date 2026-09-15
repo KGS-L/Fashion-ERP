@@ -1,12 +1,12 @@
 # Security Policy
 
-Security is a core requirement of FashionERP.
+Security is a core requirement of Ivadoo.
 
 ## Reporting a vulnerability
 
 Please do not report security vulnerabilities through public GitHub issues.
 
-When possible, use GitHub's private vulnerability reporting or contact the FashionERP maintainers privately through the KGS-L organization.
+When possible, use GitHub's private vulnerability reporting or contact the Ivadoo maintainers privately through the KGS-L organization.
 
 Include enough information to reproduce and evaluate the issue, such as:
 
