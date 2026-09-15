@@ -27,7 +27,7 @@ ZERO = Decimal("0")
 
 def _locked_order(manufacturing_order):
     return (
-        ManufacturingOrder.objects.select_for_update()
+        ManufacturingOrder.objects.select_for_update(of=("self",))
         .select_related(
             "organization",
             "company",
@@ -43,7 +43,9 @@ def _locked_order(manufacturing_order):
 
 def _locked_requirement(manufacturing_order, requirement_id):
     try:
-        return manufacturing_order.material_requirements.select_for_update().select_related(
+        return manufacturing_order.material_requirements.select_for_update(
+            of=("self",)
+        ).select_related(
             "product", "product_variant", "unit"
         ).get(id=requirement_id)
     except manufacturing_order.material_requirements.model.DoesNotExist as exc:
