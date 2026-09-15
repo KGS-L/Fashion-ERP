@@ -14,6 +14,7 @@ on:
       - 'README.md'
       - 'SECURITY.md'
       - 'CONTRIBUTING.md'
+      - 'LICENSE'
   push:
     branches:
       - main
@@ -30,6 +31,7 @@ on:
       - 'README.md'
       - 'SECURITY.md'
       - 'CONTRIBUTING.md'
+      - 'LICENSE'
   workflow_dispatch:
 
 permissions:
@@ -86,14 +88,21 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v7
 
-      - name: Reject legacy FashionERP identifiers
+      - name: Reject legacy product identifiers
         shell: bash
         run: |
           set -euo pipefail
 
+          old_title="Fashion""ERP"
+          old_lower="fashion""erp"
+          old_upper="FASHION""ERP"
+          old_slug="Fashion""-ERP"
+          old_slug_lower="${old_slug,,}"
+
           failed=0
 
-          legacy_paths="$(git ls-files | grep -Ei '(^|/)(fashionerp|fashion-erp)(/|$)' || true)"
+          legacy_path_pattern="(^|/)(${old_lower}|${old_slug_lower})(/|$)"
+          legacy_paths="$(git ls-files | grep -Ei "${legacy_path_pattern}" || true)"
           if [ -n "$legacy_paths" ]; then
             echo "::group::Legacy paths"
             printf '%s\n' "$legacy_paths"
@@ -101,7 +110,8 @@ jobs:
             failed=1
           fi
 
-          legacy_content="$(git grep -nI -E 'FashionERP|fashionerp|FASHIONERP|Fashion-ERP' -- . || true)"
+          legacy_content_pattern="${old_title}|${old_lower}|${old_upper}|${old_slug}"
+          legacy_content="$(git grep -nI -E "${legacy_content_pattern}" -- . || true)"
           if [ -n "$legacy_content" ]; then
             echo "::group::Legacy content"
             printf '%s\n' "$legacy_content"
