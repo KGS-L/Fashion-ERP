@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "ivadoo.quality.apps.QualityConfig",
     "ivadoo.delivery.apps.DeliveryConfig",
     "ivadoo.operations.apps.OperationsConfig",
+    "ivadoo.employees.apps.EmployeesConfig",
 ]
 
 MIDDLEWARE = [
