@@ -4,8 +4,6 @@ Thank you for your interest in contributing to Ivadoo.
 
 Ivadoo is being developed as a modular open-core ERP for fashion, textile and garment businesses.
 
-The project was originally developed under the working name **Ivadoo**. Some stable internal namespaces and historical material still use that legacy name while the public product brand is Ivadoo.
-
 ## Before contributing
 
 For significant changes, please open an issue first to describe the problem, proposal or feature you want to work on.
