@@ -60,7 +60,6 @@ class ManufacturingApiTests(APITestCase):
         )
         StockPosition.objects.create(
             organization=self.organization,
-            company=self.company,
             warehouse=self.warehouse,
             location=self.location,
             product=self.fabric,
