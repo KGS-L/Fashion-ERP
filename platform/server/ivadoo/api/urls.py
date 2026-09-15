@@ -15,6 +15,7 @@ urlpatterns = [
     path("measurements/", include("ivadoo.measurements.urls")),
     path("products/", include("ivadoo.catalog.urls")),
     path("sales/", include("ivadoo.sales.urls")),
+    path("inventory/", include("ivadoo.inventory.urls")),
     path(
         "establishments/",
         include("ivadoo.organizations.establishment_urls"),
