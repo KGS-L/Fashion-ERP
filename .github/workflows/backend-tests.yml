@@ -9,6 +9,7 @@ on:
       - 'docs/migrations/**'
       - 'docs/operations/**'
       - 'docs/security/**'
+      - 'docs/testing/**'
       - '.github/workflows/backend-tests.yml'
   push:
     branches:
@@ -21,6 +22,7 @@ on:
       - 'docs/migrations/**'
       - 'docs/operations/**'
       - 'docs/security/**'
+      - 'docs/testing/**'
       - '.github/workflows/backend-tests.yml'
   workflow_dispatch:
 
