@@ -12,7 +12,7 @@ class Customer(models.Model):
         INDIVIDUAL = "individual", "Individual"
         COMPANY = "company", "Company"
 
-    class Status(models.TextChoices):
+    class CustomerStatus(models.TextChoices):
         ACTIVE = "active", "Active"
         INACTIVE = "inactive", "Inactive"
         ARCHIVED = "archived", "Archived"
@@ -64,8 +64,8 @@ class Customer(models.Model):
     notes = models.TextField(blank=True)
     status = models.CharField(
         max_length=16,
-        choices=Status.choices,
-        default=Status.ACTIVE,
+        choices=CustomerStatus.choices,
+        default=CustomerStatus.ACTIVE,
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
