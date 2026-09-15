@@ -74,6 +74,7 @@ class Phase3OperationalJourneyTests(APITestCase):
                     "quality.inspection.manage",
                     "quality.inspection.complete",
                     "quality.rework.manage",
+                    "fashion.sale.view",
                     "fashion.fitting.view",
                     "fashion.fitting.manage",
                     "fashion.alteration.manage",
