@@ -65,6 +65,17 @@ register_module(
         api_prefixes=("/api/v1/sales/",),
     )
 )
+register_module(
+    ModuleManifest(
+        code="operations.inventory",
+        name="Inventory",
+        version="1.0.0",
+        dependencies=("foundation", "fashion.catalog", "fashion.sales"),
+        default_enabled=True,
+        edition="business",
+        api_prefixes=("/api/v1/inventory/",),
+    )
+)
 
 
 BASE_PROTECTED = frozenset(
@@ -163,5 +174,71 @@ register_model(
         manage_permission="fashion.sale.manage",
         protected_fields=BASE_PROTECTED | {"number", "status", "confirmed_at", "cancelled_at"},
         actions=("confirm", "cancel"),
+    )
+)
+register_model(
+    ModelManifest(
+        key="inventory.warehouse",
+        label="Warehouse",
+        django_model="inventory.Warehouse",
+        module_code="operations.inventory",
+        view_permission="inventory.stock.view",
+        manage_permission="inventory.stock.manage",
+        protected_fields=BASE_PROTECTED,
+    )
+)
+register_model(
+    ModelManifest(
+        key="inventory.stocklot",
+        label="Stock lot",
+        django_model="inventory.StockLot",
+        module_code="operations.inventory",
+        view_permission="inventory.stock.view",
+        manage_permission="inventory.stock.manage",
+        protected_fields=BASE_PROTECTED
+        | {
+            "initial_quantity",
+            "remaining_quantity",
+            "remaining_length",
+            "status",
+            "warehouse",
+            "warehouse_id",
+            "location",
+            "location_id",
+            "product",
+            "product_id",
+            "product_variant",
+            "product_variant_id",
+            "unit",
+            "unit_id",
+        },
+    )
+)
+register_model(
+    ModelManifest(
+        key="inventory.stockposition",
+        label="Stock position",
+        django_model="inventory.StockPosition",
+        module_code="operations.inventory",
+        view_permission="inventory.stock.view",
+        manage_permission="inventory.stock.manage",
+        protected_fields=BASE_PROTECTED
+        | {
+            "warehouse",
+            "warehouse_id",
+            "location",
+            "location_id",
+            "product",
+            "product_id",
+            "product_variant",
+            "product_variant_id",
+            "unit",
+            "unit_id",
+            "quantity_available",
+            "quantity_reserved",
+            "quantity_in_production",
+            "quantity_damaged",
+            "quantity_subcontractor",
+        },
     )
 )
