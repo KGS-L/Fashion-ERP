@@ -1,3 +1,4 @@
+from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 
 from ivadoo.inventory.models import StockLocation
@@ -123,6 +124,7 @@ class DeliveryReturnLineSerializer(serializers.ModelSerializer):
         )
         read_only_fields = ("id", "stock_movements", "created_at")
 
+    @extend_schema_field(serializers.ListField(child=serializers.DictField()))
     def get_stock_movements(self, obj):
         return [
             {
