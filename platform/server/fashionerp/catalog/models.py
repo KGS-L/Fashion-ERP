@@ -186,3 +186,41 @@ class FashionModelVariant(models.Model):
     class Meta:
         constraints = [models.UniqueConstraint(fields=("fashion_model", "code"), name="fashion_model_variant_unique_code")]
         ordering = ("code",)
+
+
+class FashionModelMaterialRequirement(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    fashion_model = models.ForeignKey(FashionModel, on_delete=models.CASCADE, related_name="material_requirements")
+    model_variant = models.ForeignKey(FashionModelVariant, on_delete=models.CASCADE, related_name="material_requirements", null=True, blank=True)
+    product = models.ForeignKey(Product, on_delete=models.PROTECT, related_name="fashion_model_requirements")
+    product_variant = models.ForeignKey(ProductVariant, on_delete=models.PROTECT, related_name="fashion_model_requirements", null=True, blank=True)
+    quantity = models.DecimalField(max_digits=14, decimal_places=4)
+    unit = models.ForeignKey("internationalization.UnitOfMeasure", on_delete=models.PROTECT, related_name="fashion_model_requirements")
+    waste_rate = models.DecimalField(max_digits=7, decimal_places=4, default=0)
+    notes = models.TextField(blank=True)
+    position = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        constraints = [
+            models.CheckConstraint(condition=models.Q(quantity__gt=0), name="fashion_requirement_positive_quantity"),
+            models.CheckConstraint(condition=models.Q(waste_rate__gte=0), name="fashion_requirement_nonnegative_waste"),
+            models.UniqueConstraint(
+                fields=("fashion_model", "model_variant", "product", "product_variant"),
+                name="fashion_requirement_unique_material",
+            ),
+        ]
+        ordering = ("position", "product__name")
+
+    def clean(self):
+        super().clean()
+        organization_id = self.fashion_model.organization_id if self.fashion_model_id else None
+        if self.model_variant_id and self.model_variant.fashion_model_id != self.fashion_model_id:
+            raise ValidationError({"model_variant": "Model variant must belong to the fashion model."})
+        if self.product_id and self.product.organization_id != organization_id:
+            raise ValidationError({"product": "Product must belong to the fashion model organization."})
+        if self.product_variant_id and self.product_variant.product_id != self.product_id:
+            raise ValidationError({"product_variant": "Product variant must belong to the selected product."})
+        if self.unit_id and self.unit.organization_id != organization_id:
+            raise ValidationError({"unit": "Unit must belong to the fashion model organization."})
+        if self.product_id and self.unit_id and self.product.unit.category != self.unit.category:
+            raise ValidationError({"unit": "Unit category must match the product unit category."})
