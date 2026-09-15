@@ -1,0 +1,100 @@
+from django.db import transaction
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import generics
+from rest_framework.exceptions import PermissionDenied
+from rest_framework.filters import OrderingFilter, SearchFilter
+from rest_framework.permissions import IsAuthenticated
+
+from fashionerp.audit.services import audit_snapshot, record_audit_event
+from fashionerp.authorization.services import has_permission
+
+from .models import Customer
+from .serializers import CustomerSerializer
+
+
+class CustomerListView(generics.ListCreateAPIView):
+    queryset = Customer.objects.none()
+    serializer_class = CustomerSerializer
+    permission_classes = [IsAuthenticated]
+    filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
+    filterset_fields = (
+        "company_id", "establishment_id", "customer_type", "status",
+        "language_code",
+    )
+    search_fields = (
+        "code", "display_name", "first_name", "last_name", "legal_name",
+        "email", "phone",
+    )
+    ordering_fields = ("display_name", "code", "created_at", "updated_at")
+    ordering = ("display_name",)
+
+    def get_queryset(self):
+        # #37 will replace this organization-level gate with scoped customer
+        # queryset resolution. Keeping the permission explicit preserves
+        # deny-by-default while #36 establishes the customer master model.
+        if not has_permission(self.request.user, "fashion.customer.view"):
+            return Customer.objects.none()
+        return Customer.objects.filter(
+            organization_id=self.request.user.organization_id
+        ).select_related("company", "establishment", "preferred_currency").prefetch_related(
+            "contacts", "addresses", "consents"
+        )
+
+    def perform_create(self, serializer):
+        company = serializer.validated_data["company"]
+        establishment = serializer.validated_data.get("establishment")
+        if not has_permission(
+            self.request.user,
+            "fashion.customer.manage",
+            company=company,
+            establishment=establishment,
+        ):
+            raise PermissionDenied("You cannot manage customers in this scope.")
+        with transaction.atomic():
+            customer = serializer.save(
+                organization=self.request.user.organization
+            )
+            record_audit_event(
+                organization=self.request.user.organization,
+                actor=self.request.user,
+                action="fashion.customer.create",
+                object_instance=customer,
+                after=audit_snapshot(customer),
+                request=self.request,
+            )
+
+
+class CustomerDetailView(generics.RetrieveUpdateAPIView):
+    queryset = Customer.objects.none()
+    serializer_class = CustomerSerializer
+    permission_classes = [IsAuthenticated]
+    lookup_field = "id"
+    lookup_url_kwarg = "customer_id"
+
+    def get_queryset(self):
+        permission = (
+            "fashion.customer.view"
+            if self.request.method == "GET"
+            else "fashion.customer.manage"
+        )
+        if not has_permission(self.request.user, permission):
+            return Customer.objects.none()
+        return Customer.objects.filter(
+            organization_id=self.request.user.organization_id
+        ).select_related("company", "establishment", "preferred_currency").prefetch_related(
+            "contacts", "addresses", "consents"
+        )
+
+    def perform_update(self, serializer):
+        with transaction.atomic():
+            before = audit_snapshot(serializer.instance)
+            customer = serializer.save()
+            record_audit_event(
+                organization=self.request.user.organization,
+                actor=self.request.user,
+                action="fashion.customer.update",
+                object_instance=customer,
+                before=before,
+                after=audit_snapshot(customer),
+                request=self.request,
+            )
