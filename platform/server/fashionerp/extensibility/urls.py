@@ -1,6 +1,12 @@
 from django.urls import path
 
-from .views import ModuleActionView, ModuleDetailView, ModuleListView
+from .views import (
+    CustomFieldDetailView,
+    CustomFieldListCreateView,
+    ModuleActionView,
+    ModuleDetailView,
+    ModuleListView,
+)
 
 
 app_name = "extensibility"
@@ -12,5 +18,11 @@ urlpatterns = [
         "modules/<str:module_code>/<str:action>/",
         ModuleActionView.as_view(),
         name="module-action",
+    ),
+    path("custom-fields/", CustomFieldListCreateView.as_view(), name="custom-field-list"),
+    path(
+        "custom-fields/<uuid:field_id>/",
+        CustomFieldDetailView.as_view(),
+        name="custom-field-detail",
     ),
 ]

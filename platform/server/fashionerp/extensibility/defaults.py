@@ -1,4 +1,4 @@
-from .registry import ModuleManifest, register_module
+from .registry import ModelManifest, ModuleManifest, register_model, register_module
 
 
 register_module(
@@ -63,5 +63,103 @@ register_module(
         ),
         default_enabled=True,
         api_prefixes=("/api/v1/sales/",),
+    )
+)
+
+
+BASE_PROTECTED = frozenset(
+    {
+        "id",
+        "organization",
+        "organization_id",
+        "company",
+        "company_id",
+        "establishment",
+        "establishment_id",
+        "created_at",
+        "updated_at",
+        "archived_at",
+        "created_by",
+        "created_by_id",
+        "updated_by",
+        "updated_by_id",
+    }
+)
+
+register_model(
+    ModelManifest(
+        key="customers.customer",
+        label="Customer",
+        django_model="customers.Customer",
+        module_code="fashion.customers",
+        view_permission="fashion.customer.view",
+        manage_permission="fashion.customer.manage",
+        protected_fields=BASE_PROTECTED | {"status"},
+    )
+)
+register_model(
+    ModelManifest(
+        key="measurements.measurementset",
+        label="Measurement set",
+        django_model="measurements.MeasurementSet",
+        module_code="fashion.measurements",
+        view_permission="fashion.customer.view",
+        manage_permission="fashion.customer.manage",
+        protected_fields=BASE_PROTECTED | {"customer", "customer_id", "version"},
+    )
+)
+register_model(
+    ModelManifest(
+        key="catalog.product",
+        label="Product",
+        django_model="catalog.Product",
+        module_code="fashion.catalog",
+        view_permission="fashion.product.view",
+        manage_permission="fashion.product.manage",
+        protected_fields=BASE_PROTECTED,
+    )
+)
+register_model(
+    ModelManifest(
+        key="catalog.collection",
+        label="Collection",
+        django_model="catalog.Collection",
+        module_code="fashion.catalog",
+        view_permission="fashion.product.view",
+        manage_permission="fashion.product.manage",
+        protected_fields=BASE_PROTECTED,
+    )
+)
+register_model(
+    ModelManifest(
+        key="catalog.fashionmodel",
+        label="Fashion model",
+        django_model="catalog.FashionModel",
+        module_code="fashion.catalog",
+        view_permission="fashion.product.view",
+        manage_permission="fashion.product.manage",
+        protected_fields=BASE_PROTECTED,
+    )
+)
+register_model(
+    ModelManifest(
+        key="sales.quotation",
+        label="Quotation",
+        django_model="sales.Quotation",
+        module_code="fashion.sales",
+        view_permission="fashion.sale.view",
+        manage_permission="fashion.sale.manage",
+        protected_fields=BASE_PROTECTED | {"number", "status"},
+    )
+)
+register_model(
+    ModelManifest(
+        key="sales.order",
+        label="Order",
+        django_model="sales.Order",
+        module_code="fashion.sales",
+        view_permission="fashion.sale.view",
+        manage_permission="fashion.sale.manage",
+        protected_fields=BASE_PROTECTED | {"number", "status", "confirmed_at", "cancelled_at"},
     )
 )
