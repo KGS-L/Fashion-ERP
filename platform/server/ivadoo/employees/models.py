@@ -323,3 +323,12 @@ class EmployeeAssignment(models.Model):
 
     def __str__(self):
         return f"{self.employee} — {self.role}"
+
+
+from .work_models import (  # noqa: E402,F401
+    AttendanceRecord,
+    EmployeeSchedule,
+    EmployeeTask,
+    EmployeeTaskTransition,
+    EmployeeTimeEntry,
+)
