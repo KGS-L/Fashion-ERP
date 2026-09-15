@@ -1,167 +1,40 @@
 from .registry import ModelManifest, ModuleManifest, register_model, register_module
 
 
-register_module(
-    ModuleManifest(
-        code="foundation",
-        name="Foundation",
-        version="1.0.0",
-        required=True,
-        default_enabled=True,
-        api_prefixes=(
-            "/api/v1/auth/",
-            "/api/v1/organizations/",
-            "/api/v1/companies/",
-            "/api/v1/establishments/",
-            "/api/v1/access/",
-            "/api/v1/audit/",
-            "/api/v1/i18n/",
-            "/api/v1/platform/",
-        ),
-    )
-)
-register_module(
-    ModuleManifest(
-        code="fashion.customers",
-        name="Customers",
-        version="1.0.0",
-        dependencies=("foundation",),
-        default_enabled=True,
-        api_prefixes=("/api/v1/customers/",),
-    )
-)
-register_module(
-    ModuleManifest(
-        code="fashion.measurements",
-        name="Measurements",
-        version="1.0.0",
-        dependencies=("foundation", "fashion.customers"),
-        default_enabled=True,
-        api_prefixes=("/api/v1/measurements/",),
-    )
-)
-register_module(
-    ModuleManifest(
-        code="fashion.catalog",
-        name="Catalog",
-        version="1.0.0",
-        dependencies=("foundation",),
-        default_enabled=True,
-        api_prefixes=("/api/v1/products/",),
-    )
-)
-register_module(
-    ModuleManifest(
-        code="fashion.sales",
-        name="Sales",
-        version="1.0.0",
-        dependencies=(
-            "foundation",
-            "fashion.customers",
-            "fashion.measurements",
-            "fashion.catalog",
-        ),
-        default_enabled=True,
-        api_prefixes=("/api/v1/sales/",),
-    )
-)
+register_module(ModuleManifest(code="foundation", name="Foundation", version="1.0.0", required=True, default_enabled=True, api_prefixes=("/api/v1/auth/", "/api/v1/organizations/", "/api/v1/companies/", "/api/v1/establishments/", "/api/v1/access/", "/api/v1/audit/", "/api/v1/i18n/", "/api/v1/platform/")))
+register_module(ModuleManifest(code="fashion.customers", name="Customers", version="1.0.0", dependencies=("foundation",), default_enabled=True, api_prefixes=("/api/v1/customers/",)))
+register_module(ModuleManifest(code="fashion.measurements", name="Measurements", version="1.0.0", dependencies=("foundation", "fashion.customers"), default_enabled=True, api_prefixes=("/api/v1/measurements/",)))
+register_module(ModuleManifest(code="fashion.catalog", name="Catalog", version="1.0.0", dependencies=("foundation",), default_enabled=True, api_prefixes=("/api/v1/products/",)))
+register_module(ModuleManifest(code="fashion.sales", name="Sales", version="1.0.0", dependencies=("foundation", "fashion.customers", "fashion.measurements", "fashion.catalog"), default_enabled=True, api_prefixes=("/api/v1/sales/",)))
+register_module(ModuleManifest(code="operations.inventory", name="Inventory", version="1.0.0", dependencies=("foundation", "fashion.catalog"), default_enabled=True, edition="business", api_prefixes=("/api/v1/inventory/",)))
+register_module(ModuleManifest(code="operations.purchases", name="Purchases", version="1.0.0", dependencies=("foundation", "fashion.catalog", "operations.inventory"), default_enabled=True, edition="business", api_prefixes=("/api/v1/purchases/",)))
+register_module(ModuleManifest(code="operations.manufacturing", name="Manufacturing", version="1.0.0", dependencies=("foundation", "fashion.catalog", "fashion.sales", "operations.inventory"), default_enabled=True, edition="business", api_prefixes=("/api/v1/manufacturing/",)))
+register_module(ModuleManifest(code="operations.quality", name="Quality", version="1.0.0", dependencies=("foundation",), default_enabled=True, edition="business", api_prefixes=("/api/v1/quality/",)))
+register_module(ModuleManifest(code="operations.delivery", name="Delivery", version="1.0.0", dependencies=("foundation", "fashion.sales", "operations.manufacturing", "operations.quality", "operations.inventory"), default_enabled=True, edition="business", api_prefixes=("/api/v1/delivery/",)))
 
+BASE_PROTECTED = frozenset({"id", "organization", "organization_id", "company", "company_id", "establishment", "establishment_id", "created_at", "updated_at", "archived_at", "created_by", "created_by_id", "updated_by", "updated_by_id"})
 
-BASE_PROTECTED = frozenset(
-    {
-        "id",
-        "organization",
-        "organization_id",
-        "company",
-        "company_id",
-        "establishment",
-        "establishment_id",
-        "created_at",
-        "updated_at",
-        "archived_at",
-        "created_by",
-        "created_by_id",
-        "updated_by",
-        "updated_by_id",
-    }
-)
-
-register_model(
-    ModelManifest(
-        key="customers.customer",
-        label="Customer",
-        django_model="customers.Customer",
-        module_code="fashion.customers",
-        view_permission="fashion.customer.view",
-        manage_permission="fashion.customer.manage",
-        protected_fields=BASE_PROTECTED | {"status"},
-    )
-)
-register_model(
-    ModelManifest(
-        key="measurements.measurementset",
-        label="Measurement set",
-        django_model="measurements.MeasurementSet",
-        module_code="fashion.measurements",
-        view_permission="fashion.customer.view",
-        manage_permission="fashion.customer.manage",
-        protected_fields=BASE_PROTECTED | {"customer", "customer_id", "version"},
-    )
-)
-register_model(
-    ModelManifest(
-        key="catalog.product",
-        label="Product",
-        django_model="catalog.Product",
-        module_code="fashion.catalog",
-        view_permission="fashion.product.view",
-        manage_permission="fashion.product.manage",
-        protected_fields=BASE_PROTECTED,
-    )
-)
-register_model(
-    ModelManifest(
-        key="catalog.collection",
-        label="Collection",
-        django_model="catalog.Collection",
-        module_code="fashion.catalog",
-        view_permission="fashion.product.view",
-        manage_permission="fashion.product.manage",
-        protected_fields=BASE_PROTECTED,
-    )
-)
-register_model(
-    ModelManifest(
-        key="catalog.fashionmodel",
-        label="Fashion model",
-        django_model="catalog.FashionModel",
-        module_code="fashion.catalog",
-        view_permission="fashion.product.view",
-        manage_permission="fashion.product.manage",
-        protected_fields=BASE_PROTECTED,
-    )
-)
-register_model(
-    ModelManifest(
-        key="sales.quotation",
-        label="Quotation",
-        django_model="sales.Quotation",
-        module_code="fashion.sales",
-        view_permission="fashion.sale.view",
-        manage_permission="fashion.sale.manage",
-        protected_fields=BASE_PROTECTED | {"number", "status"},
-        actions=("send", "accept", "reject", "expire"),
-    )
-)
-register_model(
-    ModelManifest(
-        key="sales.order",
-        label="Order",
-        django_model="sales.Order",
-        module_code="fashion.sales",
-        view_permission="fashion.sale.view",
-        manage_permission="fashion.sale.manage",
-        protected_fields=BASE_PROTECTED | {"number", "status", "confirmed_at", "cancelled_at"},
-        actions=("confirm", "cancel"),
-    )
-)
+register_model(ModelManifest(key="customers.customer", label="Customer", django_model="customers.Customer", module_code="fashion.customers", view_permission="fashion.customer.view", manage_permission="fashion.customer.manage", protected_fields=BASE_PROTECTED | {"status"}))
+register_model(ModelManifest(key="measurements.measurementset", label="Measurement set", django_model="measurements.MeasurementSet", module_code="fashion.measurements", view_permission="fashion.customer.view", manage_permission="fashion.customer.manage", protected_fields=BASE_PROTECTED | {"customer", "customer_id", "version"}))
+register_model(ModelManifest(key="catalog.product", label="Product", django_model="catalog.Product", module_code="fashion.catalog", view_permission="fashion.product.view", manage_permission="fashion.product.manage", protected_fields=BASE_PROTECTED))
+register_model(ModelManifest(key="catalog.collection", label="Collection", django_model="catalog.Collection", module_code="fashion.catalog", view_permission="fashion.product.view", manage_permission="fashion.product.manage", protected_fields=BASE_PROTECTED))
+register_model(ModelManifest(key="catalog.fashionmodel", label="Fashion model", django_model="catalog.FashionModel", module_code="fashion.catalog", view_permission="fashion.product.view", manage_permission="fashion.product.manage", protected_fields=BASE_PROTECTED))
+register_model(ModelManifest(key="sales.quotation", label="Quotation", django_model="sales.Quotation", module_code="fashion.sales", view_permission="fashion.sale.view", manage_permission="fashion.sale.manage", protected_fields=BASE_PROTECTED | {"number", "status"}, actions=("send", "accept", "reject", "expire")))
+register_model(ModelManifest(key="sales.order", label="Order", django_model="sales.Order", module_code="fashion.sales", view_permission="fashion.sale.view", manage_permission="fashion.sale.manage", protected_fields=BASE_PROTECTED | {"number", "status", "confirmed_at", "cancelled_at"}, actions=("confirm", "cancel")))
+register_model(ModelManifest(key="sales.fittingsession", label="Fitting session", django_model="sales.FittingSession", module_code="fashion.sales", view_permission="fashion.fitting.view", manage_permission="fashion.fitting.manage", protected_fields=BASE_PROTECTED | {"order", "order_id", "status", "result", "performed_at"}, actions=("complete", "cancel")))
+register_model(ModelManifest(key="sales.alterationrequest", label="Alteration request", django_model="sales.AlterationRequest", module_code="fashion.sales", view_permission="fashion.fitting.view", manage_permission="fashion.alteration.manage", protected_fields=BASE_PROTECTED | {"order", "order_id", "fitting", "fitting_id", "status", "started_at", "completed_at", "completed_by", "completed_by_id"}, actions=("start", "complete", "cancel")))
+register_model(ModelManifest(key="sales.customervalidation", label="Customer validation", django_model="sales.CustomerValidation", module_code="fashion.sales", view_permission="fashion.fitting.view", manage_permission="fashion.customer_validation.manage", protected_fields=BASE_PROTECTED | {"order", "order_id", "fitting", "fitting_id", "decision", "recorded_by", "recorded_by_id", "validated_at"}))
+register_model(ModelManifest(key="inventory.warehouse", label="Warehouse", django_model="inventory.Warehouse", module_code="operations.inventory", view_permission="inventory.stock.view", manage_permission="inventory.stock.manage", protected_fields=BASE_PROTECTED))
+register_model(ModelManifest(key="inventory.stocklot", label="Stock lot", django_model="inventory.StockLot", module_code="operations.inventory", view_permission="inventory.stock.view", manage_permission="inventory.stock.manage", protected_fields=BASE_PROTECTED | {"initial_quantity", "remaining_quantity", "remaining_length", "status", "warehouse", "warehouse_id", "location", "location_id", "product", "product_id", "product_variant", "product_variant_id", "unit", "unit_id"}))
+register_model(ModelManifest(key="inventory.stockposition", label="Stock position", django_model="inventory.StockPosition", module_code="operations.inventory", view_permission="inventory.stock.view", manage_permission="inventory.stock.manage", protected_fields=BASE_PROTECTED | {"warehouse", "warehouse_id", "location", "location_id", "product", "product_id", "product_variant", "product_variant_id", "unit", "unit_id", "quantity_available", "quantity_reserved", "quantity_in_production", "quantity_damaged", "quantity_subcontractor"}))
+register_model(ModelManifest(key="purchases.supplier", label="Supplier", django_model="purchases.Supplier", module_code="operations.purchases", view_permission="purchase.supplier.view", manage_permission="purchase.supplier.manage", protected_fields=BASE_PROTECTED))
+register_model(ModelManifest(key="purchases.supplierproduct", label="Supplier product", django_model="purchases.SupplierProduct", module_code="operations.purchases", view_permission="purchase.supplier.view", manage_permission="purchase.supplier.manage", protected_fields=BASE_PROTECTED | {"supplier", "supplier_id"}))
+register_model(ModelManifest(key="purchases.purchaserequest", label="Purchase request", django_model="purchases.PurchaseRequest", module_code="operations.purchases", view_permission="purchase.request.view", manage_permission="purchase.request.manage", protected_fields=BASE_PROTECTED | {"number", "status", "approved_by", "approved_by_id", "submitted_at", "approved_at", "rejected_at", "cancelled_at"}, actions=("submit", "approve", "reject", "cancel")))
+register_model(ModelManifest(key="purchases.requestforquotation", label="Request for quotation", django_model="purchases.RequestForQuotation", module_code="operations.purchases", view_permission="purchase.rfq.view", manage_permission="purchase.rfq.manage", protected_fields=BASE_PROTECTED | {"number", "status", "sent_at", "closed_at", "cancelled_at"}, actions=("send", "close", "cancel")))
+register_model(ModelManifest(key="purchases.purchaseorder", label="Purchase order", django_model="purchases.PurchaseOrder", module_code="operations.purchases", view_permission="purchase.order.view", manage_permission="purchase.order.manage", protected_fields=BASE_PROTECTED | {"number", "status", "approved_by", "approved_by_id", "submitted_at", "approved_at", "ordered_at", "cancelled_at"}, actions=("submit", "approve", "order", "cancel")))
+register_model(ModelManifest(key="manufacturing.billofmaterials", label="Bill of materials", django_model="manufacturing.BillOfMaterials", module_code="operations.manufacturing", view_permission="manufacturing.bom.view", manage_permission="manufacturing.bom.manage", protected_fields=BASE_PROTECTED | {"status", "activated_at", "archived_at"}, actions=("activate", "archive")))
+register_model(ModelManifest(key="manufacturing.manufacturingorder", label="Manufacturing order", django_model="manufacturing.ManufacturingOrder", module_code="operations.manufacturing", view_permission="manufacturing.order.view", manage_permission="manufacturing.order.manage", protected_fields=BASE_PROTECTED | {"number", "status", "bom", "bom_id", "produced_quantity", "actual_start", "actual_end"}, actions=("ready", "start", "done", "cancel", "reserve_materials")))
+register_model(ModelManifest(key="quality.qualityinspection", label="Quality inspection", django_model="quality.QualityInspection", module_code="operations.quality", view_permission="quality.inspection.view", manage_permission="quality.inspection.manage", protected_fields=BASE_PROTECTED | {"status", "decision", "completed_by", "completed_by_id", "completed_at"}, actions=("complete",)))
+register_model(ModelManifest(key="quality.qualityrework", label="Quality rework", django_model="quality.QualityRework", module_code="operations.quality", view_permission="quality.inspection.view", manage_permission="quality.rework.manage", protected_fields=BASE_PROTECTED | {"inspection", "inspection_id", "status", "completed_by", "completed_by_id", "completed_at"}, actions=("complete",)))
+register_model(ModelManifest(key="delivery.delivery", label="Delivery", django_model="delivery.Delivery", module_code="operations.delivery", view_permission="delivery.delivery.view", manage_permission="delivery.delivery.manage", protected_fields=BASE_PROTECTED | {"order", "order_id", "status", "failure_reason", "prepared_at", "assigned_at", "shipped_at", "completed_at", "failed_at"}, actions=("prepare", "assign", "ship", "ready_for_pickup", "deliver", "pickup", "fail", "cancel")))
+register_model(ModelManifest(key="delivery.deliveryreturn", label="Delivery return", django_model="delivery.DeliveryReturn", module_code="operations.delivery", view_permission="delivery.return.view", manage_permission="delivery.return.manage", protected_fields=BASE_PROTECTED | {"delivery", "delivery_id", "number", "resolution", "idempotency_key"}))

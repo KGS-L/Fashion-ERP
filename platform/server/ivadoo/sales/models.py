@@ -34,3 +34,6 @@ class OrderLine(models.Model):
     description=models.CharField(max_length=255); quantity=models.DecimalField(max_digits=14,decimal_places=4,default=1); unit_price=models.DecimalField(max_digits=14,decimal_places=4)
     measurement_set=models.ForeignKey("measurements.MeasurementSet",on_delete=models.PROTECT,null=True,blank=True,related_name="order_lines")
     measurement_snapshot=models.JSONField(default=dict,blank=True); measurement_source_version=models.PositiveIntegerField(null=True,blank=True)
+
+
+from .fitting_models import AlterationRequest, CustomerValidation, FittingSession  # noqa: E402,F401

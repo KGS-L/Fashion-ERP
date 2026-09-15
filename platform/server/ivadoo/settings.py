@@ -35,6 +35,12 @@ INSTALLED_APPS = [
     "ivadoo.measurements.apps.MeasurementsConfig",
     "ivadoo.catalog.apps.CatalogConfig",
     "ivadoo.sales.apps.SalesConfig",
+    "ivadoo.inventory.apps.InventoryConfig",
+    "ivadoo.purchases.apps.PurchasesConfig",
+    "ivadoo.manufacturing.apps.ManufacturingConfig",
+    "ivadoo.quality.apps.QualityConfig",
+    "ivadoo.delivery.apps.DeliveryConfig",
+    "ivadoo.operations.apps.OperationsConfig",
 ]
 
 MIDDLEWARE = [
@@ -102,28 +108,14 @@ PASSWORD_HASHERS = [
 ]
 
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
-    },
-    {
-        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
-    },
-    {
-        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
-    },
-    {
-        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
-    },
+    {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
+    {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
+    {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
+    {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
 
 LANGUAGE_CODE = os.getenv("DJANGO_LANGUAGE_CODE", "fr")
-LANGUAGES = [
-    ("fr", _("French")),
-    ("en", _("English")),
-    ("es", _("Spanish")),
-    ("pt", _("Portuguese")),
-    ("ar", _("Arabic")),
-]
+LANGUAGES = [("fr", _("French")), ("en", _("English")), ("es", _("Spanish")), ("pt", _("Portuguese")), ("ar", _("Arabic"))]
 TIME_ZONE = os.getenv("DJANGO_TIME_ZONE", "UTC")
 USE_I18N = True
 USE_TZ = True
@@ -131,32 +123,18 @@ USE_TZ = True
 STATIC_URL = "static/"
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-IVADOO_SESSION_ABSOLUTE_TTL_SECONDS = int(
-    os.getenv("IVADOO_SESSION_ABSOLUTE_TTL_SECONDS", str(30 * 24 * 60 * 60))
-)
-IVADOO_SESSION_IDLE_TTL_SECONDS = int(
-    os.getenv("IVADOO_SESSION_IDLE_TTL_SECONDS", str(12 * 60 * 60))
-)
+IVADOO_SESSION_ABSOLUTE_TTL_SECONDS = int(os.getenv("IVADOO_SESSION_ABSOLUTE_TTL_SECONDS", str(30 * 24 * 60 * 60)))
+IVADOO_SESSION_IDLE_TTL_SECONDS = int(os.getenv("IVADOO_SESSION_IDLE_TTL_SECONDS", str(12 * 60 * 60)))
 IVADOO_2FA_ENCRYPTION_KEY = os.environ["IVADOO_2FA_ENCRYPTION_KEY"]
 IVADOO_TOTP_ISSUER = os.getenv("IVADOO_TOTP_ISSUER", "Ivadoo")
 
 REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     "DEFAULT_PAGINATION_CLASS": "ivadoo.api.pagination.StandardPageNumberPagination",
-    "DEFAULT_FILTER_BACKENDS": [
-        "django_filters.rest_framework.DjangoFilterBackend",
-        "rest_framework.filters.SearchFilter",
-        "rest_framework.filters.OrderingFilter",
-    ],
-    "DEFAULT_AUTHENTICATION_CLASSES": [
-        "ivadoo.identity.authentication.OpaqueBearerAuthentication",
-    ],
-    "DEFAULT_PERMISSION_CLASSES": [
-        "rest_framework.permissions.IsAuthenticated",
-    ],
-    "DEFAULT_THROTTLE_RATES": {
-        "login": os.getenv("IVADOO_LOGIN_THROTTLE_RATE", "10/min"),
-    },
+    "DEFAULT_FILTER_BACKENDS": ["django_filters.rest_framework.DjangoFilterBackend", "rest_framework.filters.SearchFilter", "rest_framework.filters.OrderingFilter"],
+    "DEFAULT_AUTHENTICATION_CLASSES": ["ivadoo.identity.authentication.OpaqueBearerAuthentication"],
+    "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.IsAuthenticated"],
+    "DEFAULT_THROTTLE_RATES": {"login": os.getenv("IVADOO_LOGIN_THROTTLE_RATE", "10/min")},
     "EXCEPTION_HANDLER": "ivadoo.api.exceptions.ivadoo_exception_handler",
 }
 
@@ -168,5 +146,6 @@ SPECTACULAR_SETTINGS = {
     "ENUM_NAME_OVERRIDES": {
         "OrganizationLifecycleStatusEnum": [("active", "Active"), ("suspended", "Suspended"), ("archived", "Archived")],
         "CustomerStatusEnum": [("active", "Active"), ("inactive", "Inactive"), ("archived", "Archived")],
+        "DeliveryReturnDispositionEnum": "ivadoo.delivery.models.DeliveryReturnLine.Disposition",
     },
 }
