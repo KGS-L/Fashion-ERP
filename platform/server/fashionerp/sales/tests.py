@@ -29,6 +29,6 @@ class FashionSalesFlowTests(APITestCase):
 
  def test_rejects_cross_scope_measurement_reference(self):
   other=self.org; other_company=Company.objects.create(organization=other,name="Other Maison",code="other-maison"); other_customer=Customer.objects.create(organization=other,company=other_company,code="OC1",display_name="Other Client")
-  other_ms=MeasurementSet.objects.create(organization=other,company=other_company,customer=other_customer,version=1,measured_at=timezone.now(),created_by=None)
+  other_ms=MeasurementSet.objects.create(organization=other,company=other_company,customer=other_customer,version=1,measured_at=timezone.now(),created_by=self.user)
   response=self.client.post("/api/v1/sales/orders/",{"company":str(self.company.id),"customer":str(self.customer.id),"number":"O-XTENANT","lines":[{"description":"Custom garment","quantity":"1","unit_price":"50000","measurement_set":str(other_ms.id)}]},format="json")
   self.assertEqual(response.status_code,status.HTTP_400_BAD_REQUEST)
