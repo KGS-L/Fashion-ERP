@@ -55,11 +55,11 @@ class StockLocationSerializer(serializers.ModelSerializer):
 
 
 class StockPositionSerializer(serializers.ModelSerializer):
-    warehouse_id = serializers.UUIDField(source="warehouse_id", read_only=True)
-    location_id = serializers.UUIDField(source="location_id", read_only=True)
-    product_id = serializers.UUIDField(source="product_id", read_only=True)
-    product_variant_id = serializers.UUIDField(source="product_variant_id", read_only=True, allow_null=True)
-    unit_id = serializers.UUIDField(source="unit_id", read_only=True)
+    warehouse_id = serializers.UUIDField(read_only=True)
+    location_id = serializers.UUIDField(read_only=True)
+    product_id = serializers.UUIDField(read_only=True)
+    product_variant_id = serializers.UUIDField(read_only=True, allow_null=True)
+    unit_id = serializers.UUIDField(read_only=True)
 
     class Meta:
         model = StockPosition
@@ -118,12 +118,12 @@ class StockLotSerializer(serializers.ModelSerializer):
 
 
 class StockMovementSerializer(serializers.ModelSerializer):
-    source_location_id = serializers.UUIDField(source="source_location_id", read_only=True, allow_null=True)
-    destination_location_id = serializers.UUIDField(source="destination_location_id", read_only=True, allow_null=True)
-    product_id = serializers.UUIDField(source="product_id", read_only=True)
-    product_variant_id = serializers.UUIDField(source="product_variant_id", read_only=True, allow_null=True)
-    unit_id = serializers.UUIDField(source="unit_id", read_only=True)
-    lot_id = serializers.UUIDField(source="lot_id", read_only=True, allow_null=True)
+    source_location_id = serializers.UUIDField(read_only=True, allow_null=True)
+    destination_location_id = serializers.UUIDField(read_only=True, allow_null=True)
+    product_id = serializers.UUIDField(read_only=True)
+    product_variant_id = serializers.UUIDField(read_only=True, allow_null=True)
+    unit_id = serializers.UUIDField(read_only=True)
+    lot_id = serializers.UUIDField(read_only=True, allow_null=True)
 
     class Meta:
         model = StockMovement
