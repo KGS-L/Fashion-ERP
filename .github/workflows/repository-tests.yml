@@ -11,6 +11,9 @@ on:
       - 'localizations/**'
       - 'docs/**'
       - 'tests/**'
+      - 'README.md'
+      - 'SECURITY.md'
+      - 'CONTRIBUTING.md'
   push:
     branches:
       - main
@@ -24,6 +27,9 @@ on:
       - 'localizations/**'
       - 'docs/**'
       - 'tests/**'
+      - 'README.md'
+      - 'SECURITY.md'
+      - 'CONTRIBUTING.md'
   workflow_dispatch:
 
 permissions:
@@ -71,6 +77,43 @@ jobs:
           done < <(find "${{ matrix.area }}" -mindepth 1 -type d -print0)
 
           exit "$missing"
+
+  brand-identity:
+    name: Verify Ivadoo naming
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Reject legacy FashionERP identifiers
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          failed=0
+
+          legacy_paths="$(git ls-files | grep -Ei '(^|/)(fashionerp|fashion-erp)(/|$)' || true)"
+          if [ -n "$legacy_paths" ]; then
+            echo "::group::Legacy paths"
+            printf '%s\n' "$legacy_paths"
+            echo "::endgroup::"
+            failed=1
+          fi
+
+          legacy_content="$(git grep -nI -E 'FashionERP|fashionerp|FASHIONERP|Fashion-ERP' -- . || true)"
+          if [ -n "$legacy_content" ]; then
+            echo "::group::Legacy content"
+            printf '%s\n' "$legacy_content"
+            echo "::endgroup::"
+            failed=1
+          fi
+
+          if [ "$failed" -ne 0 ]; then
+            echo "::error title=Legacy product identity detected::Tracked paths/content must use Ivadoo naming."
+          fi
+
+          exit "$failed"
 
   security-static:
     name: High-risk secret pattern scan
