@@ -38,7 +38,7 @@ class Migration(migrations.Migration):
                 ("legal_name", models.CharField(blank=True, max_length=255)),
                 ("email", models.EmailField(blank=True, max_length=254)),
                 ("phone", models.CharField(blank=True, max_length=64)),
-                ("language_code", models.CharField(choices=[("fr", "French"), ("en", "English"), ("es", "Spanish"), ("pt", "Portuguese"), ("ar", "Arabic")], default="fr", max_length=8)),
+                ("language_code", models.CharField(choices=[("fr", "Français"), ("en", "English"), ("es", "Español"), ("pt", "Português"), ("ar", "العربية")], default="fr", max_length=8)),
                 ("preferences", models.JSONField(blank=True, default=dict)),
                 ("notes", models.TextField(blank=True)),
                 ("status", models.CharField(choices=[("active", "Active"), ("inactive", "Inactive"), ("archived", "Archived")], default="active", max_length=16)),
