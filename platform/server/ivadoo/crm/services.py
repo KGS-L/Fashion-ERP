@@ -241,8 +241,6 @@ def convert_opportunity(*, opportunity, actor, customer=None, customer_code=""):
             "company",
             "company__functional_currency",
             "establishment",
-            "lead",
-            "lead__converted_customer",
             "customer",
             "currency",
             "stage",
@@ -261,7 +259,13 @@ def convert_opportunity(*, opportunity, actor, customer=None, customer_code=""):
             )
         return existing
 
-    lead = opportunity.lead
+    lead = None
+    if opportunity.lead_id:
+        lead = (
+            CRMLead.objects.select_for_update()
+            .select_related("converted_customer")
+            .get(pk=opportunity.lead_id)
+        )
     lead_customer = lead.converted_customer if lead and lead.converted_customer_id else None
     preselected_customer = customer or opportunity.customer or lead_customer
 
