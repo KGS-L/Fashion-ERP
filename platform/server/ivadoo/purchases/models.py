@@ -124,3 +124,15 @@ class SupplierProduct(models.Model):
 
     def __str__(self):
         return f"{self.supplier} · {self.product}"
+
+
+from .procurement_models import (  # noqa: E402,F401
+    PurchaseOrder,
+    PurchaseOrderLine,
+    PurchaseRequest,
+    PurchaseRequestLine,
+    RequestForQuotation,
+    RFQSupplier,
+    SupplierQuotation,
+    SupplierQuotationLine,
+)
