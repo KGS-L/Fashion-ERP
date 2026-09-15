@@ -96,6 +96,8 @@ class CustomFieldListCreateView(generics.ListCreateAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
+        if getattr(self, "swagger_fake_view", False):
+            return CustomFieldDefinition.objects.none()
         _require(
             self.request.user,
             "platform.customization.view",
@@ -142,6 +144,8 @@ class CustomFieldDetailView(generics.RetrieveUpdateAPIView):
     lookup_url_kwarg = "field_id"
 
     def get_queryset(self):
+        if getattr(self, "swagger_fake_view", False):
+            return CustomFieldDefinition.objects.none()
         permission = "platform.customization.view" if self.request.method == "GET" else "platform.customization.manage"
         _require(self.request.user, permission, "You do not have permission to access custom fields.")
         return CustomFieldDefinition.objects.filter(organization=self.request.user.organization)
@@ -222,7 +226,10 @@ class MetadataModelListView(APIView):
     permission_classes = [IsAuthenticated]
     serializer_class = MetadataModelListSerializer
 
-    @extend_schema(responses=MetadataModelListSerializer)
+    @extend_schema(
+        operation_id="v1_platform_metadata_models_list",
+        responses=MetadataModelListSerializer,
+    )
     def get(self, request):
         payload = {"models": visible_model_metadata(request.user)}
         return _metadata_response(request, payload)
@@ -232,7 +239,10 @@ class MetadataModelDetailView(APIView):
     permission_classes = [IsAuthenticated]
     serializer_class = MetadataModelSerializer
 
-    @extend_schema(responses=MetadataModelSerializer)
+    @extend_schema(
+        operation_id="v1_platform_metadata_models_retrieve",
+        responses=MetadataModelSerializer,
+    )
     def get(self, request, model_key):
         try:
             manifest = get_model_manifest(model_key)
