@@ -10,7 +10,7 @@ from ivadoo.customers.models import Customer
 from ivadoo.identity.models import User
 from ivadoo.identity.services import create_api_session
 from ivadoo.internationalization.models import UnitOfMeasure
-from ivadoo.inventory.models import StockLocation, StockMovement, Warehouse
+from ivadoo.inventory.models import StockLocation, StockMovement, StockPosition, Warehouse
 from ivadoo.inventory.services import apply_stock_movement
 from ivadoo.manufacturing.models import BillOfMaterials, ManufacturingOrder
 from ivadoo.manufacturing.production_models import ManufacturingOutputReceipt
@@ -51,9 +51,9 @@ class DeliveryApiTests(APITestCase):
             quantity=Decimal("1"), created_by=self.user,
         )
 
-    def _create(self, *, mode="local_delivery", quantity="1", packages=True):
+    def _create(self, *, mode="local_delivery", quantity="1", packages=True, number=None):
         payload = {
-            "order_id": str(self.order.id), "number": f"DEL-{mode}-1", "mode": mode,
+            "order_id": str(self.order.id), "number": number or f"DEL-{mode}-1", "mode": mode,
             "courier_name": "Local courier" if mode == "local_delivery" else "",
             "courier_reference": "TR-001" if mode == "local_delivery" else "",
             "lines": [{"order_line_id": str(self.order_line.id), "quantity": quantity}],
@@ -61,7 +61,7 @@ class DeliveryApiTests(APITestCase):
         }
         return self.client.post("/api/v1/delivery/deliveries/", payload, format="json")
 
-    def test_local_delivery_requires_full_quantity_and_timestamped_proof(self):
+    def test_local_delivery_requires_timestamped_proof_and_issues_finished_stock(self):
         created = self._create()
         self.assertEqual(created.status_code, status.HTTP_201_CREATED)
         delivery_id = created.data["id"]
@@ -78,13 +78,19 @@ class DeliveryApiTests(APITestCase):
         self.assertEqual(delivered.data["status"], Delivery.Status.DELIVERED)
         proof = DeliveryProof.objects.get(delivery_id=delivery_id)
         self.assertIsNotNone(proof.recorded_at)
+        position = StockPosition.objects.get(location=self.location, product=self.finished, product_variant=None, unit=self.piece)
+        self.assertEqual(position.quantity_available, Decimal("0"))
+        self.assertEqual(
+            StockMovement.objects.filter(reference_type="delivery.delivery_line", movement_type=StockMovement.MovementType.ISSUE).count(),
+            1,
+        )
 
-    def test_partial_quantity_is_rejected_at_preparation_in_phase3(self):
+    def test_partial_quantity_can_be_prepared_after_issue_63(self):
         created = self._create(quantity="0.5")
         self.assertEqual(created.status_code, status.HTTP_201_CREATED)
         response = self.client.post(f"/api/v1/delivery/deliveries/{created.data['id']}/actions/prepare/", {}, format="json")
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        self.assertEqual(Delivery.objects.get(id=created.data["id"]).status, Delivery.Status.DRAFT)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["status"], Delivery.Status.PREPARED)
 
     def test_pickup_follows_separate_transition_path(self):
         created = self._create(mode="pickup")
