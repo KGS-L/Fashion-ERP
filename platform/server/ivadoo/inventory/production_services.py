@@ -45,7 +45,7 @@ def consume_reserved_quantity(
         return existing, StockReservation.objects.get(pk=reservation.pk)
 
     reservation = (
-        StockReservation.objects.select_for_update()
+        StockReservation.objects.select_for_update(of=("self",))
         .select_related(
             "organization",
             "company",
