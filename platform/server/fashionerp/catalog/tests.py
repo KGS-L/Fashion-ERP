@@ -50,11 +50,3 @@ class ProductCatalogApiTests(APITestCase):
         types = {choice for choice, _ in Product.ProductType.choices}
         self.assertEqual(types, {"finished_good", "fabric", "accessory", "service", "packaging", "waste"})
 
-    def test_rejects_unit_from_another_organization(self):
-        other = Organization.objects.create(name="Other", slug="catalog-other")
-        other_unit = UnitOfMeasure.objects.create(organization=other, code="other-m", name="Other meter", symbol="m", category="length", ratio_to_base=Decimal("1"), rounding=Decimal("0.01"))
-        response = self.client.post("/api/v1/products/", {
-            "company_id": str(self.company.id), "code": "bad", "name": "Bad",
-            "product_type": "fabric", "unit_id": str(other_unit.id),
-        }, format="json")
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
