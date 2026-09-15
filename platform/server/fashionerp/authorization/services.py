@@ -6,6 +6,8 @@ from .models import AccessGrant, Permission, Role
 
 
 FOUNDATION_PERMISSIONS = (
+    ("fashion.customer.view", "fashion", "customer.view", "View customers"),
+    ("fashion.customer.manage", "fashion", "customer.manage", "Manage customers"),
     ("foundation.organization.view", "foundation", "organization.view", "View organization"),
     ("foundation.company.view", "foundation", "company.view", "View companies"),
     ("foundation.company.manage", "foundation", "company.manage", "Manage companies"),
