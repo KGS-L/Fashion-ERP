@@ -112,6 +112,54 @@ SAFE_FIELDS = {
         "timezone",
         "archived_at",
     ),
+    "purchases.supplier": (
+        "organization_id",
+        "company_id",
+        "code",
+        "name",
+        "legal_name",
+        "tax_identifier",
+        "email",
+        "phone",
+        "website",
+        "currency_id",
+        "language_code",
+        "lead_time_days",
+        "minimum_order_amount",
+        "notes",
+        "status",
+    ),
+    "purchases.suppliercontact": (
+        "supplier_id",
+        "name",
+        "role",
+        "email",
+        "phone",
+        "is_primary",
+    ),
+    "purchases.supplieraddress": (
+        "supplier_id",
+        "label",
+        "address_line1",
+        "address_line2",
+        "city",
+        "region",
+        "postal_code",
+        "country_code",
+        "is_primary",
+    ),
+    "purchases.supplierproduct": (
+        "supplier_id",
+        "product_id",
+        "product_variant_id",
+        "unit_id",
+        "currency_id",
+        "supplier_sku",
+        "lead_time_days",
+        "minimum_quantity",
+        "last_unit_price",
+        "is_preferred",
+    ),
 }
 
 
@@ -171,6 +219,14 @@ def _scope_from_object(instance):
     elif model_label == "authorization.accessgrant":
         company_id = instance.company_id
         establishment_id = instance.establishment_id
+    elif model_label == "purchases.supplier":
+        company_id = instance.company_id
+    elif model_label in {
+        "purchases.suppliercontact",
+        "purchases.supplieraddress",
+        "purchases.supplierproduct",
+    }:
+        company_id = instance.supplier.company_id
 
     return company_id, establishment_id
 
