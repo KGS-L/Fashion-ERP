@@ -27,6 +27,7 @@ def scoped_measurement_sets(user):
 
 
 class MeasurementSetListCreateView(generics.ListCreateAPIView):
+    queryset = MeasurementSet.objects.none()
     serializer_class = MeasurementSetSerializer
     permission_classes = [IsAuthenticated]
 
@@ -61,6 +62,7 @@ class MeasurementSetListCreateView(generics.ListCreateAPIView):
 
 
 class MeasurementSetDetailView(generics.RetrieveAPIView):
+    queryset = MeasurementSet.objects.none()
     serializer_class = MeasurementSetSerializer
     permission_classes = [IsAuthenticated]
     lookup_field = "id"
