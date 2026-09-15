@@ -8,6 +8,12 @@ from .models import AccessGrant, Permission, Role
 FOUNDATION_PERMISSIONS = (
     ("fashion.customer.view", "fashion", "customer.view", "View customers"),
     ("fashion.customer.manage", "fashion", "customer.manage", "Manage customers"),
+    ("platform.module.view", "platform", "module.view", "View module registry"),
+    ("platform.module.manage", "platform", "module.manage", "Manage module registry"),
+    ("platform.customization.view", "platform", "customization.view", "View customization metadata"),
+    ("platform.customization.manage", "platform", "customization.manage", "Manage customizations"),
+    ("platform.data.import", "platform", "data.import", "Import authorized business data"),
+    ("platform.data.export", "platform", "data.export", "Export authorized business data"),
     ("foundation.organization.view", "foundation", "organization.view", "View organization"),
     ("foundation.company.view", "foundation", "company.view", "View companies"),
     ("foundation.company.manage", "foundation", "company.manage", "Manage companies"),
@@ -99,6 +105,16 @@ def _role_allows(grant: AccessGrant, permission_code: str) -> bool:
     return grant.role.is_full_access or any(
         permission.code == permission_code
         for permission in grant.role.permissions.all()
+    )
+
+
+def has_any_scope_permission(user, permission_code: str) -> bool:
+    """Return whether the user has this permission in at least one active scope."""
+    if not user or not user.is_authenticated or not user.is_active:
+        return False
+    return any(
+        _role_allows(grant, permission_code)
+        for grant in active_grants_for_user(user)
     )
 
 

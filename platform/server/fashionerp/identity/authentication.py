@@ -43,6 +43,13 @@ class OpaqueBearerAuthentication(BaseAuthentication):
             raise AuthenticationFailed("Invalid authentication credentials.") from exc
 
         session = resolve_api_session(raw_token)
+
+        # The module gate runs only after a valid server-side session has bound
+        # the request to the local organization. It is therefore a capability
+        # check, not a tenant selector.
+        from fashionerp.extensibility.services import assert_api_module_enabled
+
+        assert_api_module_enabled(session.user.organization, request.path)
         touch_api_session(session)
         translation.activate(session.user.language_code)
         return session.user, session

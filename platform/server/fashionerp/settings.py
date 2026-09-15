@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     "fashionerp.authorization.apps.AuthorizationConfig",
     "fashionerp.audit.apps.AuditConfig",
     "fashionerp.internationalization.apps.InternationalizationConfig",
+    "fashionerp.extensibility.apps.ExtensibilityConfig",
     "fashionerp.customers.apps.CustomersConfig",
     "fashionerp.measurements.apps.MeasurementsConfig",
     "fashionerp.catalog.apps.CatalogConfig",
