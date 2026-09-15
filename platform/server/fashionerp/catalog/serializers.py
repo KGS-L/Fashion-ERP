@@ -3,7 +3,10 @@ from rest_framework import serializers
 from fashionerp.internationalization.models import UnitOfMeasure
 from fashionerp.organizations.models import Company
 
-from .models import Product, ProductAttribute, ProductAttributeValue, ProductVariant
+from .models import (
+    Collection, FashionModel, FashionModelVariant, Product, ProductAttribute,
+    ProductAttributeValue, ProductVariant, Season,
+)
 
 
 class ProductAttributeValueSerializer(serializers.ModelSerializer):
@@ -72,3 +75,71 @@ class ProductSerializer(serializers.ModelSerializer):
         if request and unit and unit.organization_id != request.user.organization_id:
             raise serializers.ValidationError({"unit_id": "Unit is outside the local organization."})
         return attrs
+
+
+class SeasonSerializer(serializers.ModelSerializer):
+    organization_id = serializers.UUIDField(read_only=True)
+
+    class Meta:
+        model = Season
+        fields = ("id", "organization_id", "code", "name", "year", "start_date", "end_date", "is_active")
+        read_only_fields = ("id", "organization_id")
+
+    def validate(self, attrs):
+        start = attrs.get("start_date", getattr(self.instance, "start_date", None))
+        end = attrs.get("end_date", getattr(self.instance, "end_date", None))
+        if start and end and end < start:
+            raise serializers.ValidationError({"end_date": "End date cannot precede start date."})
+        return attrs
+
+
+class CollectionSerializer(serializers.ModelSerializer):
+    organization_id = serializers.UUIDField(read_only=True)
+    company_id = serializers.PrimaryKeyRelatedField(source="company", queryset=Company.objects.all(), allow_null=True, required=False)
+    season_id = serializers.PrimaryKeyRelatedField(source="season", queryset=Season.objects.all(), allow_null=True, required=False)
+
+    class Meta:
+        model = Collection
+        fields = ("id", "organization_id", "company_id", "season_id", "code", "name", "description", "media_references", "is_active", "created_at", "updated_at")
+        read_only_fields = ("id", "organization_id", "created_at", "updated_at")
+
+    def validate(self, attrs):
+        request = self.context.get("request")
+        for field in ("company", "season"):
+            obj = attrs.get(field, getattr(self.instance, field, None))
+            if request and obj and obj.organization_id != request.user.organization_id:
+                raise serializers.ValidationError({f"{field}_id": f"{field.title()} is outside the local organization."})
+        return attrs
+
+
+class FashionModelVariantSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FashionModelVariant
+        fields = ("id", "code", "color", "size", "instructions", "media_references", "metadata", "is_active")
+        read_only_fields = ("id",)
+
+
+class FashionModelSerializer(serializers.ModelSerializer):
+    organization_id = serializers.UUIDField(read_only=True)
+    company_id = serializers.PrimaryKeyRelatedField(source="company", queryset=Company.objects.all(), allow_null=True, required=False)
+    collection_id = serializers.PrimaryKeyRelatedField(source="collection", queryset=Collection.objects.all(), allow_null=True, required=False)
+    variants = FashionModelVariantSerializer(many=True, required=False)
+
+    class Meta:
+        model = FashionModel
+        fields = ("id", "organization_id", "company_id", "collection_id", "code", "name", "description", "instructions", "media_references", "metadata", "is_active", "variants", "created_at", "updated_at")
+        read_only_fields = ("id", "organization_id", "created_at", "updated_at")
+
+    def validate(self, attrs):
+        request = self.context.get("request")
+        for field in ("company", "collection"):
+            obj = attrs.get(field, getattr(self.instance, field, None))
+            if request and obj and obj.organization_id != request.user.organization_id:
+                raise serializers.ValidationError({f"{field}_id": f"{field.title()} is outside the local organization."})
+        return attrs
+
+    def create(self, validated_data):
+        variants = validated_data.pop("variants", [])
+        model = FashionModel.objects.create(**validated_data)
+        FashionModelVariant.objects.bulk_create([FashionModelVariant(fashion_model=model, **item) for item in variants])
+        return model
