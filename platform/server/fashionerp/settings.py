@@ -161,4 +161,7 @@ SPECTACULAR_SETTINGS = {
     "DESCRIPTION": "Versioned REST API for the FashionERP platform.",
     "VERSION": "1.0.0",
     "SERVE_INCLUDE_SCHEMA": False,
+    "ENUM_NAME_OVERRIDES": {
+        "CustomerStatusEnum": "fashionerp.customers.models.Customer.Status",
+    },
 }
