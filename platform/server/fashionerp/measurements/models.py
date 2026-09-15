@@ -118,3 +118,99 @@ class MeasurementProfileItem(models.Model):
                 raise ValidationError(
                     {"definition": "Definition must belong to the profile organization."}
                 )
+
+
+class MeasurementSet(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    organization = models.ForeignKey(
+        "organizations.Organization", on_delete=models.PROTECT,
+        related_name="measurement_sets",
+    )
+    company = models.ForeignKey(
+        "organizations.Company", on_delete=models.PROTECT,
+        related_name="measurement_sets",
+    )
+    establishment = models.ForeignKey(
+        "organizations.Establishment", on_delete=models.PROTECT,
+        related_name="measurement_sets", null=True, blank=True,
+    )
+    customer = models.ForeignKey(
+        "customers.Customer", on_delete=models.PROTECT,
+        related_name="measurement_sets",
+    )
+    profile = models.ForeignKey(
+        MeasurementProfile, on_delete=models.PROTECT,
+        related_name="measurement_sets", null=True, blank=True,
+    )
+    version = models.PositiveIntegerField()
+    measured_at = models.DateTimeField()
+    notes = models.TextField(blank=True)
+    alteration_notes = models.TextField(blank=True)
+    media_references = models.JSONField(default=list, blank=True)
+    created_by = models.ForeignKey(
+        "identity.User", on_delete=models.PROTECT,
+        related_name="created_measurement_sets",
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=("customer", "version"),
+                name="measurement_set_unique_customer_version",
+            ),
+        ]
+        ordering = ("-measured_at", "-version")
+
+    def clean(self):
+        super().clean()
+        if self.customer_id:
+            if self.customer.organization_id != self.organization_id:
+                raise ValidationError({"customer": "Customer must belong to the organization."})
+            if self.customer.company_id != self.company_id:
+                raise ValidationError({"company": "Company must match the customer company."})
+        if self.establishment_id and self.establishment.company_id != self.company_id:
+            raise ValidationError({"establishment": "Establishment must belong to the company."})
+        if self.profile_id and self.profile.organization_id != self.organization_id:
+            raise ValidationError({"profile": "Profile must belong to the organization."})
+
+
+class MeasurementValue(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    measurement_set = models.ForeignKey(
+        MeasurementSet, on_delete=models.CASCADE, related_name="values"
+    )
+    definition = models.ForeignKey(
+        MeasurementDefinition, on_delete=models.PROTECT,
+        related_name="measurement_values",
+    )
+    value = models.DecimalField(max_digits=14, decimal_places=4)
+    tolerance = models.DecimalField(
+        max_digits=12, decimal_places=4, null=True, blank=True
+    )
+    note = models.TextField(blank=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=("measurement_set", "definition"),
+                name="measurement_value_unique_definition_per_set",
+            ),
+            models.CheckConstraint(
+                condition=models.Q(value__gte=0),
+                name="measurement_value_nonnegative",
+            ),
+            models.CheckConstraint(
+                condition=models.Q(tolerance__gte=0) | models.Q(tolerance__isnull=True),
+                name="measurement_value_nonnegative_tolerance",
+            ),
+        ]
+        ordering = ("definition__name",)
+
+    def clean(self):
+        super().clean()
+        if self.measurement_set_id and self.definition_id:
+            if self.measurement_set.organization_id != self.definition.organization_id:
+                raise ValidationError(
+                    {"definition": "Definition must belong to the measurement set organization."}
+                )
