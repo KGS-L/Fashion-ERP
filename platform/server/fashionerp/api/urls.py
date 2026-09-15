@@ -11,6 +11,7 @@ urlpatterns = [
     path("i18n/", include("fashionerp.internationalization.urls")),
     path("companies/", include("fashionerp.organizations.company_urls")),
     path("customers/", include("fashionerp.customers.urls")),
+    path("measurements/", include("fashionerp.measurements.urls")),
     path(
         "establishments/",
         include("fashionerp.organizations.establishment_urls"),
