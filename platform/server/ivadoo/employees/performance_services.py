@@ -1,12 +1,11 @@
 import hashlib
 import json
-from datetime import datetime, time, timedelta
+from datetime import datetime, time, timedelta, timezone as dt_timezone
 from decimal import Decimal, ROUND_HALF_UP
 from zoneinfo import ZoneInfo
 
 from django.db import transaction
 from django.db.models import Q
-from django.utils import timezone
 from rest_framework.exceptions import ValidationError
 
 from .models import (
@@ -28,7 +27,11 @@ def _period_bounds(period_start, period_end, site=None):
     zone = ZoneInfo(getattr(site, "timezone", None) or "UTC")
     local_start = datetime.combine(period_start, time.min, tzinfo=zone)
     local_end = datetime.combine(period_end + timedelta(days=1), time.min, tzinfo=zone)
-    return local_start.astimezone(timezone.utc), local_end.astimezone(timezone.utc), zone.key
+    return (
+        local_start.astimezone(dt_timezone.utc),
+        local_end.astimezone(dt_timezone.utc),
+        zone.key,
+    )
 
 
 def _scope_tasks(queryset, *, company, establishment=None, workshop=None):
