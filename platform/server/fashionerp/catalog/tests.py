@@ -119,3 +119,12 @@ class ProductCatalogApiTests(APITestCase):
             format="json",
         )
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_catalog_is_deny_by_default_without_view_grant(self):
+        outsider = User.objects.create_user(username="catalog.no-grant", password="Strong-Test-Password-42!", organization=self.organization)
+        _, token = create_api_session(user=outsider)
+        self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {token}")
+        Product.objects.create(organization=self.organization, company=None, code="shared-hidden", name="Shared Hidden", product_type="service", unit=self.meter)
+        response = self.client.get("/api/v1/products/")
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data["count"], 0)
