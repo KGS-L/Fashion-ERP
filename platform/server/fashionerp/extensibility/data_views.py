@@ -1,17 +1,11 @@
+from drf_spectacular.utils import OpenApiParameter, OpenApiTypes, extend_schema
 from rest_framework import serializers, status
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .data_io import (
-    execute_import,
-    export_rows,
-    parse_mapping,
-    parse_uploaded_table,
-    prepare_import,
-    tabular_response,
-)
+from .data_io import execute_import, export_rows, parse_mapping, parse_uploaded_table, prepare_import, tabular_response
 from .data_resources import get_data_resource
 
 
@@ -19,11 +13,18 @@ class DataImportRequestSerializer(serializers.Serializer):
     resource = serializers.CharField(max_length=160)
     file = serializers.FileField()
     mapping = serializers.JSONField()
-    mode = serializers.ChoiceField(
-        choices=("create", "update", "upsert", "skip_duplicates"),
-        default="create",
-    )
+    mode = serializers.ChoiceField(choices=("create", "update", "upsert", "skip_duplicates"), default="create")
     commit = serializers.BooleanField(default=False)
+
+
+class DataImportResultSerializer(serializers.Serializer):
+    resource = serializers.CharField()
+    mode = serializers.CharField()
+    commit = serializers.BooleanField()
+    counts = serializers.JSONField()
+    errors = serializers.JSONField()
+    preview = serializers.JSONField()
+    result = serializers.JSONField(required=False)
 
 
 class DataImportView(APIView):
@@ -31,6 +32,7 @@ class DataImportView(APIView):
     parser_classes = [MultiPartParser, FormParser]
     serializer_class = DataImportRequestSerializer
 
+    @extend_schema(request=DataImportRequestSerializer, responses=DataImportResultSerializer)
     def post(self, request):
         resource = str(request.data.get("resource", "")).strip()
         if not resource:
@@ -43,18 +45,8 @@ class DataImportView(APIView):
         commit_value = request.data.get("commit", False)
         commit = commit_value is True or str(commit_value).lower() in {"1", "true", "yes", "on"}
         rows = parse_uploaded_table(upload)
-        plans = prepare_import(
-            request=request,
-            model_key=resource,
-            rows=rows,
-            mapping=mapping,
-            mode=mode,
-        )
-        errors = [
-            {"row": plan["row"], "errors": plan["errors"]}
-            for plan in plans
-            if plan.get("errors")
-        ]
+        plans = prepare_import(request=request, model_key=resource, rows=rows, mapping=mapping, mode=mode)
+        errors = [{"row": plan["row"], "errors": plan["errors"]} for plan in plans if plan.get("errors")]
         counts = {
             "rows": len(plans),
             "valid": len(plans) - len(errors),
@@ -84,7 +76,16 @@ class DataImportView(APIView):
 
 class DataExportView(APIView):
     permission_classes = [IsAuthenticated]
+    serializer_class = serializers.Serializer
 
+    @extend_schema(
+        parameters=[
+            OpenApiParameter("resource", OpenApiTypes.STR, OpenApiParameter.QUERY, required=True),
+            OpenApiParameter("format", OpenApiTypes.STR, OpenApiParameter.QUERY, required=False, enum=["csv", "xlsx"]),
+            OpenApiParameter("fields", OpenApiTypes.STR, OpenApiParameter.QUERY, required=False),
+        ],
+        responses={200: OpenApiTypes.BINARY},
+    )
     def get(self, request):
         resource = str(request.query_params.get("resource", "")).strip()
         if not resource:

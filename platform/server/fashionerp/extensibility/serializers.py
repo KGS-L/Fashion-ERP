@@ -84,3 +84,58 @@ class CustomFieldDefinitionSerializer(serializers.ModelSerializer):
                     {"field_type": "A custom field type cannot change after values have been stored."}
                 )
         return attrs
+
+
+class ModuleStateSerializer(serializers.Serializer):
+    code = serializers.CharField()
+    name = serializers.CharField()
+    version = serializers.CharField()
+    available_version = serializers.CharField()
+    state = serializers.CharField()
+    enabled = serializers.BooleanField()
+    required = serializers.BooleanField()
+    default_enabled = serializers.BooleanField()
+    edition = serializers.CharField()
+    dependencies = serializers.ListField(child=serializers.CharField())
+
+
+class CustomDataWriteSerializer(serializers.Serializer):
+    values = serializers.JSONField()
+
+
+class CustomDataResponseSerializer(serializers.Serializer):
+    model_key = serializers.CharField()
+    object_id = serializers.UUIDField()
+    version = serializers.IntegerField(required=False)
+    values = serializers.JSONField()
+
+
+class MetadataFieldSerializer(serializers.Serializer):
+    key = serializers.CharField()
+    label = serializers.CharField()
+    type = serializers.CharField()
+    native = serializers.BooleanField()
+    custom = serializers.BooleanField()
+    protected = serializers.BooleanField()
+    required = serializers.BooleanField()
+    read_only = serializers.BooleanField()
+    choices = serializers.JSONField(required=False)
+    searchable = serializers.BooleanField(required=False)
+    reportable = serializers.BooleanField(required=False)
+    sensitive = serializers.BooleanField(required=False)
+    version = serializers.IntegerField(required=False)
+    reference_model = serializers.CharField(required=False, allow_null=True)
+
+
+class MetadataModelSerializer(serializers.Serializer):
+    key = serializers.CharField()
+    label = serializers.CharField()
+    module = serializers.JSONField()
+    permissions = serializers.JSONField()
+    capabilities = serializers.JSONField()
+    actions = serializers.ListField(child=serializers.CharField())
+    fields = MetadataFieldSerializer(many=True)
+
+
+class MetadataModelListSerializer(serializers.Serializer):
+    models = MetadataModelSerializer(many=True)

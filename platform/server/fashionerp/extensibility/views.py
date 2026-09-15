@@ -1,5 +1,6 @@
 from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import transaction
+from drf_spectacular.utils import extend_schema
 from rest_framework import generics, status
 from rest_framework.exceptions import PermissionDenied, ValidationError
 from rest_framework.permissions import IsAuthenticated
@@ -13,7 +14,14 @@ from .custom_fields import save_custom_values, visible_custom_values
 from .metadata import can_view_model, metadata_etag, model_metadata, visible_model_metadata
 from .models import CustomFieldDefinition
 from .registry import get_model_manifest
-from .serializers import CustomFieldDefinitionSerializer
+from .serializers import (
+    CustomDataResponseSerializer,
+    CustomDataWriteSerializer,
+    CustomFieldDefinitionSerializer,
+    MetadataModelListSerializer,
+    MetadataModelSerializer,
+    ModuleStateSerializer,
+)
 from .services import list_module_states, module_state, set_module_state
 
 
@@ -35,7 +43,9 @@ def _metadata_response(request, payload):
 
 class ModuleListView(APIView):
     permission_classes = [IsAuthenticated]
+    serializer_class = ModuleStateSerializer
 
+    @extend_schema(responses=ModuleStateSerializer(many=True))
     def get(self, request):
         _require(request.user, "platform.module.view", "You do not have permission to view platform modules.")
         return Response(list_module_states(request.user.organization))
@@ -43,7 +53,9 @@ class ModuleListView(APIView):
 
 class ModuleDetailView(APIView):
     permission_classes = [IsAuthenticated]
+    serializer_class = ModuleStateSerializer
 
+    @extend_schema(responses=ModuleStateSerializer)
     def get(self, request, module_code):
         _require(request.user, "platform.module.view", "You do not have permission to view platform modules.")
         try:
@@ -55,7 +67,9 @@ class ModuleDetailView(APIView):
 
 class ModuleActionView(APIView):
     permission_classes = [IsAuthenticated]
+    serializer_class = ModuleStateSerializer
 
+    @extend_schema(request=None, responses=ModuleStateSerializer)
     def post(self, request, module_code, action):
         _require(request.user, "platform.module.manage", "You do not have permission to manage platform modules.")
         if action not in {"enable", "disable"}:
@@ -87,9 +101,7 @@ class CustomFieldListCreateView(generics.ListCreateAPIView):
             "platform.customization.view",
             "You do not have permission to view customization metadata.",
         )
-        queryset = CustomFieldDefinition.objects.filter(
-            organization=self.request.user.organization
-        )
+        queryset = CustomFieldDefinition.objects.filter(organization=self.request.user.organization)
         model_key = self.request.query_params.get("model_key")
         if model_key:
             queryset = queryset.filter(model_key=model_key)
@@ -102,10 +114,7 @@ class CustomFieldListCreateView(generics.ListCreateAPIView):
             "You do not have permission to manage custom fields.",
         )
         with transaction.atomic():
-            definition = serializer.save(
-                organization=self.request.user.organization,
-                created_by=self.request.user,
-            )
+            definition = serializer.save(organization=self.request.user.organization, created_by=self.request.user)
             record_audit_event(
                 organization=self.request.user.organization,
                 actor=self.request.user,
@@ -133,19 +142,9 @@ class CustomFieldDetailView(generics.RetrieveUpdateAPIView):
     lookup_url_kwarg = "field_id"
 
     def get_queryset(self):
-        permission = (
-            "platform.customization.view"
-            if self.request.method == "GET"
-            else "platform.customization.manage"
-        )
-        _require(
-            self.request.user,
-            permission,
-            "You do not have permission to access custom fields.",
-        )
-        return CustomFieldDefinition.objects.filter(
-            organization=self.request.user.organization
-        )
+        permission = "platform.customization.view" if self.request.method == "GET" else "platform.customization.manage"
+        _require(self.request.user, permission, "You do not have permission to access custom fields.")
+        return CustomFieldDefinition.objects.filter(organization=self.request.user.organization)
 
     def perform_update(self, serializer):
         with transaction.atomic():
@@ -187,18 +186,17 @@ class CustomFieldDetailView(generics.RetrieveUpdateAPIView):
 
 class CustomObjectDataView(APIView):
     permission_classes = [IsAuthenticated]
+    serializer_class = CustomDataResponseSerializer
 
+    @extend_schema(responses=CustomDataResponseSerializer)
     def get(self, request, model_key, object_id):
         try:
-            values = visible_custom_values(
-                user=request.user,
-                model_key=model_key,
-                object_id=object_id,
-            )
+            values = visible_custom_values(user=request.user, model_key=model_key, object_id=object_id)
         except (LookupError, DjangoValidationError):
             return Response(status=status.HTTP_404_NOT_FOUND)
         return Response({"model_key": model_key, "object_id": str(object_id), "values": values})
 
+    @extend_schema(request=CustomDataWriteSerializer, responses=CustomDataResponseSerializer)
     def patch(self, request, model_key, object_id):
         values = request.data.get("values", request.data)
         try:
@@ -211,29 +209,20 @@ class CustomObjectDataView(APIView):
                 request=request,
                 partial=True,
             )
-            visible = visible_custom_values(
-                user=request.user,
-                model_key=model_key,
-                object_id=object_id,
-            )
+            visible = visible_custom_values(user=request.user, model_key=model_key, object_id=object_id)
         except LookupError:
             return Response(status=status.HTTP_404_NOT_FOUND)
         except DjangoValidationError as exc:
             detail = exc.message_dict if hasattr(exc, "message_dict") else exc.messages
             raise ValidationError(detail) from exc
-        return Response(
-            {
-                "model_key": model_key,
-                "object_id": str(object_id),
-                "version": record.version,
-                "values": visible,
-            }
-        )
+        return Response({"model_key": model_key, "object_id": str(object_id), "version": record.version, "values": visible})
 
 
 class MetadataModelListView(APIView):
     permission_classes = [IsAuthenticated]
+    serializer_class = MetadataModelListSerializer
 
+    @extend_schema(responses=MetadataModelListSerializer)
     def get(self, request):
         payload = {"models": visible_model_metadata(request.user)}
         return _metadata_response(request, payload)
@@ -241,7 +230,9 @@ class MetadataModelListView(APIView):
 
 class MetadataModelDetailView(APIView):
     permission_classes = [IsAuthenticated]
+    serializer_class = MetadataModelSerializer
 
+    @extend_schema(responses=MetadataModelSerializer)
     def get(self, request, model_key):
         try:
             manifest = get_model_manifest(model_key)
