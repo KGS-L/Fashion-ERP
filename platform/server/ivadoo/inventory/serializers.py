@@ -153,6 +153,7 @@ class StockMovementCreateSerializer(serializers.Serializer):
     reference_type = serializers.CharField(max_length=80, required=False, allow_blank=True)
     reference_id = serializers.UUIDField(required=False, allow_null=True)
     idempotency_key = serializers.CharField(max_length=160, required=False, allow_blank=True)
+    approval_id = serializers.UUIDField(required=False, allow_null=True, write_only=True)
 
     def validate(self, attrs):
         request = self.context["request"]

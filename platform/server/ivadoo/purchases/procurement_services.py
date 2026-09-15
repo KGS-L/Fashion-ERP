@@ -3,6 +3,7 @@ from django.db import transaction
 from django.utils import timezone
 
 from ivadoo.audit.services import audit_snapshot, record_audit_event
+from ivadoo.operations.services import assert_purchase_order_approver
 
 from .models import PurchaseOrder, PurchaseRequest, RequestForQuotation, SupplierQuotation
 
@@ -144,6 +145,8 @@ def transition_purchase_order(*, purchase_order, action, actor, reason="", reque
         raise ValidationError({"reason": "A reason is required for purchase order cancellation."})
     if action == "submit" and not instance.lines.exists():
         raise ValidationError({"lines": "A purchase order must contain at least one line before submission."})
+    if action == "approve":
+        assert_purchase_order_approver(purchase_order=instance, actor=actor)
     instance.status = target
     instance.transition_reason = reason.strip()
     update_fields = ["status", "transition_reason", "updated_at"]

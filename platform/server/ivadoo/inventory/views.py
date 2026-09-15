@@ -9,6 +9,7 @@ from rest_framework.views import APIView
 
 from ivadoo.audit.services import audit_snapshot, record_audit_event
 from ivadoo.authorization.services import authorized_company_ids, has_permission
+from ivadoo.operations.services import assert_stock_movement_approval, consume_stock_movement_approval
 
 from .models import StockLocation, StockLot, StockMovement, StockPosition, StockReservation, Warehouse
 from .serializers import (
@@ -305,7 +306,8 @@ class StockMovementApplyView(APIView):
     def post(self, request):
         serializer = StockMovementCreateSerializer(data=request.data, context={"request": request})
         serializer.is_valid(raise_exception=True)
-        data = serializer.validated_data
+        data = dict(serializer.validated_data)
+        approval_id = data.pop("approval_id", None)
         location = data.get("source_location") or data.get("destination_location")
         if location is None:
             raise ValidationError("At least one stock location is required.")
@@ -326,12 +328,19 @@ class StockMovementApplyView(APIView):
         ):
             raise PermissionDenied("You cannot apply stock movements in the destination scope.")
         try:
-            movement = apply_stock_movement(
-                organization=request.user.organization,
-                actor=request.user,
-                request=request,
-                **data,
-            )
+            with transaction.atomic():
+                approval = assert_stock_movement_approval(
+                    organization=request.user.organization,
+                    data=data,
+                    approval_id=approval_id,
+                )
+                movement = apply_stock_movement(
+                    organization=request.user.organization,
+                    actor=request.user,
+                    request=request,
+                    **data,
+                )
+                consume_stock_movement_approval(approval=approval, movement=movement)
         except DjangoValidationError as exc:
             _raise_service_validation(exc)
         return Response(StockMovementSerializer(movement).data, status=status.HTTP_201_CREATED)
