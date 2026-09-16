@@ -1,4 +1,4 @@
-from django.urls import path
+from django.urls import include, path
 
 from .views import (
     CRMConversionEventListView,
@@ -18,6 +18,7 @@ from .views import (
 app_name = "crm"
 
 urlpatterns = [
+    path("", include("ivadoo.crm.tracking_urls")),
     path("sources/", CRMSourceListView.as_view(), name="source-list"),
     path("sources/<uuid:source_id>/", CRMSourceDetailView.as_view(), name="source-detail"),
     path("stages/", CRMPipelineStageListView.as_view(), name="stage-list"),

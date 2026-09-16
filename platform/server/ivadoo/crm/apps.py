@@ -6,4 +6,5 @@ class CrmConfig(AppConfig):
     name = "ivadoo.crm"
 
     def ready(self):
+        from . import tracking_models  # noqa: F401
         from . import registry  # noqa: F401

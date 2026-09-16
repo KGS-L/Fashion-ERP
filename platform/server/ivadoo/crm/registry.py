@@ -11,7 +11,7 @@ register_module(
     ModuleManifest(
         code="enterprise.crm",
         name="CRM",
-        version="1.0.0",
+        version="1.1.0",
         dependencies=("foundation", "fashion.customers"),
         default_enabled=True,
         edition="business",
@@ -103,5 +103,49 @@ register_model(
             "actor_id",
             "occurred_at",
         },
+    )
+)
+register_model(
+    ModelManifest(
+        key="crm.crmsegment",
+        label="CRM segment",
+        django_model="crm.CRMSegment",
+        module_code="enterprise.crm",
+        view_permission="enterprise.crm.view",
+        manage_permission="enterprise.crm.manage",
+        protected_fields=BASE_PROTECTED,
+    )
+)
+register_model(
+    ModelManifest(
+        key="crm.crmsegmentmembership",
+        label="CRM segment membership",
+        django_model="crm.CRMSegmentMembership",
+        module_code="enterprise.crm",
+        view_permission="enterprise.crm.view",
+        manage_permission="enterprise.crm.manage",
+        protected_fields=BASE_PROTECTED | {"segment", "segment_id", "lead", "lead_id", "customer", "customer_id"},
+    )
+)
+register_model(
+    ModelManifest(
+        key="crm.crmfollowup",
+        label="CRM follow-up",
+        django_model="crm.CRMFollowUp",
+        module_code="enterprise.crm",
+        view_permission="enterprise.crm.view",
+        manage_permission="enterprise.crm.manage",
+        protected_fields=BASE_PROTECTED | {"company", "company_id", "lead", "lead_id", "opportunity", "opportunity_id", "customer", "customer_id"},
+    )
+)
+register_model(
+    ModelManifest(
+        key="crm.crminteraction",
+        label="CRM interaction",
+        django_model="crm.CRMInteraction",
+        module_code="enterprise.crm",
+        view_permission="enterprise.crm.view",
+        manage_permission="enterprise.crm.manage",
+        protected_fields=BASE_PROTECTED | {"company", "company_id", "lead", "lead_id", "opportunity", "opportunity_id", "customer", "customer_id", "actor", "actor_id", "occurred_at"},
     )
 )
