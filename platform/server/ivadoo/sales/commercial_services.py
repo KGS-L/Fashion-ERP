@@ -1,4 +1,4 @@
-from decimal import Decimal
+from decimal import Decimal, ROUND_HALF_UP
 
 from rest_framework.exceptions import PermissionDenied
 
@@ -9,6 +9,13 @@ from ivadoo.operations.services import resolve_approval_rule
 from .models import OrderCommercialSnapshot
 
 
+FOUR_DECIMAL_PLACES = Decimal("0.0001")
+
+
+def _four_decimal(value):
+    return Decimal(value).quantize(FOUR_DECIMAL_PLACES, rounding=ROUND_HALF_UP)
+
+
 def order_amounts(order):
     subtotal = Decimal("0")
     discount_total = Decimal("0")
@@ -17,7 +24,10 @@ def order_amounts(order):
         discount = gross * Decimal(line.discount_rate)
         subtotal += gross
         discount_total += discount
-    return subtotal, discount_total, subtotal - discount_total
+    subtotal = _four_decimal(subtotal)
+    discount_total = _four_decimal(discount_total)
+    total = _four_decimal(subtotal - discount_total)
+    return subtotal, discount_total, total
 
 
 def order_max_discount_rate(order):
