@@ -145,6 +145,39 @@ class CommercialOrderApiTests(APITestCase):
         response = self.client.post("/api/v1/sales/orders/", payload, format="json")
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
+    def test_series_order_rejects_model_from_another_company_scope(self):
+        other_company = Company.objects.create(
+            organization=self.organization,
+            name="Other Maison",
+            code="other-maison-series",
+        )
+        other_model = FashionModel.objects.create(
+            organization=self.organization,
+            company=other_company,
+            code="OTHER-TEE",
+            name="Other Tee",
+        )
+        other_small = FashionModelVariant.objects.create(
+            fashion_model=other_model,
+            code="OTHER-S",
+            size="S",
+            color="Blue",
+        )
+        other_medium = FashionModelVariant.objects.create(
+            fashion_model=other_model,
+            code="OTHER-M",
+            size="M",
+            color="Blue",
+        )
+        payload = self._series_payload(number="SO-SCOPE")
+        payload["lines"][0]["fashion_model"] = str(other_model.id)
+        payload["lines"][0]["variant_quantities"] = [
+            {"model_variant": str(other_small.id), "quantity": "1.0000"},
+            {"model_variant": str(other_medium.id), "quantity": "2.0000"},
+        ]
+        response = self.client.post("/api/v1/sales/orders/", payload, format="json")
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
     def test_wholesale_order_rejects_invalid_discount(self):
         payload = self._series_payload(number="WO-001", discount_rate="1.1000")
         payload["order_type"] = "wholesale"
