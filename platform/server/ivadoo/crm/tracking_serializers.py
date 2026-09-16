@@ -94,6 +94,7 @@ class CRMSegmentMembershipSerializer(serializers.ModelSerializer):
         read_only_fields = (
             "id", "organization_id", "company_id", "added_by_id", "added_at",
         )
+        validators = ()
 
     def validate(self, attrs):
         request = self.context.get("request")
@@ -104,6 +105,15 @@ class CRMSegmentMembershipSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError({"segment_id": "Segment is required."})
         _validate_scope(request=request, company=segment.company)
         _validate_target(company=segment.company, lead=lead, customer=customer)
+        duplicate = CRMSegmentMembership.objects.filter(segment=segment)
+        if lead is not None:
+            duplicate = duplicate.filter(lead=lead)
+        else:
+            duplicate = duplicate.filter(customer=customer)
+        if duplicate.exists():
+            raise serializers.ValidationError(
+                {"target": "This CRM target already belongs to the selected segment."}
+            )
         return attrs
 
 
