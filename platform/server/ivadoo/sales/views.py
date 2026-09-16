@@ -10,6 +10,10 @@ from rest_framework.views import APIView
 from ivadoo.audit.services import record_audit_event
 from ivadoo.authorization.services import authorized_company_ids, has_permission
 
+from .commercial_services import (
+    assert_order_confirmation_rules,
+    create_commercial_snapshot,
+)
 from .models import Order, Quotation
 from .serializers import OrderSerializer, QuotationSerializer
 
@@ -58,7 +62,7 @@ class OrderListCreateView(generics.ListCreateAPIView):
     queryset = Order.objects.none()
     serializer_class = OrderSerializer
     permission_classes = [IsAuthenticated]
-    filterset_fields = ("company_id", "customer_id", "status")
+    filterset_fields = ("company_id", "customer_id", "status", "order_type")
     search_fields = ("number", "customer__display_name")
 
     def get_queryset(self):
@@ -66,7 +70,10 @@ class OrderListCreateView(generics.ListCreateAPIView):
             Order,
             self.request.user,
             "fashion.sale.view",
-        ).prefetch_related("lines")
+        ).prefetch_related(
+            "lines__variant_quantities__model_variant",
+            "lines__measurement_set__values__definition",
+        )
 
     def perform_create(self, serializer):
         company = serializer.validated_data["company"]
@@ -77,7 +84,18 @@ class OrderListCreateView(generics.ListCreateAPIView):
             company=company,
         ):
             raise PermissionDenied()
-        serializer.save(organization=self.request.user.organization)
+        order = serializer.save(
+            organization=self.request.user.organization,
+            created_by=self.request.user,
+        )
+        record_audit_event(
+            organization=self.request.user.organization,
+            actor=self.request.user,
+            action="fashion.order.create",
+            object_instance=order,
+            company_id=company.id,
+            request=self.request,
+        )
 
 
 class QuotationActionView(APIView):
@@ -125,7 +143,11 @@ class OrderActionView(APIView):
             order = get_object_or_404(
                 scoped(Order, request.user, "fashion.sale.manage")
                 .select_for_update()
-                .prefetch_related("lines__measurement_set__values__definition"),
+                .select_related("company", "created_by")
+                .prefetch_related(
+                    "lines__measurement_set__values__definition",
+                    "lines__variant_quantities__model_variant",
+                ),
                 id=order_id,
             )
             if action == "confirm":
@@ -133,6 +155,10 @@ class OrderActionView(APIView):
                     raise ValidationError(
                         {"status": "Only draft orders can be confirmed."}
                     )
+                resolved_rules = assert_order_confirmation_rules(
+                    order=order,
+                    actor=request.user,
+                )
                 for line in order.lines.all():
                     measurement_set = line.measurement_set
                     if measurement_set:
@@ -165,6 +191,11 @@ class OrderActionView(APIView):
                 order.status = Order.Status.CONFIRMED
                 order.confirmed_at = timezone.now()
                 order.save(update_fields=["status", "confirmed_at", "updated_at"])
+                create_commercial_snapshot(
+                    order=order,
+                    actor=request.user,
+                    resolved=resolved_rules,
+                )
             elif action == "cancel":
                 if order.status == Order.Status.CANCELLED:
                     raise ValidationError({"status": "Order is already cancelled."})
@@ -179,6 +210,7 @@ class OrderActionView(APIView):
                 actor=request.user,
                 action=f"fashion.order.{action}",
                 object_instance=order,
+                company_id=order.company_id,
                 request=request,
             )
             return Response(OrderSerializer(order).data)
