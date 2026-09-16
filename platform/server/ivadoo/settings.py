@@ -150,5 +150,8 @@ SPECTACULAR_SETTINGS = {
         "CustomerStatusEnum": [("active", "Active"), ("inactive", "Inactive"), ("archived", "Archived")],
         "CustomerTypeEnum": [("individual", "Individual"), ("company", "Company")],
         "DeliveryReturnDispositionEnum": "ivadoo.delivery.models.DeliveryReturnLine.Disposition",
+        "CRMFollowUpStatusEnum": "ivadoo.crm.tracking_models.CRMFollowUp.Status",
+        "CRMFollowUpPriorityEnum": "ivadoo.crm.tracking_models.CRMFollowUp.Priority",
+        "CRMInteractionDirectionEnum": "ivadoo.crm.tracking_models.CRMInteraction.Direction",
     },
 }
