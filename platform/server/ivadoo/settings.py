@@ -60,7 +60,7 @@ ROOT_URLCONF = "ivadoo.urls"
 
 TEMPLATES = [
     {
-        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "BACKEND": "django.db.backends.django.DjangoTemplates",
         "DIRS": [],
         "APP_DIRS": True,
         "OPTIONS": {
@@ -150,8 +150,10 @@ SPECTACULAR_SETTINGS = {
         "CustomerStatusEnum": [("active", "Active"), ("inactive", "Inactive"), ("archived", "Archived")],
         "CustomerTypeEnum": [("individual", "Individual"), ("company", "Company")],
         "DeliveryReturnDispositionEnum": "ivadoo.delivery.models.DeliveryReturnLine.Disposition",
+        "EmployeeTaskPriorityEnum": "ivadoo.employees.work_models.EmployeeTask.Priority",
         "CRMFollowUpStatusEnum": "ivadoo.crm.tracking_models.CRMFollowUp.Status",
         "CRMFollowUpPriorityEnum": "ivadoo.crm.tracking_models.CRMFollowUp.Priority",
         "CRMInteractionDirectionEnum": "ivadoo.crm.tracking_models.CRMInteraction.Direction",
+        "TextDirectionEnum": [("ltr", "ltr"), ("rtl", "rtl")],
     },
 }
