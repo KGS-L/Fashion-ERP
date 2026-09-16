@@ -187,7 +187,7 @@ def _mark_lead_converted(*, lead, customer, actor, created_customer):
 @transaction.atomic
 def convert_lead(*, lead, actor, customer=None, customer_code=""):
     lead = (
-        CRMLead.objects.select_for_update()
+        CRMLead.objects.select_for_update(of=("self",))
         .select_related(
             "organization",
             "company",
@@ -235,7 +235,7 @@ def convert_lead(*, lead, actor, customer=None, customer_code=""):
 @transaction.atomic
 def convert_opportunity(*, opportunity, actor, customer=None, customer_code=""):
     opportunity = (
-        CRMOpportunity.objects.select_for_update()
+        CRMOpportunity.objects.select_for_update(of=("self",))
         .select_related(
             "organization",
             "company",
@@ -262,7 +262,7 @@ def convert_opportunity(*, opportunity, actor, customer=None, customer_code=""):
     lead = None
     if opportunity.lead_id:
         lead = (
-            CRMLead.objects.select_for_update()
+            CRMLead.objects.select_for_update(of=("self",))
             .select_related("converted_customer")
             .get(pk=opportunity.lead_id)
         )
