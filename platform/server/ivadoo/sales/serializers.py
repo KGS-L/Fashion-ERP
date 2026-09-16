@@ -49,6 +49,28 @@ def _validate_customization(value):
     return value
 
 
+def _validate_line_company_scope(*, company, line):
+    model = line.get("fashion_model")
+    variant = line.get("model_variant")
+    allocations = line.get("variant_quantities", [])
+    if model and model.company_id and model.company_id != company.id:
+        raise serializers.ValidationError(
+            {"lines": "Fashion model is outside the selected company scope."}
+        )
+    if variant:
+        variant_company_id = variant.fashion_model.company_id
+        if variant_company_id and variant_company_id != company.id:
+            raise serializers.ValidationError(
+                {"lines": "Model variant is outside the selected company scope."}
+            )
+    for allocation in allocations:
+        allocation_company_id = allocation["model_variant"].fashion_model.company_id
+        if allocation_company_id and allocation_company_id != company.id:
+            raise serializers.ValidationError(
+                {"lines": "Variant quantity is outside the selected company scope."}
+            )
+
+
 class QuotationLineSerializer(serializers.ModelSerializer):
     class Meta:
         model = QuotationLine
@@ -126,6 +148,8 @@ class QuotationSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 {"customer": "Customer must belong to the selected company."}
             )
+        for line in attrs["lines"]:
+            _validate_line_company_scope(company=company, line=line)
         return attrs
 
     def create(self, validated_data):
@@ -346,6 +370,7 @@ class OrderSerializer(serializers.ModelSerializer):
                 )
 
         for line in attrs["lines"]:
+            _validate_line_company_scope(company=company, line=line)
             measurement_set = line.get("measurement_set")
             allocations = line.get("variant_quantities", [])
             if measurement_set and (
