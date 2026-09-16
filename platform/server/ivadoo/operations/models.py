@@ -9,6 +9,7 @@ class ApprovalRule(models.Model):
     class Resource(models.TextChoices):
         PURCHASE_ORDER = "purchase_order", "Purchase order"
         STOCK_MOVEMENT = "stock_movement", "Stock movement"
+        SALES_ORDER = "sales_order", "Sales order"
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     organization = models.ForeignKey("organizations.Organization", on_delete=models.PROTECT, related_name="operational_approval_rules")
