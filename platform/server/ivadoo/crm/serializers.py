@@ -28,7 +28,9 @@ def _validate_scope(*, request, company, establishment=None):
 class CRMSourceSerializer(serializers.ModelSerializer):
     organization_id = serializers.UUIDField(read_only=True)
     company_id = serializers.PrimaryKeyRelatedField(
-        source="company", queryset=Company.objects.all()
+        source="company",
+        queryset=Company.objects.all(),
+        pk_field=serializers.UUIDField(format="hex_verbose"),
     )
 
     class Meta:
@@ -63,7 +65,9 @@ class CRMSourceSerializer(serializers.ModelSerializer):
 class CRMPipelineStageSerializer(serializers.ModelSerializer):
     organization_id = serializers.UUIDField(read_only=True)
     company_id = serializers.PrimaryKeyRelatedField(
-        source="company", queryset=Company.objects.all()
+        source="company",
+        queryset=Company.objects.all(),
+        pk_field=serializers.UUIDField(format="hex_verbose"),
     )
 
     class Meta:
@@ -99,23 +103,28 @@ class CRMPipelineStageSerializer(serializers.ModelSerializer):
 class CRMLeadSerializer(serializers.ModelSerializer):
     organization_id = serializers.UUIDField(read_only=True)
     company_id = serializers.PrimaryKeyRelatedField(
-        source="company", queryset=Company.objects.all()
+        source="company",
+        queryset=Company.objects.all(),
+        pk_field=serializers.UUIDField(format="hex_verbose"),
     )
     establishment_id = serializers.PrimaryKeyRelatedField(
         source="establishment",
         queryset=Establishment.objects.all(),
+        pk_field=serializers.UUIDField(format="hex_verbose"),
         allow_null=True,
         required=False,
     )
     source_id = serializers.PrimaryKeyRelatedField(
         source="source",
         queryset=CRMSource.objects.all(),
+        pk_field=serializers.UUIDField(format="hex_verbose"),
         allow_null=True,
         required=False,
     )
     owner_id = serializers.PrimaryKeyRelatedField(
         source="owner",
         queryset=User.objects.all(),
+        pk_field=serializers.UUIDField(format="hex_verbose"),
         allow_null=True,
         required=False,
     )
@@ -200,38 +209,47 @@ class CRMLeadSerializer(serializers.ModelSerializer):
 class CRMOpportunitySerializer(serializers.ModelSerializer):
     organization_id = serializers.UUIDField(read_only=True)
     company_id = serializers.PrimaryKeyRelatedField(
-        source="company", queryset=Company.objects.all()
+        source="company",
+        queryset=Company.objects.all(),
+        pk_field=serializers.UUIDField(format="hex_verbose"),
     )
     establishment_id = serializers.PrimaryKeyRelatedField(
         source="establishment",
         queryset=Establishment.objects.all(),
+        pk_field=serializers.UUIDField(format="hex_verbose"),
         allow_null=True,
         required=False,
     )
     lead_id = serializers.PrimaryKeyRelatedField(
         source="lead",
         queryset=CRMLead.objects.all(),
+        pk_field=serializers.UUIDField(format="hex_verbose"),
         allow_null=True,
         required=False,
     )
     customer_id = serializers.PrimaryKeyRelatedField(
         source="customer",
         queryset=Customer.objects.all(),
+        pk_field=serializers.UUIDField(format="hex_verbose"),
         allow_null=True,
         required=False,
     )
     source_id = serializers.PrimaryKeyRelatedField(
         source="source",
         queryset=CRMSource.objects.all(),
+        pk_field=serializers.UUIDField(format="hex_verbose"),
         allow_null=True,
         required=False,
     )
     stage_id = serializers.PrimaryKeyRelatedField(
-        source="stage", queryset=CRMPipelineStage.objects.all()
+        source="stage",
+        queryset=CRMPipelineStage.objects.all(),
+        pk_field=serializers.UUIDField(format="hex_verbose"),
     )
     owner_id = serializers.PrimaryKeyRelatedField(
         source="owner",
         queryset=User.objects.all(),
+        pk_field=serializers.UUIDField(format="hex_verbose"),
         allow_null=True,
         required=False,
     )
@@ -378,6 +396,7 @@ class CRMConvertSerializer(serializers.Serializer):
     customer_id = serializers.PrimaryKeyRelatedField(
         source="customer",
         queryset=Customer.objects.all(),
+        pk_field=serializers.UUIDField(format="hex_verbose"),
         allow_null=True,
         required=False,
     )
